@@ -62,6 +62,9 @@ class EngineRef(_Part):
     version: str
     config: dict[str, Any]
     config_hash: str
+    wake_on_truth: bool = Field(
+        default=False, description="Woken by ground truth (the reference contestant only)."
+    )
 
 
 class HeaderRecord(_Record):

@@ -15,7 +15,7 @@ from typing import Self
 from pydantic import BaseModel
 
 from blackout import __version__
-from blackout.controllers.base import Controller, belief_of
+from blackout.controllers.base import Controller, belief_of, run_stats
 from blackout.env import BlackoutEnv, DecisionRequest, EpisodeResult, run_episode
 from blackout.info.belief import BeliefState
 from blackout.logs.schema import (
@@ -99,7 +99,12 @@ def header_record(
             id=scenario.id, hash=scenario_digest(scenario), spec=scenario.model_dump(mode="json")
         ),
         contestant=ContestantRef(name=contestant, model=model, effort=effort, run_index=run_index),
-        engine=EngineRef(version=__version__, config=config, config_hash=digest(config)),
+        engine=EngineRef(
+            version=__version__,
+            config=config,
+            config_hash=digest(config),
+            wake_on_truth=env.wake_on_truth,
+        ),
     )
 
 
@@ -188,6 +193,9 @@ def record_episode(
         )
         records = writer.records
     summary = {**_summary(header, episode, log_path, records), **(summary_extra or {})}
+    stats = run_stats(controller)
+    if stats is not None:
+        summary["contestant_stats"] = stats
     text = json.dumps(summary, indent=2, sort_keys=True) + "\n"
     (run_dir / SUMMARY_FILE).write_text(text, encoding="utf-8", newline="\n")
     return RecordedRun(episode, run_dir, log_path, summary)

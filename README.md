@@ -9,7 +9,7 @@ A small simulated city loses power. Different contestants try to keep three hosp
 
 ## Status
 
-Milestones **M0–M6** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, the scenario generator, and the first real baseline with a batch runner. A deterministic city now runs end to end:
+Milestones **M0–M7** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, the scenario generator, the naive Rules baseline with a batch runner, and the OR-Tools Solver with its perfect-information Reference. A deterministic city now runs end to end:
 - Trucks haul fuel from depots to hospitals, and generators burn down.
 - Hidden road blocks stop vehicles until somebody reroutes them.
 - Substations fail, overload and trip in cascades unless load is shed.
@@ -28,6 +28,10 @@ Scenarios can now be generated from a seed. The generator draws a random city fr
 
 The first baseline, **Rules** (C1), is the naive "50-line script": it trusts every report, reads L1 text with a keyword parser (built from the train phrasing bank only), serves hospitals by earliest time to failure, reroutes around known blocks, sends crews to the substation carrying the most critical load, and sheds residential then essential zones on an overload. `blackout batch` runs a YAML matrix of contestants over a suite in parallel processes, logs and scores every run, resumes where it left off, and writes tables by template × level. On dev-v0, Rules loses 0 hospital-minutes in all 18 scenarios (do-nothing loses 140–408), and the keyword parser reads the L1 reports with F1 = 1.0 ([results/dev_baselines/results.md](results/dev_baselines/results.md)). That says more about dev-v0 than about Rules: these worlds are too easy, and M8 will calibrate harder ones (docs/DECISIONS.md D059).
 
+The strong baseline, **Solver** (C2), re-plans at every decision point. It believes verified and field reports, holds unverified ones back until a second source or telemetry backs them, and spends `confirm_report` on an unverified report only if believing it would change the plan. It then plans power first: an exact search over which zones to shed (keeping every feeder at or below 95% and never shedding a hospital's zone) and a brute-force crew order. Then an OR-Tools CP-SAT model picks one of up to 91 enumerated plans per truck (idle, or one or two trips, each direct or via a depot) to minimize hospital darkness over the next two hours. Only each truck's first trip is committed. Every solve is deterministic (one worker, fixed seed, deterministic time limit), and on dev-v0 the p95 solve takes about 0.02 s. **Reference** (C3) runs the same code on ground truth (every block, true fuel, true repair times, but no knowledge of the future), so it is the ceiling a contestant with perfect information reaches. Both are built on one library call, `solve_plan(belief, overrides) -> SolverResult`, which the LLM contestants will reuse as a tool.
+
+On dev-v0, Solver and Reference also lose 0 minutes everywhere, so Solver vs Rules is a tie there. Two small hand-made traps show where planning pays off. In `trap_assignment`, earliest-deadline-first gives the nearest truck to the first hospital and leaves the second one 7 minutes dark, while the solver swaps the trucks and saves both. In `trap_depot`, Rules drives to the depot nearest the hospital instead of loading where the truck already is, and the hospital is dark for 3 minutes; the solver loses none (D068).
+
 Every run leaves a small, deterministic log that can be replayed and checked tick by tick, and scored independently of the contestant. Since M4 the log also records what the contestant believed at each decision. AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
 
 ## Try it
@@ -43,7 +47,10 @@ uv run blackout gen --suite dev-v0 --sample 20          # regenerate the dev-v0 
 uv run blackout gen --suite dev-v0 --check              # check the committed suite matches a fresh run
 uv run blackout run --scenario dev0_t01_s0_l1 --quiet   # run a generated scenario
 uv run blackout run --scenario dev0_t02_s0_l1 --controller rules   # the Rules baseline sheds load
-uv run blackout batch --matrix configs/matrices/dev_baselines.yaml   # baselines over dev-v0
+uv run blackout run --scenario trap_assignment --controller rules    # greedy dispatch: 7 dark minutes
+uv run blackout run --scenario trap_assignment --controller solver   # CP-SAT plan: none
+uv run blackout run --scenario hello_blackout --controller reference # ground truth: never gets stuck
+uv run blackout batch --matrix configs/matrices/dev_baselines.yaml   # all four baselines over dev-v0
 uv run blackout batch --matrix configs/matrices/dev_baselines.yaml --resume   # skips finished runs
 ```
 
@@ -74,13 +81,14 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 | `src/blackout/info/` | The information layer: telemetry, roles, reports, `confirm_report`, wake triggers, beliefs |
 | `src/blackout/graph/` | The dependency graph built from a belief, and its five queries |
 | `src/blackout/controllers/` | Contestants (do-nothing, scripted, Rules) and the keyword parser |
+| `src/blackout/controllers/solver/` | C2 Solver and C3 Reference: power planning, the CP-SAT fuel model, the source filter, and the `solve_plan` contract |
 | `src/blackout/experiments/` | Experiment matrices, the batch runner, and result tables |
 | `src/blackout/logs/` | Run logs: writer, reader and verified replay |
 | `src/blackout/scoring/` | The scorer (metrics from a log alone, cross-checked) and parse F1 |
 | `src/blackout/scenarios/` | Scenario schema and the generator: seeding, worlds, templates, report text |
 | `data/phrasing/train/` | The train phrasing bank (one YAML file per fact type, plus the noise lexicon) |
 | `scenarios/dev-v0/` | The generated dev-v0 suite and its manifest of hashes |
-| `scenarios/handmade/` | Hand-made scenarios and their scripts |
+| `scenarios/handmade/` | Hand-made scenarios: the demos and their scripts, and the planning traps |
 | `runs/` | Run logs and summaries (git-ignored) |
 | `results/` | Generated result tables, committed at milestones |
 | `tests/` | Tests: physics, every rejection reason, property tests, golden run hashes |

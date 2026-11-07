@@ -54,7 +54,7 @@ def mini(**changes: object) -> Matrix:
 def test_dev_baselines_matrix_covers_dev_v0() -> None:
     matrix = load_matrix(ROOT / "configs" / "matrices" / "dev_baselines.yaml")
     assert (matrix.experiment, matrix.suite, matrix.runs) == ("dev_baselines", "dev-v0", 1)
-    assert matrix.contestants == ("do-nothing", "rules")
+    assert matrix.contestants == ("do-nothing", "rules", "solver", "reference")
     assert len(matrix.scenarios(ROOT / "scenarios")) == 18
 
 

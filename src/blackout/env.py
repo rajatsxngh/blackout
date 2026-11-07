@@ -15,7 +15,7 @@ each decision point wakes only the roles with triggers of their own.
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 
-from blackout.controllers.base import Controller
+from blackout.controllers.base import Controller, uses_truth
 from blackout.info.layer import InfoLayer, merge
 from blackout.info.observation import Observation
 from blackout.info.roles import ROLE_ALL
@@ -36,7 +36,7 @@ from blackout.sim.routing import path_minutes
 from blackout.sim.triggers import Trigger, TriggerKind, TtfWatch
 from blackout.sim.validate import check
 
-__all__ = ["ROLE_ALL", "BlackoutEnv", "DecisionRequest", "Done", "run_episode"]
+__all__ = ["ROLE_ALL", "BlackoutEnv", "DecisionRequest", "Done", "env_for", "run_episode"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -317,6 +317,13 @@ class EpisodeResult:
         return chain_digest(self.tick_hashes)
 
 
+def env_for(
+    scenario: Scenario, controller: Controller, *, config: SimConfig | None = None
+) -> BlackoutEnv:
+    """A one-role env for ``controller``: woken by truth only if it's the reference."""
+    return BlackoutEnv(scenario, config=config, wake_on_truth=uses_truth(controller))
+
+
 def run_episode(
     env: BlackoutEnv,
     controller: Controller,
@@ -327,6 +334,12 @@ def run_episode(
     if len(env.roles) != 1:
         raise ValueError(f"run_episode drives one role, but the env has roles {env.roles}")
     (role,) = env.roles
+    if uses_truth(controller):
+        if not env.wake_on_truth:
+            raise ValueError(
+                f"{controller.name} reads ground truth: use env_for() or wake_on_truth"
+            )
+        controller.attach(lambda: env.engine)  # type: ignore[attr-defined]
     controller.reset()
     request = env.reset()
     records: list[DecisionRecord] = []

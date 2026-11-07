@@ -26,7 +26,7 @@ from pathlib import Path
 from blackout import __version__
 from blackout.controllers.keyword_parser import TRAIN_BANK_DIR
 from blackout.controllers.registry import make_controller
-from blackout.env import BlackoutEnv
+from blackout.env import env_for
 from blackout.experiments.matrix import Matrix
 from blackout.logs.schema import LOG_FILE, SUMMARY_FILE
 from blackout.logs.writer import record_episode, run_dir_for
@@ -134,10 +134,11 @@ def execute(job: Job, run: bool) -> Outcome:
     """
     if run:
         scenario = load_scenario(job.scenario_path)
-        extra = {"config_hash": job.config_hash, "experiment": job.experiment}
+        controller = make_controller(job.contestant)
+        extra: dict[str, object] = {"config_hash": job.config_hash, "experiment": job.experiment}
         record_episode(
-            BlackoutEnv(scenario),
-            make_controller(job.contestant),
+            env_for(scenario, controller),
+            controller,
             job.run_dir,
             run_index=job.run_index,
             summary_extra=extra,

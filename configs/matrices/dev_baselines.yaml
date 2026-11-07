@@ -1,7 +1,8 @@
-# Baselines on the dev-v0 suite (docs/PRD.md section 12, M6): do-nothing (C0) and Rules (C1).
+# Baselines on the dev-v0 suite (docs/PRD.md section 12, M6 and M7): do-nothing (C0), Rules (C1),
+# Solver (C2) and Reference (C3, ground truth).
 # Run with: uv run blackout batch --matrix configs/matrices/dev_baselines.yaml [--resume]
 # Logs go to runs/dev_baselines/, tables to results/dev_baselines/.
 experiment: dev_baselines
 suite: dev-v0
-contestants: [do-nothing, rules]
-runs: 1  # both are deterministic, so one run each is the whole story
+contestants: [do-nothing, rules, solver, reference]
+runs: 1  # all four are deterministic, so one run each is the whole story

@@ -9,10 +9,13 @@ from collections.abc import Callable
 from blackout.controllers.base import Controller
 from blackout.controllers.do_nothing import DoNothingController
 from blackout.controllers.rules import RulesController
+from blackout.controllers.solver import ReferenceController, SolverController
 
 CONTESTANTS: dict[str, Callable[[], Controller]] = {
     DoNothingController.name: DoNothingController,
     RulesController.name: RulesController,
+    SolverController.name: SolverController,
+    ReferenceController.name: ReferenceController,
 }
 
 

@@ -19,7 +19,7 @@ from blackout import __version__
 from blackout.controllers.base import Controller
 from blackout.controllers.registry import make_controller
 from blackout.controllers.scripted import ScriptedController, load_script
-from blackout.env import BlackoutEnv, DecisionRequest, run_episode
+from blackout.env import DecisionRequest, env_for, run_episode
 from blackout.experiments.matrix import load_matrix
 from blackout.experiments.results import RESULTS_ROOT, write_results
 from blackout.experiments.runner import RUNS_ROOT, Outcome, plan, run_batch
@@ -45,6 +45,8 @@ DEFAULT_OUT = Path("runs") / "adhoc"
 class ControllerName(StrEnum):
     DO_NOTHING = "do-nothing"
     RULES = "rules"
+    SOLVER = "solver"
+    REFERENCE = "reference"
     SCRIPTED = "scripted"
 
 
@@ -110,7 +112,7 @@ def run(
     scenario_path = _find_scenario(scenario)
     loaded = _load(load_scenario, scenario_path, "scenario")
     contestant = _make_controller(controller, script or scenario_path.with_suffix(".script.json"))
-    env = BlackoutEnv(loaded)
+    env = env_for(loaded, contestant)
 
     def show(request: DecisionRequest, results: tuple[ActionResult, ...]) -> None:
         typer.echo(f"t={request.tick:>3}  {', '.join(str(t) for t in request.triggers)}")

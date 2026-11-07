@@ -157,9 +157,9 @@ def test_reads_l1_text_with_the_keyword_parser() -> None:
 
 
 def test_registry_builds_contestants_by_name() -> None:
-    assert set(CONTESTANTS) == {"do-nothing", "rules"}
+    assert set(CONTESTANTS) == {"do-nothing", "rules", "solver", "reference"}
     assert isinstance(make_controller("rules"), RulesController)
-    with pytest.raises(KeyError, match="available: do-nothing, rules"):
+    with pytest.raises(KeyError, match="available: do-nothing, rules, solver, reference"):
         make_controller("oracle")
 
 

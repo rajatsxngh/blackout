@@ -86,7 +86,11 @@ def replay(log: RunLog, scenario: Scenario | None = None) -> Replay:
         raise ReplayMismatchError(
             f"scenario {scenario.id!r} isn't the one this run was recorded on"
         )
-    env = BlackoutEnv(scenario, config=SimConfig.from_dict(log.header.engine.config))
+    env = BlackoutEnv(
+        scenario,
+        config=SimConfig.from_dict(log.header.engine.config),
+        wake_on_truth=log.header.engine.wake_on_truth,
+    )
     expected = [tick.h for tick in log.ticks]
 
     def check_tick(engine: Engine) -> None:
