@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "hello_blackout",
   "description": "A storm has knocked out the East substation, and St. Mary's Hospital has no backup feed: it's on its generator with 40 minutes of fuel. One truck at the Northside depot can reach it in 16 minutes along 1st Ave and Maple St, but Maple St between 3rd and 4th is blocked, and nobody knows yet. A crew at Oak & 1st can repair the substation, but the repair takes two hours.",
   "horizon": 240,

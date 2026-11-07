@@ -96,8 +96,20 @@ class Job:
         return summary.get("config_hash") == self.config_hash
 
 
-def plan(matrix: Matrix, *, scenario_root: Path, runs_root: Path = RUNS_ROOT) -> list[Job]:
-    """Every run of ``matrix``, in a fixed order: scenario, contestant, run index."""
+class HeldOut(ValueError):  # noqa: N818 (a refusal)
+    """The test guard refused the suite (blackout.experiments.guard)."""
+
+
+def plan(
+    matrix: Matrix, *, scenario_root: Path, runs_root: Path = RUNS_ROOT, root: Path = Path()
+) -> list[Job]:
+    """Every run of ``matrix``, in a fixed order: scenario, contestant, run index. A held-out
+    suite is refused (``HeldOut``) unless the test guard lets it through."""
+    from blackout.experiments.guard import guard_problems  # the guard hashes this module
+
+    problems = guard_problems(matrix.suite, root)
+    if problems:
+        raise HeldOut("; ".join(problems))
     jobs: list[Job] = []
     out = runs_root / matrix.experiment
     for path, scenario in matrix.scenarios(scenario_root):

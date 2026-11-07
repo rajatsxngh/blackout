@@ -42,3 +42,6 @@ jobs:
         run: uv run pytest --cov
       - name: CLI smoke test
         run: uv run blackout run --scenario hello_blackout --controller scripted --quiet
+      # The frozen dev suite must match a fresh generation on both OSes (D055, D082).
+      - name: Dev suite matches a fresh generation
+        run: uv run blackout gen --suite dev --check

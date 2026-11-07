@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t02_s2_l1",
   "description": "T02 Cascade. Quarry Substation (S3) fails at t=11 (70 min of crew work). Its zones fall back to Ashford Substation (S2), 3500 kW over its 52000 kW capacity; shedding residential load (28500 kW) prevents the trip.",
   "template": "T02",
@@ -335,8 +335,10 @@
       "text": "Just dipped the tank at Bayside Clinic, one-thirty remaining, don't quote me.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -367,8 +369,10 @@
       "text": "Hi, this is Nurse supervisor Okafor. Northgate here, we're down to about 240 liters in the generator tank.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -404,8 +408,10 @@
       "text": "Line crew 1 here. Confirming the Quarry substation is offline as of a few minutes ago. Cause is a line down across the bus. And another thing, Quarry Substation needs 70 mins of crew time.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03",
@@ -428,12 +434,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "99ae419ff16aff6194dc18d52bb9ded3"
+    "world_hash": "86f6e0d98aa29cd39ba03adecc37925c"
   },
   "validity": {
     "do_nothing_critical_downtime": 408,
     "do_nothing_trips": 2,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "2879f411d07f5d4a7e32d9fe530169f7"
+  "content_hash": "94ef5cd39b2bb910f800de51288b790d"
 }

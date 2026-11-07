@@ -117,7 +117,11 @@ def test_reports_are_routed_by_channel(channel: Channel) -> None:
 def test_clean_reports_show_facts_and_hide_their_truth() -> None:
     env = BlackoutEnv(
         make_scenario(
-            events=[report("R1", 0, FUEL_FACT, truth={"is_true": False, "cue": "telemetry"})]
+            events=[
+                report(
+                    "R1", 0, FUEL_FACT, truth={"is_true": False, "cues": [{"kind": "telemetry"}]}
+                )
+            ]
         )
     )
     request = env.reset()

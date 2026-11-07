@@ -22,8 +22,6 @@ from blackout.scenarios.schema import Scenario, load_scenario
 from blackout.scenarios.suites import MANIFEST
 
 SCENARIO_ROOT = Path("scenarios")
-HELD_OUT_SUITES = frozenset({"test"})
-"""Suites the batch runner refuses: the test suite needs a committed pre-registration (M12)."""
 
 
 class Matrix(BaseModel):
@@ -45,10 +43,6 @@ class Matrix(BaseModel):
             )
         if len(set(self.contestants)) != len(self.contestants):
             raise ValueError("contestants are listed more than once")
-        if self.suite in HELD_OUT_SUITES:
-            raise ValueError(
-                f"suite {self.suite!r} is held out: it needs docs/PREREGISTRATION.md (M12)"
-            )
         return self
 
     def scenarios(self, root: Path = SCENARIO_ROOT) -> list[tuple[Path, Scenario]]:

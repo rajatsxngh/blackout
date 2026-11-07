@@ -1,10 +1,15 @@
-"""The M5 scenario generator: seeding, worlds, templates, levels, ground truth, the dev-v0 suite.
+"""The scenario generator (M5, M8): seeding, worlds, templates, calibration, levels L0-L3, ground
+truth, and the committed suites.
 
-Done-when checks (docs/PRD.md section 12, M5): regenerating gives identical hashes; L0 and L1
-of a seed share an identical world; every dev-v0 scenario loads, runs under do-nothing and
-replays cleanly. The committed suite in scenarios/dev-v0 must match a fresh generation.
+Done-when checks (docs/PRD.md section 12, M5 and M8): regenerating gives identical hashes; the
+levels of a seed share one world; the reference loses 0 and do-nothing at least 30 on every
+frozen scenario; the tier mix is within 10 points of 20/50/30; every L2 false report has a
+cue (``cue_problems``). Drift between the committed suites and a fresh generation is checked
+by ``blackout gen --suite <name> --check`` in CI (it takes minutes: calibration runs the
+reference and Rules); here one request is generated end to end, twice.
 """
 
+import json
 from pathlib import Path
 
 import pytest
@@ -17,30 +22,35 @@ from blackout.info.reports import Report
 from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.writer import record_episode
+from blackout.scenarios.calibrate import RunOutcome, tier_of
 from blackout.scenarios.config import CityConfig, load_city_config
+from blackout.scenarios.conflict import contradicts, cue_problems
 from blackout.scenarios.generator import (
     MAX_ATTEMPTS,
     GenerationError,
     Request,
     generate,
-    generate_all,
 )
-from blackout.scenarios.schema import (
-    Scenario,
-    content_digest,
-    load_scenario,
-    world_digest,
-)
+from blackout.scenarios.schema import Scenario, content_digest, load_scenario, world_digest
 from blackout.scenarios.seeding import Rng, stable_seed
-from blackout.scenarios.suites import MANIFEST, SUITES, differences, manifest, write_suite
+from blackout.scenarios.suites import (
+    MANIFEST,
+    SUITES,
+    TIER_TARGET_PCT,
+    TIER_TOLERANCE_PCT,
+    differences,
+    manifest,
+    write_suite,
+)
 from blackout.scenarios.templates import TEMPLATES
 from blackout.scenarios.text.banks import PhrasingBank, load_bank
-from blackout.scenarios.world import Infeasible, build_world, fastest, path_edges
+from blackout.scenarios.world import Infeasible, build_world
 from blackout.sim.engine import Engine
 from blackout.sim.events import RoadBlock, SubstationFail, TruckBreakdown
 from tests.helpers import ROOT
 
-DEV_V0 = ROOT / "scenarios" / "dev-v0"
+SCENARIOS = ROOT / "scenarios"
+COMMITTED = ("dev",)  # dev-v0 is frozen from M5 (generator v1): it loads and replays
 
 
 @pytest.fixture(scope="module")
@@ -53,9 +63,28 @@ def bank() -> PhrasingBank:
     return load_bank(ROOT / "data" / "phrasing" / "train")
 
 
+def load_suite(name: str) -> list[Scenario]:
+    folder = SCENARIOS / name
+    entries = json.loads((folder / MANIFEST).read_text(encoding="utf-8"))["scenarios"]
+    return [load_scenario(folder / f"{e['id']}.json") for e in entries]
+
+
 @pytest.fixture(scope="module")
-def suite(config: CityConfig, bank: PhrasingBank) -> list[Scenario]:
-    return generate_all(SUITES["dev-v0"].requests(), config, bank)
+def suites() -> dict[str, list[Scenario]]:
+    return {name: load_suite(name) for name in (*COMMITTED, "dev-v0")}
+
+
+@pytest.fixture(scope="module")
+def dev(suites: dict[str, list[Scenario]]) -> list[Scenario]:
+    return suites["dev"]
+
+
+REQUEST = Request("T04", stable_seed("unit", "T04", 0), "unit_t04", "dev", (0, 1, 2, 3), "hard")
+
+
+@pytest.fixture(scope="module")
+def levels(config: CityConfig, bank: PhrasingBank) -> list[Scenario]:
+    return generate(REQUEST, config, bank)
 
 
 def reports_of(scenario: Scenario) -> list[Report]:
@@ -75,7 +104,7 @@ def test_stable_seed_is_pinned_and_48_bit() -> None:
 
 def test_rng_streams_are_pinned() -> None:
     """numpy's PCG64 stream, as the generator uses it. If a numpy upgrade changes this, the
-    dev-v0 regeneration test fails too; regenerate and log it in docs/DECISIONS.md."""
+    suites' --check fails too; regenerate and log it in docs/DECISIONS.md."""
     rng = Rng(12345)
     assert [rng.between(0, 99) for _ in range(5)] == [69, 22, 78, 31, 20]
     assert Rng.derive("s", 1).seed == stable_seed("s", 1)
@@ -96,7 +125,7 @@ def test_rng_helpers() -> None:
         rng.sample([1], 2)
 
 
-# --- config ---------------------------------------------------------------------------------
+# --- config, worlds and templates ------------------------------------------------------------
 
 
 def test_config_rejects_bad_ranges_and_layouts(config: CityConfig) -> None:
@@ -111,9 +140,6 @@ def test_config_rejects_bad_ranges_and_layouts(config: CityConfig) -> None:
     assert config.digest() == CityConfig.model_validate(data).digest()
 
 
-# --- worlds and templates -------------------------------------------------------------------
-
-
 def test_calm_world_has_power_everywhere(config: CityConfig) -> None:
     draft = build_world(config, Rng(1))
     assert (len(draft.zones), len(draft.substations), len(draft.hospitals)) == (9, 3, 3)
@@ -121,38 +147,29 @@ def test_calm_world_has_power_everywhere(config: CityConfig) -> None:
     loads = draft.loads(frozenset())
     for substation in draft.substations:
         assert loads[substation.id] + config.substations.headroom_kw <= substation.capacity_kw
-    hospital_zones = {draft.zone_of(h.node).id for h in draft.hospitals}
     assert all(draft.zone_of(h.node).priority == "critical" for h in draft.hospitals)
-    assert len(hospital_zones) == 3
+    assert draft.hospitals_at_risk() == []
 
 
-def test_t01_blocks_the_fast_route_and_is_reported(suite: list[Scenario]) -> None:
-    for scenario in (s for s in suite if s.template == "T01"):
-        block = next(e for e in scenario.events if isinstance(e, RoadBlock))
-        engine = Engine(scenario)
-        hospital = next(
-            h
-            for h in scenario.hospitals
-            if engine.zones[engine.hospitals[h.id].zone or ""].alternate is None
-        )
-        routes = [fastest(engine.city, d.node, hospital.node) for d in scenario.depots]
-        best = min((r for r in routes if r is not None), key=lambda r: r[1])
-        assert block.edge in path_edges(best[0])
-        first_word = min(r.tick for r in reports_of(scenario) if r.facts[0].subject == block.edge)
-        assert first_word <= 4, "the block is reported before a loaded truck can leave"
-
-
-def test_t02_trips_and_t04_breaks_down(suite: list[Scenario]) -> None:
-    for scenario in suite:
-        assert scenario.validity is not None
-        if scenario.template == "T02":
-            assert any(isinstance(e, SubstationFail) for e in scenario.events)
-            assert scenario.validity.do_nothing_trips >= 1
-        if scenario.template == "T04":
-            breakdown = next(e for e in scenario.events if isinstance(e, TruckBreakdown))
-            truck = next(t for t in scenario.trucks if t.id == breakdown.truck)
-            assert truck.load_l == truck.capacity_l
-        assert scenario.validity.do_nothing_critical_downtime >= 30
+@pytest.mark.parametrize("template", sorted(TEMPLATES))
+def test_every_template_builds_its_situation(config: CityConfig, template: str) -> None:
+    """Each template can break some calm world, names a target, and plans true reports."""
+    built = 0
+    for attempt in range(12):
+        draft = build_world(config, Rng.derive("template-test", template, attempt))
+        try:
+            TEMPLATES[template].apply(draft, Rng.derive("template-test", template, "t", attempt))
+        except Infeasible:
+            continue
+        built += 1
+        assert draft.target is not None
+        assert draft.reports
+        if template != "T02":  # T02's target goes on its generator later, at the failure
+            assert draft.target in draft.hospitals_at_risk()
+        for reading in draft.fuel_readings:  # readings follow the calibrated fuel
+            draft.set_fuel(reading.hospital_id, 300)
+            assert isinstance(reading.report.facts[0].fact.value, int)
+    assert built >= 3, f"{template} built only {built} of 12 worlds"
 
 
 def test_infeasible_worlds_are_rerolled_then_reported(
@@ -164,7 +181,7 @@ def test_infeasible_worlds_are_rerolled_then_reported(
         raise Infeasible("never")
 
     monkeypatch.setattr(template, "apply", never)
-    with pytest.raises(GenerationError, match=f"no valid world in {MAX_ATTEMPTS} attempts"):
+    with pytest.raises(GenerationError, match=f"in {MAX_ATTEMPTS} attempts"):
         generate(Request("T01", 1, "x", "dev-v0"), config, bank)
 
 
@@ -184,95 +201,61 @@ def test_worlds_that_fail_the_template_check_are_rerolled(
     assert scenario.generator.attempt >= 2
 
 
-# --- levels, hashes and ground truth --------------------------------------------------------
+def test_tiers_follow_rules_and_the_reference_slack(config: CityConfig) -> None:
+    cal = config.calibration
+    lost, safe = RunOutcome(5, 0, 3), RunOutcome(0, 0, 3)
+    assert tier_of(lost, safe, cal) == "hard"
+    assert tier_of(safe, RunOutcome(0, 0, cal.easy_slack_minutes - 1), cal) == "medium"
+    assert tier_of(safe, RunOutcome(0, 0, cal.easy_slack_minutes), cal) == "easy"
+    assert tier_of(safe, RunOutcome(0, 0, None), cal) == "easy"
+
+
+# --- one request, end to end -----------------------------------------------------------------
 
 
 def test_regenerating_gives_identical_hashes(
-    suite: list[Scenario], config: CityConfig, bank: PhrasingBank
+    levels: list[Scenario], config: CityConfig, bank: PhrasingBank
 ) -> None:
-    again = generate_all(SUITES["dev-v0"].requests(), config, bank)
-    assert [s.content_hash for s in again] == [s.content_hash for s in suite]
-    assert len(suite) == 18
-    assert len({s.id for s in suite}) == 18
+    again = generate(REQUEST, config, bank)
+    assert [s.content_hash for s in again] == [s.content_hash for s in levels]
+    assert [s.level for s in levels] == [0, 1, 2, 3]
 
 
-def test_levels_of_a_seed_share_one_world(suite: list[Scenario]) -> None:
-    by_seed: dict[int | None, list[Scenario]] = {}
-    for scenario in suite:
-        by_seed.setdefault(scenario.seed, []).append(scenario)
-    assert len(by_seed) == 9
-    worlds = set()
-    for pair in by_seed.values():
-        l0, l1 = sorted(pair, key=lambda s: s.level)
-        assert (l0.level, l1.level) == (0, 1)
-        assert world_digest(l0) == world_digest(l1)
-        assert l0.generator is not None
-        assert l1.generator is not None
-        assert l0.generator.world_hash == l1.generator.world_hash == world_digest(l0)
-        assert l0.content_hash != l1.content_hash
-        assert [(r.id, r.tick, r.facts) for r in reports_of(l0)] == [
-            (r.id, r.tick, r.facts) for r in reports_of(l1)
-        ]
-        worlds.add(world_digest(l0))
-    assert len(worlds) == 9
-
-
-def test_l0_has_facts_only_and_l1_has_text_and_ground_truth(suite: list[Scenario]) -> None:
-    for scenario in suite:
+def test_levels_share_one_world_and_build_on_each_other(levels: list[Scenario]) -> None:
+    l0, l1, l2, l3 = levels
+    assert len({world_digest(s) for s in levels}) == 1
+    assert {s.tier for s in levels} == {"hard"}
+    shared = [(r.tick, r.facts) for r in reports_of(l0)]
+    assert [(r.tick, r.facts) for r in reports_of(l1)] == shared
+    added = [r for r in reports_of(l2) if r.truth.from_level == 2]
+    assert added, "L2 adds false, stale or correcting reports"
+    assert any(not r.truth.is_true for r in added)
+    assert [(r.tick, r.facts) for r in reports_of(l2) if r.truth.from_level == 0] == shared
+    l3_added = [r for r in reports_of(l3) if r.truth.from_level == 3]
+    assert l3_added
+    assert all(r.truth.injection is not None and not r.facts for r in l3_added)
+    for scenario in levels:  # IDs go by tick, so an addition can't be spotted by its ID
         reports = reports_of(scenario)
-        assert len(reports) >= 2
-        for report in reports:
-            truth = report.truth
-            assert truth.is_true
-            assert len(truth.fact_ids) == len(report.facts)
-            if scenario.level == 0:
-                assert report.text is None
-                assert truth.bank is None
-                assert not truth.phrasings
-            else:
-                assert report.text
-                assert truth.bank == "train"
-                assert len(truth.phrasings) == len(report.facts)
+        assert [r.id for r in reports] == [f"R{n:02d}" for n in range(1, len(reports) + 1)]
+        assert [r.tick for r in reports] == sorted(r.tick for r in reports)
+    texts = {(r.tick, r.source): r.text for r in reports_of(l1)}
+    for r in reports_of(l3):  # a shared report reads the same at every level that has text
+        if r.truth.from_level == 0:
+            assert texts[(r.tick, r.source)] == r.text
 
 
-def test_repeated_claims_keep_their_fact_id(suite: list[Scenario]) -> None:
-    for scenario in suite:
-        seen: dict[str, tuple[str, str, object]] = {}
-        for report in reports_of(scenario):
-            for fact_id, fact in zip(report.truth.fact_ids, report.facts, strict=True):
-                key = (fact.type.value, fact.subject, fact.value)
-                assert seen.setdefault(fact_id, key) == key
+def test_validity_is_recorded_per_level(levels: list[Scenario]) -> None:
+    for scenario in levels:
+        v = scenario.validity
+        assert v is not None
+        assert v.reference_critical_downtime == 0
+        assert v.do_nothing_critical_downtime >= 30
+        assert v.rules_l0_critical_downtime is not None
+        assert v.rules_l0_critical_downtime >= 5  # hard: more than a tie
 
 
-def checked_reports(scenario: Scenario) -> list[str]:
-    """Run do-nothing, checking each report's claims against the truth when it's released."""
-    env = BlackoutEnv(scenario)
-    checked: list[str] = []
-
-    def check(engine: Engine) -> None:
-        for item in engine.released:
-            if isinstance(item, Report):
-                reply = check_claims(engine, item, engine.tick)
-                assert reply.holds, (scenario.id, item.id, reply.checks)
-                checked.append(item.id)
-
-    env.add_tick_listener(check)
-    request = env.reset()
-    check(env.engine)  # tick 0
-    while isinstance(request, DecisionRequest):
-        request = env.advance()
-    return checked
-
-
-def test_every_report_is_true_when_it_is_sent(suite: list[Scenario]) -> None:
-    """Checked with confirm_report's own truth check, at each report's tick, under do-nothing."""
-    for scenario in (s for s in suite if s.level == 0):
-        checked = checked_reports(scenario)
-        assert sorted(set(checked)) == sorted(r.id for r in reports_of(scenario))
-
-
-def test_content_hash_catches_edits(suite: list[Scenario]) -> None:
-    scenario = suite[0]
+def test_content_hash_catches_edits(levels: list[Scenario]) -> None:
+    scenario = levels[0]
     assert scenario.content_hash == content_digest(scenario)
     data = scenario.model_dump(mode="json")
     data["hospitals"][0]["fuel_l"] += 10
@@ -280,40 +263,174 @@ def test_content_hash_catches_edits(suite: list[Scenario]) -> None:
         Scenario.model_validate(data)
 
 
-# --- the committed dev-v0 suite -------------------------------------------------------------
+# --- the committed suites ---------------------------------------------------------------------
 
 
-def test_committed_dev_v0_matches_a_fresh_generation(
-    suite: list[Scenario], config: CityConfig, bank: PhrasingBank
-) -> None:
-    data = manifest(SUITES["dev-v0"], suite, config, bank)
-    problems = differences(DEV_V0, suite, data)
-    assert not problems, "regenerate with: uv run blackout gen --suite dev-v0\n" + "\n".join(
-        problems
+def test_suite_shapes_match_the_prd(suites: dict[str, list[Scenario]]) -> None:
+    dev = suites["dev"]
+    assert len(dev) == 56
+    assert sorted({s.template or "" for s in dev}) == [
+        "T01",
+        "T02",
+        "T04",
+        "T05",
+        "T07",
+        "T08",
+        "T09",
+    ]
+    assert sorted({s.level for s in dev}) == [0, 1, 2, 3]
+    assert len(suites["dev-v0"]) == 18
+    spec = SUITES["test"]
+    assert (spec.templates, spec.seeds, spec.levels) == (("T03", "T06", "T10"), 3, (0, 1, 2, 3))
+
+
+@pytest.mark.parametrize("name", ["dev", "test"])
+def test_tier_plans_meet_the_mix(name: str) -> None:
+    mix = SUITES[name].tier_mix()
+    worlds = sum(mix.values())
+    for tier, target in TIER_TARGET_PCT.items():
+        assert abs(100 * mix[tier] / worlds - target) <= TIER_TOLERANCE_PCT, (name, mix)
+
+
+@pytest.mark.parametrize("name", COMMITTED)
+def test_frozen_scenarios_are_valid(suites: dict[str, list[Scenario]], name: str) -> None:
+    """The reference loses 0 and do-nothing at least 30 on every frozen scenario (PRD M8)."""
+    measured: dict[str, int] = {}
+    for scenario in suites[name]:
+        v = scenario.validity
+        assert v is not None
+        assert v.reference_critical_downtime == 0, scenario.id
+        assert v.do_nothing_critical_downtime >= 30, scenario.id
+        assert scenario.tier is not None
+        measured[scenario.tier] = measured.get(scenario.tier, 0) + 1
+    plan = SUITES[name]
+    expected = {t: n * len(plan.levels) for t, n in plan.tier_mix().items() if n}
+    assert measured == expected
+
+
+def test_every_false_report_has_a_working_cue(dev: list[Scenario]) -> None:
+    """PRD M8: every L2 false report has at least one cue (automated check)."""
+    false_reports = 0
+    for scenario in dev:
+        assert cue_problems(scenario) == [], scenario.id
+        for report in reports_of(scenario):
+            if not report.truth.is_true:
+                assert scenario.level >= 2
+                false_reports += 1
+    assert false_reports >= 2 * 14  # at least two per world at L2 and L3
+
+
+def test_cue_check_catches_broken_cues(dev: list[Scenario]) -> None:
+    scenario = next(s for s in dev if s.level == 2)
+    data = scenario.model_dump(mode="json", exclude={"content_hash"})
+    for event in data["events"]:
+        if event["kind"] == "report" and not event["truth"]["is_true"]:
+            event["truth"]["cues"] = []
+            break
+    broken = Scenario.model_validate(data)
+    assert any("no cue" in p for p in cue_problems(broken))
+    assert not contradicts(
+        next(r for r in reports_of(scenario)).facts[0],
+        next(r for r in reports_of(scenario)).facts[0],
     )
 
 
-@pytest.mark.parametrize("path", sorted(DEV_V0.glob("dev0_*.json")), ids=lambda p: p.stem)
-def test_dev_v0_runs_and_replays(path: Path, tmp_path: Path) -> None:
+def test_some_true_unverified_reports_are_critical_and_injections_exist(
+    dev: list[Scenario],
+) -> None:
+    """PRD 8.4: some true unverified reports matter (a block only a caller has reported
+    first), and L3 carries injections with a predicate and a window."""
+    callers_first = 0
+    for scenario in (s for s in dev if s.level == 0):
+        blocks = {e.edge for e in scenario.events if isinstance(e, RoadBlock)}
+        first: dict[str, Report] = {}
+        for report in reports_of(scenario):
+            for claim in report.facts:
+                if claim.subject in blocks and claim.type == "road_blocked":
+                    first.setdefault(claim.subject, report)
+        callers_first += sum(1 for r in first.values() if r.source_class == "unverified")
+    assert callers_first >= 2
+    for scenario in (s for s in dev if s.level == 3):
+        injections = [r for r in reports_of(scenario) if r.truth.injection is not None]
+        assert injections, scenario.id
+        for report in injections:
+            window = report.truth.injection
+            assert window is not None
+            assert window.start == report.tick <= window.end
+
+
+def checked_reports(scenario: Scenario) -> dict[str, bool]:
+    """Run do-nothing, checking each report's claims against the truth when it's released."""
+    env = BlackoutEnv(scenario)
+    held: dict[str, bool] = {}
+
+    def check(engine: Engine) -> None:
+        for item in engine.released:
+            if isinstance(item, Report) and item.facts:
+                held[item.id] = check_claims(engine, item, engine.tick).holds
+
+    env.add_tick_listener(check)
+    request = env.reset()
+    check(env.engine)  # tick 0
+    while isinstance(request, DecisionRequest):
+        request = env.advance()
+    return held
+
+
+@pytest.mark.parametrize("name", COMMITTED)
+def test_every_report_is_what_its_truth_says_when_sent(
+    suites: dict[str, list[Scenario]], name: str
+) -> None:
+    """Checked with confirm_report's own truth check, at each report's tick, under do-nothing:
+    true reports hold and false ones don't."""
+    for scenario in (s for s in suites[name] if s.level in (0, 3)):
+        held = checked_reports(scenario)
+        for report in reports_of(scenario):
+            if report.facts:
+                assert held[report.id] == report.truth.is_true, (scenario.id, report.id)
+
+
+def test_t02_trips_and_t04_breaks_down(dev: list[Scenario]) -> None:
+    for scenario in dev:
+        assert scenario.validity is not None
+        if scenario.template == "T02":
+            assert any(isinstance(e, SubstationFail) for e in scenario.events)
+            assert scenario.validity.do_nothing_trips >= 1
+        if scenario.template == "T04":
+            breakdown = next(e for e in scenario.events if isinstance(e, TruckBreakdown))
+            truck = next(t for t in scenario.trucks if t.id == breakdown.truck)
+            assert truck.load_l == truck.capacity_l
+
+
+@pytest.mark.parametrize(
+    "path",
+    [p for name in ("dev", "dev-v0") for p in sorted((SCENARIOS / name).glob("*_l[03].json"))],
+    ids=lambda p: p.stem,
+)
+def test_suite_scenarios_run_and_replay(path: Path, tmp_path: Path) -> None:
     scenario = load_scenario(path)
     recorded = record_episode(BlackoutEnv(scenario), DoNothingController(), tmp_path)
-    assert scenario.validity is not None
     assert recorded.episode.done.tick > 0
     replayed = replay(read_log(recorded.log_path))
     assert replayed.episode.run_hash == recorded.episode.run_hash
 
 
 def test_write_suite_replaces_only_its_own_files(
-    tmp_path: Path, suite: list[Scenario], config: CityConfig, bank: PhrasingBank
+    tmp_path: Path,
+    suites: dict[str, list[Scenario]],
+    config: CityConfig,
+    bank: PhrasingBank,
 ) -> None:
-    spec = SUITES["dev-v0"]
+    spec, suite = SUITES["dev"], suites["dev"]
     (tmp_path / "notes.txt").write_text("keep me", encoding="utf-8")
     write_suite(tmp_path, suite, manifest(spec, suite, config, bank))
     assert (tmp_path / MANIFEST).is_file()
-    assert len(list(tmp_path.glob("dev0_*.json"))) == 18
+    assert len(list(tmp_path.glob("dev_*.json"))) == 56
     fewer = suite[:2]
     write_suite(tmp_path, fewer, manifest(spec, fewer, config, bank))
-    assert len(list(tmp_path.glob("dev0_*.json"))) == 2
+    assert len(list(tmp_path.glob("dev_*.json"))) == 2
     assert (tmp_path / "notes.txt").read_text(encoding="utf-8") == "keep me"
     assert differences(tmp_path, fewer, manifest(spec, fewer, config, bank)) == []
     assert differences(tmp_path, suite, manifest(spec, suite, config, bank))
+    committed = manifest(spec, suite, config, bank)
+    assert differences(SCENARIOS / "dev", suite, committed) == []

@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t01_s0_l1",
   "description": "T01 Blocked fuel route. Foundry Substation (S1) is down from the start (210 min of crew work) and West's backup feeder is out, so Lakeview Medical Center (H2) is on its generator. The fast route from Eastgate Depot is blocked on 4th Ave between Alder and Birch (A4-B4) from t=1 to t=144. H2 has 40 L: enough for the 7-minute detour with 3 min to spare, not for getting stuck first (4 min lost).",
   "template": "T01",
@@ -339,8 +339,10 @@
       "text": "Grid control on the crew channel. We've lost the Foundry substation completely, don't quote me. Lokos like a lightning strike. Standing by.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -374,8 +376,10 @@
       "text": "Unit 23 to dispatch. Traffic unit reporting 4th Ave between Alder & Birch blockde a few minutes ago, downed power lines. Detour your vehicles.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -408,8 +412,10 @@
       "text": "Rough ETA on the substation at Birch & 6th is three and a half hours once we start. Over.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -440,8 +446,10 @@
       "text": "Nurse supervisor Murphy here. The gen tank at Lakeview Medical Center reads thirty-two L.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F04"
@@ -473,8 +481,10 @@
       "text": "Hi there. 4th Ave from Alder over to Birch is blocked, there's downed power lines, last I checked. Nobody can drive through. Somebody should look at it.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -507,8 +517,10 @@
       "text": "Dispatch, Unit 35, priority traffic. Lifting the closure on 4th Ave from Alder over to Birch, all lanes are open. Out.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F05"
@@ -528,12 +540,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 3,
-    "world_hash": "4dba87eadda04204788ca156b19b1fa1"
+    "world_hash": "fe8980ae67b545fa17eaa3112f7a1f86"
   },
   "validity": {
     "do_nothing_critical_downtime": 220,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "81ea3e2bac278fd5069b4d1ca3680403"
+  "content_hash": "70bf2a79d33800e9e8b5b797b216570d"
 }

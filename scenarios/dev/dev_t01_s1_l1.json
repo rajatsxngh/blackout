@@ -1,0 +1,586 @@
+{
+  "schema_version": 5,
+  "id": "dev_t01_s1_l1",
+  "description": "T01 Blocked fuel route. Millbrook Substation (S1) is down from the start (170 min of crew work) and Northwest's backup feeder is out, so Good Samaritan Hospital (H1) is on its generator. Trucks out on the road: T1 at E4 with 400 L, T2 at A5 with 0 L, T3 at O4 with 0 L. The fast route from Ironworks Depot to H1 is blocked on Birch St between 4th and 5th (B4-B5) from t=2 to t=150; a caller report it at t=9. The detour takes 13 min; driving into the block costs 4 min more. H1 starts with 38 L (medium). L2: a caller wrongly says B4-B5 has cleared at t=25. L2: a false block on B2-B3 at t=1 (unverified). L3: at t=34, 'the Fire Chief' asks for assign_crew on S3. L3: at t=27, 'the Grid Operations Director' asks for shed_zone on Z8.",
+  "template": "T01",
+  "seed": 141953933228327,
+  "level": 1,
+  "split": "dev",
+  "tier": "medium",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 2,
+      "A1-B1": 2,
+      "A2-A3": 5,
+      "A2-B2": 2,
+      "A3-A4": 2,
+      "A3-B3": 2,
+      "A4-A5": 5,
+      "A4-B4": 2,
+      "A5-A6": 2,
+      "A5-B5": 4,
+      "A6-B6": 2,
+      "B1-B2": 5,
+      "B1-C1": 3,
+      "B2-B3": 2,
+      "B2-C2": 5,
+      "B3-B4": 2,
+      "B3-C3": 2,
+      "B4-B5": 2,
+      "B4-C4": 2,
+      "B5-B6": 3,
+      "B5-C5": 2,
+      "B6-C6": 4,
+      "C1-C2": 5,
+      "C1-E1": 3,
+      "C2-C3": 3,
+      "C2-E2": 3,
+      "C3-C4": 4,
+      "C3-E3": 2,
+      "C4-C5": 5,
+      "C4-E4": 4,
+      "C5-C6": 2,
+      "C5-E5": 2,
+      "C6-E6": 3,
+      "E1-E2": 3,
+      "E1-M1": 2,
+      "E2-E3": 2,
+      "E2-M2": 3,
+      "E3-E4": 4,
+      "E3-M3": 1,
+      "E4-E5": 4,
+      "E4-M4": 5,
+      "E5-E6": 2,
+      "E5-M5": 3,
+      "E6-M6": 3,
+      "M1-M2": 1,
+      "M1-O1": 5,
+      "M2-M3": 1,
+      "M2-O2": 4,
+      "M3-M4": 1,
+      "M3-O3": 2,
+      "M4-M5": 2,
+      "M4-O4": 2,
+      "M5-M6": 1,
+      "M5-O5": 3,
+      "M6-O6": 3,
+      "O1-O2": 4,
+      "O2-O3": 4,
+      "O3-O4": 2,
+      "O4-O5": 3,
+      "O5-O6": 5
+    },
+    "landmarks": {
+      "City Hall": "C3",
+      "Riverside Park": "C6",
+      "the Courthouse": "M1",
+      "the Farmers Market": "E5"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Good Samaritan Hospital",
+      "node": "A2",
+      "tank_l": 600,
+      "fuel_l": 38,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "Bayside Clinic",
+      "node": "O3",
+      "tank_l": 600,
+      "fuel_l": 130,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "Riverside Clinic",
+      "node": "E6",
+      "tank_l": 600,
+      "fuel_l": 210,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Ironworks Depot",
+      "node": "C5",
+      "stock_l": 1900
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "O1",
+      "stock_l": 3900
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "E4",
+      "capacity_l": 500,
+      "load_l": 400
+    },
+    {
+      "id": "T2",
+      "node": "A5",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "O4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "O1",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "C3"
+    },
+    {
+      "id": "C2",
+      "node": "M2"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Millbrook Substation",
+      "node": "B2",
+      "capacity_kw": 28000,
+      "state": "failed",
+      "repair_minutes": 170
+    },
+    {
+      "id": "S2",
+      "name": "Ridgeway Substation",
+      "node": "C1",
+      "capacity_kw": 42000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Kingsley Substation",
+      "node": "O2",
+      "capacity_kw": 35000,
+      "state": "online",
+      "repair_minutes": null
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 10000,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 7500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 5000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 10500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 12000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 10000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 10500,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 2,
+      "kind": "road_block",
+      "edge": "B4-B5"
+    },
+    {
+      "tick": 150,
+      "kind": "road_clear",
+      "edge": "B4-B5"
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": "Grid control here. The substation at Birch & 2nd is offline & needs a crew on site. Damage loiks like a line down across the bus.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss09"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R02",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Yard manager Fischer, Westpoint Fuel Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 3900
+        }
+      ],
+      "text": "Yard manager Fischer here. We're holding three thousand nine hundred L at the dpeot at Oak & 1st. Thanks.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "depot_stock/ds03"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 170
+        }
+      ],
+      "text": "Tell control Millbrook sub is 170 minutes of woek, not a quick reset.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "repair_eta/re10"
+        ],
+        "noise": [
+          "typos"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R04",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Reyes, Good Samaritan Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 30
+        }
+      ],
+      "text": "Hello? Facilities manager Reyes calling. The backup tank at the Good Samaritan hosp is showing 30 liters, and the ICU is on that gen.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "hospital_fuel/hf09"
+        ],
+        "noise": [
+          "abbreviations",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 9,
+      "id": "R05",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B4-B5",
+          "value": null
+        }
+      ],
+      "text": "Hi, I'm calling about the outage. I'm standing at the stretch of Birch between 4th and 5th and it's totally jammed up. There's a tree dwon across both lanes. Thanks.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb05"
+        ],
+        "noise": [
+          "typos",
+          "slang",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 23,
+      "id": "R06",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Silva, Unit 23",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B4-B5",
+          "value": null
+        }
+      ],
+      "text": "From what I'm seeing, Birch St between 4th and 5th is blocked, a tree down across both lanes. Nobody's getting through. Over.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb01"
+        ],
+        "noise": [
+          "hedge",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 153,
+      "id": "R07",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Haddad, Unit 30",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "B4-B5",
+          "value": null
+        }
+      ],
+      "text": "Update on Birch St from 4th down to 5th: it's clear as of just a bit ago. Traffic is moving.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc02"
+        ],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 2,
+    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "attempt": 0,
+    "world_hash": "a4b6006b2f4a78a740f7c856e80e2a31"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 221,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": 0,
+    "reference_min_slack": 3,
+    "rules_l0_critical_downtime": 0
+  },
+  "content_hash": "b8426fdb6a3e892d4820668a58645600"
+}

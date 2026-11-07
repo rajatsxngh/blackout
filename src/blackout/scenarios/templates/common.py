@@ -15,6 +15,7 @@ from blackout.scenarios.seeding import Rng
 from blackout.scenarios.text.render import TimedFact
 from blackout.scenarios.world import (
     Draft,
+    FuelReading,
     crew_source,
     depot_source,
     fact,
@@ -25,7 +26,7 @@ from blackout.scenarios.world import (
 from blackout.sim.city import EdgeId
 
 MIN_DO_NOTHING_LOSS = 30
-"""PRD 8.6: do-nothing must lose at least 30 hospital-minutes (the reference half is M8)."""
+"""PRD 8.6: do-nothing must lose at least 30 hospital-minutes (and the reference none)."""
 
 EARLY_TICKS = (1, 4)
 """Fuel and stock readings go out in this window: nothing a contestant does lands sooner."""
@@ -59,20 +60,59 @@ def repair_minutes(draft: Draft, rng: Rng, span: tuple[int, int]) -> int:
 
 def isolate_hospital(draft: Draft, hospital_id: str, repair: int) -> str:
     """The substation feeding ``hospital_id``'s zone is down from the start, and the zone's
-    backup feeder is out too, so the hospital runs on its generator. Returns the substation."""
+    backup feeder is out too, so the hospital runs on its generator. Returns the substation.
+    If that substation is already down, it stays down with its existing repair time."""
     hospital = draft.hospital(hospital_id)
     zone = draft.zone_of(hospital.node)
     substation_id = zone.primary
-    draft.update_substation(substation_id, state="failed", repair_minutes=repair)
+    if draft.substation(substation_id).state == "online":
+        draft.update_substation(substation_id, state="failed", repair_minutes=repair)
     draft.update_zone(zone.id, alternate=None)
-    draft.fit_capacity(frozenset({substation_id}))
+    down = frozenset(s.id for s in draft.substations if s.state != "online")
+    draft.fit_capacity(down)
     substation = draft.substation(substation_id)
     draft.story.append(
-        f"{substation.name} ({substation_id}) is down from the start ({repair} min of crew work)"
-        f" and {zone.name}'s backup feeder is out, so {hospital.name} ({hospital_id}) is on its"
-        " generator."
+        f"{substation.name} ({substation_id}) is down from the start"
+        f" ({substation.repair_minutes} min of crew work) and {zone.name}'s backup feeder is"
+        f" out, so {hospital.name} ({hospital_id}) is on its generator."
     )
     return substation_id
+
+
+def scatter_fleet(draft: Draft, rng: Rng, keep: frozenset[str] = frozenset()) -> None:
+    """Spread the trucks (except ``keep``) over the city, some carrying part of a load.
+
+    Trucks parked at the depots with nothing aboard make every plan look alike. Scattered
+    trucks, some loaded and far away, some empty next to a depot, are where choosing which
+    truck goes where starts to matter (PRD 8.7: "nearest loaded truck, or via the nearest
+    depot" is the greedy rule).
+    """
+    cfg = draft.config.fleet
+    nodes = sorted(n for z in draft.zones for n in z.nodes)
+    moved = []
+    for truck in draft.trucks:
+        if truck.id in keep or not rng.chance(cfg.scatter_pct):
+            continue
+        node = rng.pick(nodes)
+        load = 0
+        if rng.chance(cfg.loaded_pct):
+            load = rng.between(cfg.load_l[0], min(cfg.load_l[1], truck.capacity_l), 50)
+        draft.update_truck(truck.id, node=node, load_l=load)
+        moved.append(f"{truck.id} at {node} with {load} L")
+    if moved:
+        draft.story.append("Trucks out on the road: " + ", ".join(moved) + ".")
+
+
+def report_spike(draft: Draft, rng: Rng, hospital_id: str, tick: int, burn: int) -> None:
+    """Hospital staff call in a generator burning faster, as it happens."""
+    hospital = draft.hospital(hospital_id)
+    draft.plan(
+        tick + rng.between(0, 1),
+        Channel.HOSPITAL_STAFF,
+        SourceClass.FIELD,
+        hospital_source(rng, hospital),
+        TimedFact(fact(FactType.BURN_SPIKE, hospital_id, burn), tick),
+    )
 
 
 def report_failure(draft: Draft, rng: Rng, substation_id: str, failed_at: int, repair: int) -> None:
@@ -117,15 +157,16 @@ def report_fuel(draft: Draft, rng: Rng, hospital_id: str, unpowered_from: int | 
     (None: on the grid until after the reading)."""
     hospital = draft.hospital(hospital_id)
     tick = rng.between(*EARLY_TICKS)
-    burned = 0 if unpowered_from is None else hospital.burn_lpm * max(0, tick - unpowered_from)
-    level = max(0, hospital.fuel_l - burned)
-    draft.plan(
+    planned = draft.plan(
         tick,
         Channel.HOSPITAL_STAFF,
         SourceClass.FIELD,
         hospital_source(rng, hospital),
-        TimedFact(fact(FactType.HOSPITAL_FUEL, hospital_id, level), tick),
+        TimedFact(fact(FactType.HOSPITAL_FUEL, hospital_id, hospital.fuel_l), tick),
     )
+    assert planned is not None
+    draft.fuel_readings.append(FuelReading(planned, hospital_id, unpowered_from))
+    draft.set_fuel(hospital_id, hospital.fuel_l)  # fills in the reading
 
 
 def report_depot(draft: Draft, rng: Rng) -> None:
@@ -143,9 +184,32 @@ def report_depot(draft: Draft, rng: Rng) -> None:
     )
 
 
-def report_block(draft: Draft, rng: Rng, segment: EdgeId, blocked_at: int, delay: int) -> None:
-    """Police report a block ``delay`` minutes after it happens; a caller may echo it."""
+def report_block(
+    draft: Draft,
+    rng: Rng,
+    segment: EdgeId,
+    blocked_at: int,
+    delay: int,
+    *,
+    caller_first: bool = False,
+    police: bool = True,
+) -> None:
+    """Police report a block ``delay`` minutes after it happens; a caller may echo it.
+
+    With ``caller_first``, a member of the public calls it in ``delay`` minutes after it
+    happens and the police only later, if at all (``police``). That caller is an unverified
+    source telling the truth, and often the only early warning: PRD 8.4's "critical true
+    unverified report", which a contestant that ignores unverified sources pays for.
+    """
     claim = TimedFact(fact(FactType.ROAD_BLOCKED, segment), blocked_at)
+    if caller_first:
+        draft.plan(
+            blocked_at + delay, Channel.PUBLIC, SourceClass.UNVERIFIED, public_source(rng), claim
+        )
+        if police:
+            later = blocked_at + delay + rng.between(*draft.config.reports.police_late_minutes)
+            draft.plan(later, Channel.POLICE_RADIO, SourceClass.FIELD, police_source(rng), claim)
+        return
     draft.plan(
         blocked_at + delay, Channel.POLICE_RADIO, SourceClass.FIELD, police_source(rng), claim
     )

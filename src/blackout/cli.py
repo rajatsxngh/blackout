@@ -20,6 +20,7 @@ from blackout.controllers.base import Controller
 from blackout.controllers.registry import make_controller
 from blackout.controllers.scripted import ScriptedController, load_script
 from blackout.env import DecisionRequest, env_for, run_episode
+from blackout.experiments.guard import frozen_hashes, hashes_block
 from blackout.experiments.matrix import load_matrix
 from blackout.experiments.results import RESULTS_ROOT, write_results
 from blackout.experiments.runner import RUNS_ROOT, Outcome, plan, run_batch
@@ -30,8 +31,9 @@ from blackout.logs.writer import record_episode, run_dir_for
 from blackout.scenarios.config import DEFAULT_CITY_CONFIG, load_city_config
 from blackout.scenarios.generator import GenerationError, generate_all
 from blackout.scenarios.schema import Scenario, load_scenario
-from blackout.scenarios.suites import SUITES, differences, manifest, write_suite
-from blackout.scenarios.text.banks import TRAIN_BANK, load_bank
+from blackout.scenarios.suites import FROZEN, SUITES, TEST_BANK, differences, manifest, write_suite
+from blackout.scenarios.text.bank_check import check_bank, lock_problems, write_lock
+from blackout.scenarios.text.banks import load_bank
 from blackout.scoring.scorer import ScoreCard, score
 from blackout.sim.actions import ActionResult
 from blackout.sim.render_ascii import render_ascii
@@ -165,28 +167,56 @@ def run(
 
 @app.command("gen")
 def gen_command(
-    suite: Annotated[str, typer.Option(help="Which suite to generate (dev-v0; dev and test: M8).")],
+    suite: Annotated[str, typer.Option(help="Which suite to generate: dev or test.")],
     out: Annotated[
         Path | None, typer.Option(help="Where to write it [default: scenarios/<suite>].")
     ] = None,
     config: Annotated[Path, typer.Option(help="The city config.")] = DEFAULT_CITY_CONFIG,
-    bank: Annotated[Path, typer.Option(help="The phrasing bank.")] = TRAIN_BANK,
+    bank: Annotated[
+        Path | None, typer.Option(help="The phrasing bank [default: the suite's own].")
+    ] = None,
     check: Annotated[
         bool, typer.Option("--check", help="Write nothing; fail if the files on disk differ.")
     ] = False,
-    sample: Annotated[int, typer.Option(help="Print this many L1 reports afterwards.")] = 0,
+    sample: Annotated[int, typer.Option(help="Print this many L1+ reports afterwards.")] = 0,
+    workers: Annotated[
+        int | None,
+        typer.Option(min=1, help="Parallel processes [default: CPU count, at most 8]."),
+    ] = None,
 ) -> None:
-    """Generate a scenario suite: one file per scenario, plus manifest.json with hashes."""
+    """Generate a scenario suite: one file per scenario, plus manifest.json with hashes.
+
+    The test suite is rendered with the human-written test bank, which must match its
+    committed lock file, and never prints report text (no --sample)."""
+    if suite in FROZEN:
+        raise typer.BadParameter(FROZEN[suite], param_hint="'--suite'")
     if suite not in SUITES:
         raise typer.BadParameter(
-            f"unknown suite {suite!r}; available: {', '.join(SUITES)} (dev and test arrive in M8)",
-            param_hint="'--suite'",
+            f"unknown suite {suite!r}; available: {', '.join(SUITES)}", param_hint="'--suite'"
         )
     spec = SUITES[suite]
+    bank_dir = bank or spec.bank
+    if spec.bank == TEST_BANK:
+        if sample:
+            raise typer.BadParameter(
+                "the test suite's text is never printed (it would expose the test bank)",
+                param_hint="'--sample'",
+            )
+        problems = lock_problems(bank_dir)
+        if problems:
+            for problem in problems:
+                typer.echo(problem, err=True)
+            typer.echo(
+                "The test suite needs the human-written test bank, locked and committed:"
+                " see docs/TEST_BANK_GUIDE.md.",
+                err=True,
+            )
+            raise typer.Exit(code=1)
     city = _load(load_city_config, config, "city config")
-    phrasing = _load(load_bank, bank, "phrasing bank")
+    phrasing = _load(load_bank, bank_dir, "phrasing bank")
     try:
-        scenarios = generate_all(spec.requests(), city, phrasing)
+        count = workers or min(8, os.cpu_count() or 1)
+        scenarios = generate_all(spec.requests(), city, phrasing, workers=count)
     except GenerationError as error:
         typer.echo(f"generation failed: {error}", err=True)
         raise typer.Exit(code=1) from error
@@ -203,18 +233,63 @@ def gen_command(
         write_suite(target, scenarios, data)
         typer.echo(f"{suite}: wrote {len(scenarios)} scenarios and the manifest to {target}")
     for scenario in scenarios:
-        assert scenario.validity is not None
-        assert scenario.generator is not None
+        v, g = scenario.validity, scenario.generator
+        assert v is not None
+        assert g is not None
         typer.echo(
-            f"  {scenario.id:<18} L{scenario.level}  world {scenario.generator.world_hash[:12]}"
-            f"  do-nothing loses {scenario.validity.do_nothing_critical_downtime} min"
+            f"  {scenario.id:<18} L{scenario.level} {scenario.tier or '-':<6}"
+            f"  world {g.world_hash[:12]}  do-nothing {v.do_nothing_critical_downtime:>3}"
+            f"  rules@L0 {v.rules_l0_critical_downtime:>3}"
+            f"  reference {v.reference_critical_downtime} (slack {v.reference_min_slack})"
         )
+    mix = spec.tier_mix()
+    typer.echo("Tier mix (worlds): " + ", ".join(f"{t} {n}" for t, n in mix.items()))
     if sample:
         _print_sample(scenarios, sample)
 
 
+bank_app = typer.Typer(no_args_is_help=True, help="Check and lock phrasing banks.")
+app.add_typer(bank_app, name="bank")
+
+
+@bank_app.command("check")
+def bank_check_command(
+    path: Annotated[Path, typer.Argument(help="A bank directory.")] = TEST_BANK,
+) -> None:
+    """Validate a bank (IDs and counts only: phrasing text is never printed)."""
+    report = check_bank(path)
+    for name, count in report.counts.items():
+        typer.echo(f"  {name:<28} {count} phrasings")
+    for warning in report.warnings:
+        typer.echo(f"  warning: {warning}")
+    for error in report.errors:
+        typer.echo(f"  error: {error}", err=True)
+    if not report.ok:
+        raise typer.Exit(code=1)
+    typer.echo(f"{path.as_posix()}: OK, digest {report.digest}")
+
+
+@bank_app.command("lock")
+def bank_lock_command(
+    path: Annotated[Path, typer.Argument(help="A bank directory.")] = TEST_BANK,
+) -> None:
+    """Check a bank, then write its lock file (commit it together with the bank)."""
+    report = check_bank(path)
+    if not report.ok:
+        for error in report.errors:
+            typer.echo(f"  error: {error}", err=True)
+        raise typer.Exit(code=1)
+    typer.echo(f"wrote {write_lock(path).as_posix()} (digest {report.digest})")
+
+
+@app.command("prereg-hashes")
+def prereg_hashes_command() -> None:
+    """Print the frozen-hashes block for docs/PREREGISTRATION.md (the test guard checks it)."""
+    typer.echo(hashes_block(frozen_hashes()), nl=False)
+
+
 def _print_sample(scenarios: list[Scenario], count: int) -> None:
-    """Up to ``count`` L1 reports, spread evenly over the suite."""
+    """Up to ``count`` L1+ reports, spread evenly over the suite."""
     reports = [
         (scenario.id, event)
         for scenario in scenarios
@@ -228,7 +303,11 @@ def _print_sample(scenarios: list[Scenario], count: int) -> None:
     typer.echo(f"\nSample of {min(count, len(reports))} L1 reports (of {len(reports)}):")
     for scenario_id, report in reports[::step][:count]:
         assert report.kind == "report"
-        claims = "; ".join(fact.describe() for fact in report.facts)
+        claims = "; ".join(fact.describe() for fact in report.facts) or "(none)"
+        if not report.truth.is_true:
+            claims += "  [FALSE]"
+        if report.truth.injection is not None:
+            claims += f"  [INJECTION {report.truth.injection.kind}]"
         typer.echo(
             f"\n[{scenario_id} {report.id} t={report.tick} {report.channel}] {report.source}"
             f"\n  {report.text}\n  facts: {claims}"

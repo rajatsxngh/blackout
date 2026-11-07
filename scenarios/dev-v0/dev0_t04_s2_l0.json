@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t04_s2_l0",
   "description": "T04 Breakdown mid-delivery. Millbrook Substation (S3) is down from the start (180 min of crew work) and Southeast's backup feeder is out, so Lakeview Medical Center (H3) is on its generator. T4 starts at B1 with 500 L, 14 min from H3, and breaks down for good at t=7. H3 has 56 L: enough for T1 to load and deliver after the breakdown with 5 min to spare. A side block on Oak St between 1st and 2nd (O1-O2) from t=33 to t=95 touches no fast route.",
   "template": "T04",
@@ -345,8 +345,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -373,8 +375,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -401,8 +405,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -434,8 +440,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01",
@@ -463,8 +471,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F05"
@@ -491,8 +501,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F06"
@@ -507,12 +519,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "332d7af659970ca6c8d5834d85a7c0bb"
+    "world_hash": "77feb5b14176e08a67fc9677a5f6841d"
   },
   "validity": {
     "do_nothing_critical_downtime": 212,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "6e0d4cc2c50eb29038a303f9f4a59e17"
+  "content_hash": "26914f242b3223303e240b729a4fc641"
 }

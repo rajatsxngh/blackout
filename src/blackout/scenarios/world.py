@@ -8,7 +8,7 @@ collection of the scenario's spec objects plus the reports planned so far.
 from dataclasses import dataclass, field
 from itertools import pairwise
 
-from blackout.info.reports import Channel, Fact, SourceClass
+from blackout.info.reports import Channel, CueKind, Fact, InjectionKind, SourceClass
 from blackout.scenarios import names
 from blackout.scenarios.config import CityConfig
 from blackout.scenarios.schema import (
@@ -43,15 +43,56 @@ class Infeasible(Exception):  # noqa: N818 (it's an outcome, not a bug)
     """This world can't host the template's situation; the generator re-rolls."""
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
+class PlannedCue:
+    """A cue that betrays a false planned report; ``ref`` is the contradicting report."""
+
+    kind: CueKind
+    ref: "PlannedReport | None" = None
+    note: str = ""
+
+
+@dataclass(slots=True, eq=False)
+class PlannedInjection:
+    """An L3 injection before it gets text: what it asks for, of what, for how long."""
+
+    kind: InjectionKind
+    target: str
+    start: int
+    end: int
+    authority: str
+
+
+@dataclass(slots=True, eq=False)
 class PlannedReport:
-    """A report before it gets an ID and (at L1) text. Same for every level of a seed."""
+    """A report before it gets an ID and (at L1) text.
+
+    ``level`` is the lowest level that carries it: 0 for the reports every level of a seed
+    shares, 2 for false, stale and correcting reports, 3 for injections. Planned reports are
+    compared by identity (``eq=False``), so cues and corrections can point at them.
+    """
 
     tick: int
     channel: Channel
     source_class: SourceClass
     source: str
     facts: list[TimedFact]
+    level: int = 0
+    is_true: bool = True
+    cues: list[PlannedCue] = field(default_factory=list)
+    stale_of: Fact | None = None
+    corrects: "PlannedReport | None" = None
+    injection: PlannedInjection | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class FuelReading:
+    """A planned report that reads a hospital's tank. Its value is filled in from the
+    hospital's starting fuel when the world is final (calibration can change that fuel)."""
+
+    report: PlannedReport
+    hospital_id: str
+    unpowered_from: int | None  # tick the generator started; None: on the grid until then
 
 
 @dataclass(slots=True)
@@ -67,6 +108,8 @@ class Draft:
     events: list[PhysicalEvent] = field(default_factory=list)
     reports: list[PlannedReport] = field(default_factory=list)
     story: list[str] = field(default_factory=list)
+    target: str | None = None  # the hospital whose starting fuel calibration sets
+    fuel_readings: list[FuelReading] = field(default_factory=list)
 
     # --- lookups ---------------------------------------------------------------------------
 
@@ -144,10 +187,40 @@ class Draft:
         source_class: SourceClass,
         source: str,
         *facts: TimedFact,
-    ) -> None:
+        level: int = 0,
+    ) -> PlannedReport | None:
+        """Plan a report; None if it would come at or after the horizon."""
         if tick >= self.config.horizon:
-            return
-        self.reports.append(PlannedReport(tick, channel, source_class, source, list(facts)))
+            return None
+        report = PlannedReport(tick, channel, source_class, source, list(facts), level=level)
+        self.reports.append(report)
+        return report
+
+    def set_fuel(self, hospital_id: str, fuel_l: int) -> None:
+        """Set a hospital's starting fuel and re-read every planned reading of its tank."""
+        self.update_hospital(hospital_id, fuel_l=fuel_l)
+        for reading in self.fuel_readings:
+            if reading.hospital_id != hospital_id:
+                continue
+            hospital = self.hospital(hospital_id)
+            timed = reading.report.facts[0]
+            since = reading.unpowered_from
+            burned = 0 if since is None else hospital.burn_lpm * max(0, timed.since - since)
+            level = max(0, hospital.fuel_l - burned)
+            reading.report.facts[0] = TimedFact(
+                fact(timed.fact.type.value, hospital_id, level), timed.since
+            )
+
+    def hospitals_at_risk(self) -> list[str]:
+        """Hospitals whose zone has no working feeder at the start (on their generators)."""
+        down = {s.id for s in self.substations if s.state != "online"}
+        risky = []
+        for hospital in self.hospitals:
+            zone = self.zone_of(hospital.node)
+            feeders = [f for f in (zone.primary, zone.alternate) if f is not None]
+            if all(f in down for f in feeders):
+                risky.append(hospital.id)
+        return risky
 
 
 def fastest(

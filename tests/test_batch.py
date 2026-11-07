@@ -13,7 +13,7 @@ from typer.testing import CliRunner
 
 from blackout.cli import app
 from blackout.experiments.matrix import Matrix, load_matrix
-from blackout.experiments.results import group_rows, run_rows, write_results
+from blackout.experiments.results import RunRow, group_rows, head_to_head, run_rows, write_results
 from blackout.experiments.runner import Job, code_digest, plan, run_batch, run_config
 from blackout.logs.schema import SUMMARY_FILE
 from blackout.scenarios.schema import load_scenario
@@ -51,11 +51,13 @@ def mini(**changes: object) -> Matrix:
 # --- matrices -------------------------------------------------------------------------------
 
 
-def test_dev_baselines_matrix_covers_dev_v0() -> None:
+def test_baseline_matrices_cover_dev_and_dev_v0() -> None:
     matrix = load_matrix(ROOT / "configs" / "matrices" / "dev_baselines.yaml")
-    assert (matrix.experiment, matrix.suite, matrix.runs) == ("dev_baselines", "dev-v0", 1)
+    assert (matrix.experiment, matrix.suite, matrix.runs) == ("dev_baselines", "dev", 1)
     assert matrix.contestants == ("do-nothing", "rules", "solver", "reference")
-    assert len(matrix.scenarios(ROOT / "scenarios")) == 18
+    assert len(matrix.scenarios(ROOT / "scenarios")) == 56
+    legacy = load_matrix(ROOT / "configs" / "matrices" / "dev_v0_baselines.yaml")
+    assert (legacy.suite, len(legacy.scenarios(ROOT / "scenarios"))) == ("dev-v0", 18)
 
 
 @pytest.mark.parametrize(
@@ -63,7 +65,6 @@ def test_dev_baselines_matrix_covers_dev_v0() -> None:
     [
         ({"contestants": ["oracle"]}, "unknown contestants"),
         ({"contestants": ["rules", "rules"]}, "more than once"),
-        ({"suite": "test"}, "held out"),
         ({"contestants": []}, "at least 1"),
         ({"runs": 0}, "greater than 0"),
         ({"surprise": 1}, "Extra inputs"),
@@ -187,7 +188,7 @@ def test_result_tables(scenario_root: Path, tmp_path: Path) -> None:
     assert "| L1 | 3 | 3 | 3 | 1.000 | 1.000 | 1.000 |" in table
     assert "Scorer discrepancies: 0." in table
     csv_lines = (tmp_path / "results" / "mini" / "runs.csv").read_text(encoding="utf-8")
-    assert csv_lines.splitlines()[0].startswith("scenario,template,level,contestant,")
+    assert csv_lines.splitlines()[0].startswith("scenario,template,level,tier,contestant,")
     assert len(csv_lines.splitlines()) == 1 + 4
 
 
@@ -290,3 +291,41 @@ def test_cli_run_accepts_rules(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert "critical downtime  0 min" in result.output
     assert (tmp_path / PICKED[0] / "rules__none__r0" / SUMMARY_FILE).is_file()
+
+
+def test_head_to_head_compares_rules_solver_and_reference() -> None:
+    def row(scenario: str, tier: str, contestant: str, dark: int) -> RunRow:
+        return RunRow(
+            scenario,
+            "T04",
+            0,
+            tier,
+            contestant,
+            0,
+            dark,
+            100,
+            None,
+            None,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            None,
+            "h",
+            0,
+        )
+
+    rows = [
+        row("a", "hard", "rules", 9),
+        row("a", "hard", "solver", 0),
+        row("a", "hard", "reference", 0),
+        row("b", "easy", "rules", 1),
+        row("b", "easy", "solver", 3),
+        row("b", "easy", "reference", 0),
+    ]
+    lines = head_to_head(rows)
+    assert "| T04 L0 | 2 | 5.0 | 1.5 | 0.0 | 1 | 1/0/1 |" in lines
+    assert "| tier hard | 1 | 9.0 | 0.0 | 0.0 | 1 | 1/0/0 |" in lines
+    assert head_to_head([r for r in rows if r.contestant != "solver"]) == []

@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t01_s1_l1",
   "description": "T01 Blocked fuel route. Quarry Substation (S3) is down from the start (170 min of crew work) and Southeast's backup feeder is out, so Hillcrest Hospital (H3) is on its generator. The fast route from Westpoint Fuel Depot is blocked on 6th Ave between Maple and Oak (M6-O6) from t=0 to t=165. H3 has 62 L: enough for the 15-minute detour with 6 min to spare, not for getting stuck first (10 min lost).",
   "template": "T01",
@@ -339,8 +339,10 @@
       "text": "Hi there. Um, there's smoke coming off the Quarry substation, & the power's out all around here.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -373,8 +375,10 @@
       "text": "Hi, this is Nurse supervisor Tanaka. Just dipped the tank at Hillcrest Hospital, 60 litres remainig. Thanks.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -407,8 +411,10 @@
       "text": "We have a full closre on Sixth Avenue between Oak and Maple due to a car fire. Expect it to stay shut for a while. Over.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -440,8 +446,10 @@
       "text": "Grid control on the crew channel. Um, the Quarry substation is don hard, a transformer fire, last I checked.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -475,8 +483,10 @@
       "text": "Best guess for Quarry sub is 2h50 of repair time. Out.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F04"
@@ -507,8 +517,10 @@
       "text": "Update on Sixth Ave between Oak and Maple: it's clear as of about 4 minutes ago. Traffic is moving.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F05"
@@ -527,12 +539,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 1,
-    "world_hash": "5a200e0f3b9d6ac4dbb4bfd917f96441"
+    "world_hash": "4b152e6676ebb8ff7d9050e81610c3b1"
   },
   "validity": {
     "do_nothing_critical_downtime": 209,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "6e88d35db56ac54d7a1ff58a11b6c410"
+  "content_hash": "8db279d4aa618bbbd9ceedca24a7beb0"
 }

@@ -1,0 +1,7 @@
+# Baselines on the frozen dev-v0 suite (docs/PRD.md section 12, M6 and M7): do-nothing (C0),
+# Rules (C1), Solver (C2) and Reference (C3, ground truth). Kept for the M6/M7 record.
+# Run with: uv run blackout batch --matrix configs/matrices/dev_v0_baselines.yaml [--resume]
+experiment: dev_v0_baselines
+suite: dev-v0
+contestants: [do-nothing, rules, solver, reference]
+runs: 1

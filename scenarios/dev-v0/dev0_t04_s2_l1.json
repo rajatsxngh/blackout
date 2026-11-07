@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t04_s2_l1",
   "description": "T04 Breakdown mid-delivery. Millbrook Substation (S3) is down from the start (180 min of crew work) and Southeast's backup feeder is out, so Lakeview Medical Center (H3) is on its generator. T4 starts at B1 with 500 L, 14 min from H3, and breaks down for good at t=7. H3 has 56 L: enough for T1 to load and deliver after the breakdown with 5 min to spare. A side block on Oak St between 1st and 2nd (O1-O2) from t=33 to t=95 touches no fast route.",
   "template": "T04",
@@ -345,8 +345,10 @@
       "text": "There was a huge bang from the substation at Oak & 5th and then everything went out. Maybe a lightning strike? Somebody should look at it.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -377,8 +379,10 @@
       "text": "The tank gauges at Harbor say seventeen hundred liters, don't quote me. Thanks.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -410,8 +414,10 @@
       "text": "Charge nurse Okafor here. Can someone get fuel to the hosp at Maple & 5th? We've oly got fifty L.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -449,8 +455,10 @@
       "text": "Line crew 1 on the crew channel. From what I'm seeing, the Millbrook substation is down hard, a lightning strike. Also, rough ETA on Millbrook is 3 hours once we start. Standing by.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01",
@@ -486,8 +494,10 @@
       "text": "This is Unit 26. We've shut down Oak St btwn 1st and 2nd because of downed powr lines, so route everything around it, I think.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F05"
@@ -521,8 +531,10 @@
       "text": "As far as I can tell, the blocksge on Oak St from 1st down to 2nd is gone, the tow truck just hauled it off. Copy?",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F06"
@@ -543,12 +555,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "332d7af659970ca6c8d5834d85a7c0bb"
+    "world_hash": "77feb5b14176e08a67fc9677a5f6841d"
   },
   "validity": {
     "do_nothing_critical_downtime": 212,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "bd6b320b900cfdf4b132ebab7218e3f8"
+  "content_hash": "b7e7fbfc448c212d1e77da4971fc8483"
 }

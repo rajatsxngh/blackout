@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t04_s1_l0",
   "description": "T04 Breakdown mid-delivery. Foundry Substation (S1) is down from the start (200 min of crew work) and West's backup feeder is out, so County General Hospital (H2) is on its generator. T1 starts at B1 with 500 L, 10 min from H2, and breaks down for good at t=7. H2 has 58 L: enough for T2 to load and deliver after the breakdown with 7 min to spare.",
   "template": "T04",
@@ -335,8 +335,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -363,8 +365,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -391,8 +395,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -407,12 +413,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "45e06f983817f0ac802bce34c15891ac"
+    "world_hash": "faa775491e8935c473f744c5272fd4a8"
   },
   "validity": {
     "do_nothing_critical_downtime": 211,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "4474b273ff2be4ae8f4a2954bd1b2a02"
+  "content_hash": "74d772a2e8d61e228cbe90558a82f559"
 }

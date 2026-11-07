@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t02_s2_l0",
   "description": "T02 Cascade. Quarry Substation (S3) fails at t=11 (70 min of crew work). Its zones fall back to Ashford Substation (S2), 3500 kW over its 52000 kW capacity; shedding residential load (28500 kW) prevents the trip.",
   "template": "T02",
@@ -335,8 +335,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -363,8 +365,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -396,8 +400,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03",
@@ -413,12 +419,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "99ae419ff16aff6194dc18d52bb9ded3"
+    "world_hash": "86f6e0d98aa29cd39ba03adecc37925c"
   },
   "validity": {
     "do_nothing_critical_downtime": 408,
     "do_nothing_trips": 2,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "ed5dca7b4322dd92a92d3681b9a44c86"
+  "content_hash": "eb42481e3847dc7ec3dea66d32e28ee3"
 }

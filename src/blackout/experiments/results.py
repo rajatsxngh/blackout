@@ -29,6 +29,7 @@ class RunRow:
     scenario: str
     template: str
     level: int
+    tier: str
     contestant: str
     run_index: int
     critical_downtime_min: int
@@ -64,6 +65,7 @@ def run_rows(outcomes: Sequence[Outcome], scenarios: Mapping[str, Scenario]) -> 
                 scenario=scenario.id,
                 template=scenario.template or "-",
                 level=scenario.level,
+                tier=scenario.tier or "-",
                 contestant=card.contestant,
                 run_index=card.run_index,
                 critical_downtime_min=d,
@@ -193,8 +195,9 @@ def markdown(
         "",
         "## Keyword parser F1 by level",
         "",
-        "Scored on (kind, subject, value within 10%) against each report's true facts. At L0"
-        " contestants receive the facts themselves, so F1 is 1 by construction.",
+        "Scored on (kind, subject, value within 10%) against what each report claims, true or"
+        " false (injections claim nothing). At L0 contestants receive the facts themselves, so"
+        " F1 is 1 by construction.",
         "",
         "| Level | Facts | Parsed | Correct | Precision | Recall | F1 |",
         "|---|---|---|---|---|---|---|",
@@ -204,9 +207,74 @@ def markdown(
             f"| L{level} | {c.tp + c.fn} | {c.tp + c.fp} | {c.tp} | {_num(c.precision)}"
             f" | {_num(c.recall)} | {_num(c.f1)} |"
         )
+    lines += head_to_head(rows)
     problems = sum(r.discrepancies for r in rows)
     lines += ["", f"Runs: {len(rows)}. Scorer discrepancies: {problems}.", ""]
     return "\n".join(lines)
+
+
+TIE_MINUTES = 1
+"""PRD 8.10: a paired difference of at most 1 minute is a tie."""
+_TRIO = ("rules", "solver", "reference")
+
+
+def head_to_head(rows: Sequence[RunRow]) -> list[str]:
+    """Rules vs Solver vs Reference on the same scenarios, by template x level, by level and
+    by tier: mean downtime, how often Rules loses more than a tie, and the Solver's paired
+    wins, ties and losses against Rules (empty unless all three ran)."""
+    mean: dict[tuple[str, str], float] = {}
+    by_scenario: dict[str, RunRow] = {}
+    for contestant in _TRIO:
+        chosen = [r for r in rows if r.contestant == contestant]
+        for scenario in sorted({r.scenario for r in chosen}):
+            runs = [r for r in chosen if r.scenario == scenario]
+            mean[(scenario, contestant)] = fmean(r.critical_downtime_min for r in runs)
+            by_scenario[scenario] = runs[0]
+    scenarios = sorted(s for s in by_scenario if all((s, c) in mean for c in _TRIO))
+    if not scenarios:
+        return []
+    groups: list[tuple[str, list[str]]] = []
+    for template in sorted({by_scenario[s].template for s in scenarios}):
+        for level in sorted({by_scenario[s].level for s in scenarios}):
+            picked = [
+                s
+                for s in scenarios
+                if by_scenario[s].template == template and by_scenario[s].level == level
+            ]
+            if picked:
+                groups.append((f"{template} L{level}", picked))
+    for level in sorted({by_scenario[s].level for s in scenarios}):
+        groups.append((f"all L{level}", [s for s in scenarios if by_scenario[s].level == level]))
+    for tier in ("easy", "medium", "hard", "-"):
+        picked = [s for s in scenarios if by_scenario[s].tier == tier]
+        if picked:
+            groups.append((f"tier {tier}", picked))
+    groups.append(("all", scenarios))
+    lines = [
+        "",
+        "## Rules vs Solver vs Reference",
+        "",
+        "Mean critical downtime (minutes) on the same scenarios. *Rules loses* counts scenarios"
+        f" where Rules is more than {TIE_MINUTES} min dark (a tie, PRD 8.10, is |diff| <="
+        f" {TIE_MINUTES}). *Solver vs Rules* is the Solver's paired wins / ties / losses.",
+        "",
+        "| Group | Scenarios | Rules | Solver | Reference | Rules loses"
+        " | Solver vs Rules (W/T/L) |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for name, picked in groups:
+        rules = [mean[(s, "rules")] for s in picked]
+        solver = [mean[(s, "solver")] for s in picked]
+        best = [mean[(s, "reference")] for s in picked]
+        diffs = [a - b for a, b in zip(rules, solver, strict=True)]
+        wins = sum(d > TIE_MINUTES for d in diffs)
+        losses = sum(d < -TIE_MINUTES for d in diffs)
+        lines.append(
+            f"| {name} | {len(picked)} | {fmean(rules):.1f} | {fmean(solver):.1f}"
+            f" | {fmean(best):.1f} | {sum(r > TIE_MINUTES for r in rules)}"
+            f" | {wins}/{len(picked) - wins - losses}/{losses} |"
+        )
+    return lines
 
 
 def _num(value: float | None) -> str:

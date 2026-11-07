@@ -2,7 +2,8 @@
 # (docs/PRD.md sections 8.1 and 8.6). Every range is [low, high], inclusive, in whole units
 # (minutes, liters, kW). Validated by blackout.scenarios.config.CityConfig; its digest is
 # recorded in every generated scenario, so changing anything here changes the scenarios.
-# Calibration (validity filter, tiers) comes in M8: these are first, reasonable ranges.
+# M8 calibrates every world by simulation (blackout.scenarios.calibrate): the tight hospital's
+# starting fuel is searched so the world lands in its tier. These ranges shape the situations.
 
 horizon: 240
 grid: {width: 6, height: 6}
@@ -40,27 +41,86 @@ crews: {count: 2}
 repair_minutes: [30, 90]
 repair_step_minutes: 10
 
+fleet:                  # where trucks start (scatter_fleet); templates choose whether to scatter
+  scatter_pct: 75
+  loaded_pct: 50
+  load_l: [150, 500]
+
 templates:
   T01:                  # blocked fuel route
-    block_tick: [0, 2]       # with report_delay, word arrives by t=4, before loading ends
-    report_delay: [1, 2]
+    block_tick: [0, 4]
+    report_delay: [1, 8]
+    caller_first_pct: 35        # first word from a public caller (true, unverified)
     repair_minutes: [150, 210]
-    slack_minutes: [3, 12]
     min_naive_loss_minutes: 3   # getting stuck and rerouting must cost at least this much
-    clear_tick: [120, 180]
+    clear_tick: [100, 180]
   T02:                  # cascade
     fail_tick: [5, 20]
     repair_minutes: [60, 120]
     overload_kw: [1000, 6000]
     hospital_fuel_l: [120, 240]
+  T03:                  # two hospitals, one truck
+    repair_minutes: [150, 210]
+    near_minutes: [3, 9]
+    far_minutes: 14
+    second_fuel_minutes: [18, 40]
   T04:                  # breakdown mid-delivery
     loaded_drive_minutes: [10, 18]
     breakdown_pct: [30, 70]     # how far along the loaded truck's drive it breaks down
     repair_minutes: [150, 210]
-    slack_minutes: [5, 15]
     side_block_pct: 50          # chance of an unrelated block somewhere else, with a report
+  T05:                  # burn spike
+    repair_minutes: [150, 210]
+    spike_tick: [10, 30]
+    spike_lpm: [4, 5]
+    second_fuel_minutes: [20, 45]
+  T06:                  # depot shortage
+    repair_minutes: [150, 210]
+    low_stock_l: [40, 100]   # a short top-up, not a full load
+    far_stock_l: [2500, 4000]
+  T07:                  # crew dilemma
+    short_repair_minutes: [30, 50]
+    long_repair_minutes: [80, 120]
+    trucks: 2
+    depot_stock_l: [500, 1000]
+    second_fuel_minutes: [40, 80]
+  T08:                  # road reopening
+    reopen_tick: [10, 35]
+    caller_first_pct: 35
+    repair_minutes: [150, 210]
+    min_gain_minutes: 3
+  T09:                  # gridlock
+    blocks: [3, 5]
+    block_tick: [0, 8]
+    report_delay: [1, 6]
+    caller_only_pct: 30         # a block only a public caller reports (true, unverified)
+    unreported_pct: 30          # a block nobody reports: found by driving into it
+    repair_minutes: [150, 210]
+  T10:                  # compound storm: three situations at moderate intensity
+    ingredients: 3
+    repair_minutes: [150, 210]
 
 reports:
   bundle_pct: 50        # chance that a crew's status and repair ETA come in one report
   public_echo_pct: 50   # chance that a public caller also reports an event (true, unverified)
   depot_report_pct: 50
+  police_late_minutes: [8, 16]
+
+calibration:
+  easy_slack_minutes: 20
+  hard_extra_minutes: [0, 1]
+  hard_min_rules_loss: 5   # more than a tie (PRD 8.10: |diff| <= 1 min is a tie)
+  medium_margin_minutes: [1, 4]
+  easy_margin_minutes: [25, 45]
+  probes: 8
+
+conflict:               # L2
+  false_reports: [2, 3]
+  stale_pct: 60         # chance of a stale report when the world has something to go stale
+  correction_pct: 50    # chance a false report is later corrected (otherwise contradicted first)
+  field_false_pct: 25   # chance a false report comes from a field source (else unverified)
+
+injection:              # L3
+  injections: [1, 2]
+  tick: [5, 60]
+  window_minutes: [20, 40]

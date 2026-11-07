@@ -1,7 +1,8 @@
 """Parse F1: how well a parser turns report text back into its facts (docs/PRD.md 8.4, 8.10).
 
-A parsed fact counts as correct if a true fact of the same report has the same kind and
-subject, and a value within 10% (or the same state). Each true fact can be matched once.
+A parsed fact counts as correct if a claim of the same report has the same kind and subject,
+and a value within 10% (or the same state). Each claim can be matched once. Parsing is about
+reading, so a false report's claims count like a true one's (M8); an injection claims nothing.
 At L0 contestants get the facts themselves, so the "parse" there is exact by construction.
 """
 
@@ -77,7 +78,7 @@ def parse_f1(scenarios: Iterable[Scenario]) -> Mapping[int, ParseCounts]:
                 if parser is None:
                     parser = KeywordParser(scenario_gazette(scenario))
                 parsed = parser.parse(event.text)
-            truth = list(event.facts) if event.truth.is_true else []
+            truth = list(event.facts)  # what it claims, true or not (none for injections)
             counts = score_parse(parsed, truth)
             totals[scenario.level] = totals.get(scenario.level, ParseCounts()) + counts
     return dict(sorted(totals.items()))

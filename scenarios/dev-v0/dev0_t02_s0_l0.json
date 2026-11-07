@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t02_s0_l0",
   "description": "T02 Cascade. Ashford Substation (S2) fails at t=18 (90 min of crew work). Its zones fall back to Foundry Substation (S3), 3000 kW over its 51500 kW capacity; shedding residential load (27000 kW) prevents the trip.",
   "template": "T02",
@@ -335,8 +335,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -368,8 +370,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02",
@@ -385,12 +389,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "d17fd6cd40a17ba7ed6b2755aae0ac95"
+    "world_hash": "f97d26c3bbff419d49c3c94341ddb796"
   },
   "validity": {
     "do_nothing_critical_downtime": 140,
     "do_nothing_trips": 1,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "c81f58ccdf29eb79fa685d1af9762b4a"
+  "content_hash": "2ecb29ca7b03d79f3fdefb60a0a72797"
 }

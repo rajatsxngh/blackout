@@ -6,6 +6,9 @@ grid and always runs on its generator. Version 3 (M4) adds radio reports (``kind
 events) and the messiness ``level`` that decides whether contestants see a report's facts (L0)
 or only its text (L1 and up). Version 4 (M5) adds what the generator records: template, seed,
 split and tier, generator details, validity results, and a content hash checked on load.
+Version 5 (M8) adds levels L2 and L3: report ground truth gains cues, stale and correction
+links, structured injections and the level a report first appears at; validity gains the
+reference and Rules results that decide a world's tier.
 
 ``description`` and everything outside the world itself are metadata for people and the
 scorer; contestants only ever see observations (blackout.info.observation).
@@ -29,7 +32,7 @@ from blackout.sim.events import (
 )
 from blackout.sim.hashing import digest
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 _ID = r"^[A-Za-z][A-Za-z0-9_]*$"
 
 
@@ -124,25 +127,36 @@ class GeneratorInfo(_Spec):
 
 
 class Validity(_Spec):
-    """Validity results recorded at generation. The full filter (with the reference) is M8."""
+    """Validity and tier results recorded at generation (docs/PRD.md section 8.6).
+
+    Do-nothing, the reference and Rules are measured on the scenario's own level, except
+    ``rules_l0_critical_downtime`` (Rules at L0 decides the tier, so every level of a seed
+    records the same value). ``reference_min_slack`` is the tightest moment of the reference
+    run: the fewest minutes of fuel any hospital running on its generator had left.
+    """
 
     do_nothing_critical_downtime: NonNegativeInt
     do_nothing_trips: NonNegativeInt
     reference_critical_downtime: NonNegativeInt | None = None
+    reference_min_slack: NonNegativeInt | None = None
+    rules_l0_critical_downtime: NonNegativeInt | None = None
+
+
+Tier = Literal["easy", "medium", "hard"]
 
 
 Split = Literal["handmade", "dev-v0", "dev", "test"]
 
 
 class Scenario(_Spec):
-    schema_version: Literal[4] = SCHEMA_VERSION
+    schema_version: Literal[5] = SCHEMA_VERSION
     id: str = Field(pattern=_ID)
     description: str = ""
     template: str | None = Field(default=None, pattern=r"^T\d\d$")
     seed: NonNegativeInt | None = None
     level: int = Field(default=0, ge=0, le=3, description="Messiness: L0 clean to L3 adversarial.")
     split: Split = "handmade"
-    tier: Literal["easy", "medium", "hard"] | None = None
+    tier: Tier | None = None
     horizon: PositiveInt = 240
     city: CitySpec = Field(default_factory=CitySpec)
     hospitals: list[HospitalSpec]
@@ -291,15 +305,24 @@ def world_digest(scenario: Scenario) -> str:
     """Digest of the physical world and the facts reported about it, at what ticks.
 
     It leaves out the scenario's ID and level, its content hash, the world hash it records,
-    and how each report was worded (text, bank, phrasings, noise). Every level made from one
-    seed must give the same value: same world, same facts at the same ticks (PRD 8.4).
+    the validity results of its own level, and how each report was worded (text, bank,
+    phrasings, noise). Only the reports every level shares (``from_level`` 0) count, without
+    their IDs: an L2 or L3 report slots in by tick, which renumbers the ones after it. Every
+    level made from one seed must give the same value: same world, same facts at the same
+    ticks (PRD 8.4).
     """
-    data = scenario.model_dump(mode="json", exclude={"id", "level", "content_hash"})
+    data = scenario.model_dump(mode="json", exclude={"id", "level", "content_hash", "validity"})
     if data["generator"] is not None:
         del data["generator"]["world_hash"]
+    events = []
     for event in data["events"]:
         if event["kind"] == "report":
-            event.pop("text")
+            if event["truth"]["from_level"] > 0:
+                continue
+            for key in ("id", "text"):
+                event.pop(key)
             for key in _RENDERING[1:]:
                 event["truth"].pop(key)
+        events.append(event)
+    data["events"] = events
     return digest(data)

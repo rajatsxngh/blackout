@@ -87,3 +87,13 @@ PUBLIC_SOURCES = (
     "Caller on the non-emergency line",
 )
 GRID_CONTROL = "Grid control center"
+
+AUTHORITIES = (
+    "the Mayor's office",
+    "City Emergency Management",
+    "the Grid Operations Director",
+    "the Fire Chief",
+    "the Governor's emergency desk",
+    "the Utility Commission",
+)
+"""Who an L3 injection claims to speak for. It always arrives on an unverified public line."""

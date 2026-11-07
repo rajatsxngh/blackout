@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t04_s0_l0",
   "description": "T04 Breakdown mid-delivery. Quarry Substation (S1) is down from the start (200 min of crew work) and West's backup feeder is out, so Good Samaritan Hospital (H1) is on its generator. T2 starts at O5 with 500 L, 16 min from H1, and breaks down for good at t=7. H1 has 60 L: enough for T1 to load and deliver after the breakdown with 5 min to spare.",
   "template": "T04",
@@ -335,8 +335,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -363,8 +365,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -391,8 +395,10 @@
       "text": null,
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -407,12 +413,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "e4c2dccd074cdc03b5e2b69de5475b23"
+    "world_hash": "71634ed61d7a484c5b540e83df15169b"
   },
   "validity": {
     "do_nothing_critical_downtime": 210,
     "do_nothing_trips": 0,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "5e939b4581480040897bd6f4ae1ec5aa"
+  "content_hash": "d355ec21f0fcfd4774e4e2e661359f59"
 }

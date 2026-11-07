@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "trap_depot",
   "description": "A planning trap for greedy dispatch (M7). Eastside Hospital (H1, Cedar & 1st) is off the grid with 17 minutes of fuel. The only truck is empty, parked at the West Yard depot (D2, Alder & 1st). The depot nearest the hospital is South Yard (D1, Cedar & 2nd), but driving there first takes 8 minutes; loading where the truck already is and driving 6 minutes lands the fuel at minute 16 instead of 20.",
   "horizon": 60,

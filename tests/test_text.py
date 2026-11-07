@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from blackout.info.reports import Channel, FactType, close_enough
 from blackout.scenarios.config import load_city_config
 from blackout.scenarios.seeding import Rng
-from blackout.scenarios.text.banks import MIN_PHRASINGS, FactBank, PhrasingBank, load_bank
+from blackout.scenarios.text.banks import TRAIN_MIN_PHRASINGS, FactBank, PhrasingBank, load_bank
 from blackout.scenarios.text.noise import NoiseLog, add_typos, apply_noise, capitalize, typo
 from blackout.scenarios.text.render import TimedFact, callsign, render
 from blackout.scenarios.text.slots import (
@@ -42,7 +42,7 @@ def gazette() -> Gazette:
 def test_train_bank_covers_every_fact_type(bank: PhrasingBank) -> None:
     assert bank.name == "train"
     for kind in FactType:
-        assert len(bank.facts[kind].phrasings) >= MIN_PHRASINGS
+        assert len(bank.facts[kind].phrasings) >= TRAIN_MIN_PHRASINGS
     failed = bank.facts[FactType.SUBSTATION_STATUS].candidates(Channel.CREW_RADIO, "failed")
     assert len(failed) >= 5
     assert all(p.value == "failed" for p in failed)
@@ -72,7 +72,7 @@ def _bank(**changes: Any) -> dict[str, Any]:
             ),
             "state value",
         ),
-        (lambda b: b.update(phrasings=b["phrasings"][:3]), "at least 10"),
+        (lambda b: b.update(phrasings=b["phrasings"][:3]), "at least 8"),
     ],
 )
 def test_bank_checks_its_phrasings(change: Any, message: str) -> None:

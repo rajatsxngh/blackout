@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "trap_assignment",
   "description": "A planning trap for greedy dispatch (M7). Two off-grid hospitals run on generators: Northside Clinic (H1, Alder & 1st) has 14 minutes of fuel, Eastside Hospital (H2, Cedar & 1st) has 16. Two loaded trucks: T1 at Birch & 1st is close to both (4 and 6 minutes), T2 at Alder & 2nd only reaches H1 in time (8 minutes; 18 to H2). Earliest-deadline-first gives H1 the nearest truck and leaves H2 dark for 7 minutes; sending T2 to H1 and T1 to H2 saves both.",
   "horizon": 60,

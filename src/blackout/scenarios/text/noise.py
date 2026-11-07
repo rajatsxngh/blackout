@@ -139,8 +139,9 @@ def _has_subject(part: str) -> bool:
 
 
 def _first_sentence_end(text: str) -> int | None:
-    """Index of the period ending the first sentence, or None if it doesn't end with one."""
-    for match in re.finditer(r"\.(\s|$)", text):
+    """Index of the period ending the first sentence, or None if it doesn't end with one.
+    The period of "St." in a name ("St. Mary's Hospital") doesn't end a sentence (D060)."""
+    for match in re.finditer(r"(?<!St)\.(\s|$)", text):
         return match.start()
     return None
 

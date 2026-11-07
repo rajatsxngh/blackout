@@ -13,6 +13,7 @@ from typer.testing import CliRunner
 
 from blackout import __version__
 from blackout.cli import app
+from blackout.scenarios.suites import SUITES, Suite
 from tests.helpers import DEMO, ROOT, read_lines, write_lines
 
 PYPROJECT = ROOT / "pyproject.toml"
@@ -156,33 +157,37 @@ def test_run_scripted_without_a_script_fails(tmp_path: Path) -> None:
     assert "script not found" in result.output
 
 
-@pytest.mark.usefixtures("in_repo_root")
-def test_gen_check_passes_on_the_committed_suite() -> None:
-    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--check", "--sample", "3"])
-    assert result.exit_code == 0, result.output
-    assert "18 scenarios in" in result.output
-    assert "Sample of 3 L1 reports" in result.output
+TINY = Suite("dev", "tiny", ("T04",), seeds=1, levels=(0, 1, 2, 3), tiers=("medium",))
 
 
-@pytest.mark.usefixtures("in_repo_root")
-def test_gen_writes_a_suite_elsewhere(tmp_path: Path) -> None:
+@pytest.fixture
+def tiny_suite(monkeypatch: pytest.MonkeyPatch) -> Suite:
+    """A one-world suite, so gen runs in seconds."""
+    monkeypatch.setitem(SUITES, "tiny", TINY)
+    return TINY
+
+
+@pytest.mark.usefixtures("in_repo_root", "tiny_suite")
+def test_gen_writes_checks_and_samples_a_suite(tmp_path: Path) -> None:
     out = tmp_path / "suite"
-    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--out", str(out)])
+    result = runner.invoke(app, ["gen", "--suite", "tiny", "--out", str(out), "--sample", "40"])
     assert result.exit_code == 0, result.output
-    assert len(list(out.glob("dev0_*.json"))) == 18
-    assert (out / "manifest.json").read_text(encoding="utf-8") == (
-        ROOT / "scenarios" / "dev-v0" / "manifest.json"
-    ).read_text(encoding="utf-8")
+    assert len(list(out.glob("tiny_*.json"))) == 4
+    assert "Tier mix (worlds): easy 0, medium 1, hard 0" in result.output
+    assert "[FALSE]" in result.output
+    assert "[INJECTION" in result.output
+    again = runner.invoke(app, ["gen", "--suite", "tiny", "--check", "--out", str(out)])
+    assert again.exit_code == 0, again.output
+    assert "4 scenarios in" in again.output
+    missing = runner.invoke(app, ["gen", "--suite", "tiny", "--check", "--out", str(tmp_path)])
+    assert missing.exit_code == 1
+    assert "missing" in missing.output
 
 
-@pytest.mark.usefixtures("in_repo_root")
-def test_gen_check_fails_when_files_differ(tmp_path: Path) -> None:
-    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--check", "--out", str(tmp_path)])
-    assert result.exit_code == 1
-    assert "missing" in result.output
-
-
-def test_gen_refuses_unknown_suites() -> None:
-    result = runner.invoke(app, ["gen", "--suite", "test"])
+def test_gen_refuses_unknown_and_frozen_suites() -> None:
+    result = runner.invoke(app, ["gen", "--suite", "nowhere"])
     assert result.exit_code != 0
-    assert "M8" in result.output
+    assert "unknown suite" in result.output
+    frozen = runner.invoke(app, ["gen", "--suite", "dev-v0"])
+    assert frozen.exit_code != 0
+    assert "frozen" in frozen.output

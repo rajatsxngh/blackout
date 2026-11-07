@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t02_s1_l1",
   "description": "T02 Cascade. Linden Substation (S1) fails at t=18 (90 min of crew work). Its zones fall back to Kingsley Substation (S2), 5500 kW over its 45000 kW capacity; shedding residential load (35000 kW) prevents the trip.",
   "template": "T02",
@@ -335,8 +335,10 @@
       "text": "Charge nurse Silva here. Genny room at Bayside Clinic, the level is roughly 230 L. Please hurry.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -369,8 +371,10 @@
       "text": "Facilities manager Abara here. Okay, the backup tank at St. Jude's Hospital is shoing about 210 L, and the ICU is on that gen.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02"
@@ -404,8 +408,10 @@
       "text": "Yard manager Tanaka here. Eastgate Depot here, we've got three thousand L ready to go.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F03"
@@ -437,8 +443,10 @@
       "text": "Grid control here. Linden Substation has failed, last I checked. It's not a trip, it's real damage: a transformer fire.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F04"
@@ -470,8 +478,10 @@
       "text": "Best guess for the Linden substation is 90 minutes of repair time.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F05"
@@ -488,12 +498,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "9f2df6eb378ce596a59ae5c80ff7e0b5"
+    "world_hash": "8c82d646ceeafca7b173d2f22b7e16be"
   },
   "validity": {
     "do_nothing_critical_downtime": 374,
     "do_nothing_trips": 2,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "696bdd4c4c3d208dac4074dfe5a9aabe"
+  "content_hash": "d4907bd7cfc72ee1944407209e3856b5"
 }

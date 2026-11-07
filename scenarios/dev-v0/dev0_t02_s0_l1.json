@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "dev0_t02_s0_l1",
   "description": "T02 Cascade. Ashford Substation (S2) fails at t=18 (90 min of crew work). Its zones fall back to Foundry Substation (S3), 3000 kW over its 51500 kW capacity; shedding residential load (27000 kW) prevents the trip.",
   "template": "T02",
@@ -335,8 +335,10 @@
       "text": "Hi, this is Facilities manager Patel. Can someone get fuel to the hosp at Cedar & 6th? We've only got about 160 liters.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F01"
@@ -373,8 +375,10 @@
       "text": "This is Line crew 2. Ashford sub went dark a few minutes ago. We're seeing a blown main breaker. Also, fixing Ashforrd Substation will take an hour & a half.",
       "truth": {
         "is_true": true,
-        "cue": null,
+        "from_level": 0,
+        "cues": [],
         "stale_of": null,
+        "corrects": null,
         "injection": null,
         "fact_ids": [
           "F02",
@@ -398,12 +402,14 @@
     "version": 1,
     "config_digest": "b97054402dbac563bdba669bb2ff88a7",
     "attempt": 0,
-    "world_hash": "d17fd6cd40a17ba7ed6b2755aae0ac95"
+    "world_hash": "f97d26c3bbff419d49c3c94341ddb796"
   },
   "validity": {
     "do_nothing_critical_downtime": 140,
     "do_nothing_trips": 1,
-    "reference_critical_downtime": null
+    "reference_critical_downtime": null,
+    "reference_min_slack": null,
+    "rules_l0_critical_downtime": null
   },
-  "content_hash": "7f0340b0673f5d1a60f92daab1a44a46"
+  "content_hash": "0647fc591d80f30ac2a8c82be8bb2670"
 }
