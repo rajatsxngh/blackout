@@ -10,8 +10,8 @@ schema version ``v``, its ``type`` and its tick ``t``:
 
 A run log is deterministic: the same run gives the same text on any machine. Anything about
 the machine or the wall clock goes in summary.json instead. Fields marked "reserved" stay empty
-until the milestone that fills them (LLM usage in M10, beliefs in M4, parsing and injection
-data in M8 and M10).
+until the milestone that fills them (LLM usage in M10, parsing and injection data in M8 and
+M10). Since M4, ``dp.belief`` holds the contestant's belief digest after it decided.
 """
 
 from typing import Annotated, Any, Literal
@@ -119,7 +119,7 @@ class DecisionPointRecord(_Record):
     triggers: list[TriggerRecord]
     obs: str = Field(description="Digest of the observation the role was shown.")
     actions: list[ActionRecord] = Field(default_factory=list)
-    belief: dict[str, Any] | None = None  # reserved for M4: the belief digest for the viewer
+    belief: dict[str, Any] | None = None  # the contestant's belief digest, if it keeps one
     notes: str | None = None  # reserved for M10: notes an agent carries to its next turn
     llm: LlmRecord | None = None  # reserved for M10
     info: dict[str, Any] | None = None  # reserved for M8 and M10: parse and injection data

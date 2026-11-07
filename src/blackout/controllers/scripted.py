@@ -9,6 +9,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, NonNegativeInt
 
+from blackout.info.belief import BeliefState
 from blackout.info.observation import Observation
 from blackout.sim.actions import Action, AnyAction
 
@@ -37,11 +38,14 @@ class ScriptedController:
     def __init__(self, script: Script) -> None:
         self._steps = sorted(script.steps, key=lambda step: step.at_tick)
         self._next = 0
+        self.belief = BeliefState()
 
     def reset(self) -> None:
         self._next = 0
+        self.belief = BeliefState()
 
     def decide(self, observation: Observation) -> Sequence[AnyAction]:
+        self.belief.observe(observation)  # not used to decide; logged for the viewer
         due: list[AnyAction] = []
         while self._next < len(self._steps) and self._steps[self._next].at_tick <= observation.tick:
             due.append(self._steps[self._next].action)

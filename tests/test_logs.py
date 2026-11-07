@@ -7,10 +7,22 @@ from typing import Any
 import pytest
 
 from blackout.controllers.do_nothing import DoNothingController
+from blackout.controllers.scripted import Script, ScriptedController
 from blackout.logs.reader import read_log
+from blackout.logs.replay import replay
 from blackout.logs.schema import LOG_FILE, SUMMARY_FILE, LogFormatError, UnsupportedLogVersionError
 from blackout.scenarios.schema import load_scenario, scenario_digest
-from tests.helpers import CASCADE, DEMO, handmade_controller, read_lines, record, write_lines
+from blackout.scoring.scorer import score
+from tests.helpers import (
+    CASCADE,
+    DEMO,
+    handmade_controller,
+    make_scenario,
+    read_lines,
+    record,
+    report,
+    write_lines,
+)
 
 
 @pytest.fixture
@@ -42,7 +54,7 @@ def test_events_and_decisions_are_recorded_where_they_happened(tmp_path: Path) -
     demo = read_log(record(DEMO, handmade_controller(DEMO, "scripted"), tmp_path).log_path)
     assert demo.ticks[0].ev == [{"edge": "M3-M4", "kind": "road_block", "tick": 0}]
     stuck = next(d for d in demo.decisions if d.t == 18)
-    assert [t.kind for t in stuck.triggers] == ["vehicle_stuck"]
+    assert [t.kind for t in stuck.triggers] == ["road_status", "vehicle_stuck"]
     (reroute,) = stuck.actions
     assert reroute.raw["kind"] == "reroute"
     assert (reroute.accepted, reroute.route) == (True, ["M3", "E3", "E4", "M4", "M5"])
@@ -124,3 +136,47 @@ def test_unreadable_files_are_rejected_clearly(tmp_path: Path) -> None:
     (tmp_path / "list.jsonl").write_text("[1, 2]\n", encoding="ascii")
     with pytest.raises(LogFormatError, match="a record must be a JSON object"):
         read_log(tmp_path / "list.jsonl")
+
+
+def test_decision_records_carry_the_contestants_belief(tmp_path: Path) -> None:
+    demo = read_log(record(DEMO, handmade_controller(DEMO, "scripted"), tmp_path).log_path)
+    before = next(d for d in demo.decisions if d.t == 5)
+    stuck = next(d for d in demo.decisions if d.t == 18)
+    assert before.belief is not None
+    assert stuck.belief is not None
+    assert before.belief["roads"] == {}
+    assert stuck.belief["roads"]["M3-M4"]["value"] == "blocked"
+    assert stuck.belief["hospitals"]["H1"]["fuel_l"]["value"] == 80 - 2 * 18
+
+
+def test_reports_and_confirmations_are_logged_replayed_and_scored(tmp_path: Path) -> None:
+    scenario = make_scenario(events=[report("R1", 2), report("R2", 3, source_class="unverified")])
+    script = Script.model_validate(
+        {
+            "steps": [
+                {"at_tick": 2, "action": {"kind": "confirm_report", "report_id": "R1"}},
+                {"at_tick": 2, "action": {"kind": "confirm_report", "report_id": "R2"}},
+            ]
+        }
+    )
+    recorded = record(scenario, ScriptedController(script), tmp_path)
+    log = read_log(recorded.log_path)
+    assert [ev["kind"] for t in log.ticks for ev in t.ev] == ["report", "report", "confirm_reply"]
+    first = log.decisions[1]
+    assert [(a.accepted, a.reason) for a in first.actions] == [
+        (True, None),
+        (False, "unknown_report"),
+    ]
+    assert replay(log).episode.run_hash == recorded.episode.run_hash
+    card = score(log)
+    assert card.ok
+    assert card.actions_by_kind == {"confirm_report": 2}
+    assert card.actions_rejected == {"unknown_report": 1}
+
+
+def test_a_log_of_an_older_scenario_schema_is_refused_clearly(tmp_path: Path) -> None:
+    records = read_lines(record(DEMO, DoNothingController(), tmp_path).log_path)
+    records[0]["scenario"]["spec"]["schema_version"] = 2
+    log = read_log(write_lines(records, tmp_path / "old.jsonl"))
+    with pytest.raises(LogFormatError, match="schema version 2"):
+        log.scenario()

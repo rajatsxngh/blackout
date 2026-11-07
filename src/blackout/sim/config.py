@@ -9,7 +9,10 @@ from blackout.sim.entities import Priority
 
 @dataclass(frozen=True, slots=True)
 class SimConfig:
-    """Timing and weighting rules shared by every scenario (docs/PRD.md sections 8.1-8.2)."""
+    """Timing, weighting and information rules shared by every scenario (PRD sections 8.1-8.4).
+
+    It's logged in every run header, so a replay uses exactly the rules the run had.
+    """
 
     load_minutes: int = 5
     unload_minutes: int = 5
@@ -20,6 +23,11 @@ class SimConfig:
     weight_critical: int = 100
     weight_essential: int = 10
     weight_residential: int = 1
+    # Information layer (PRD section 8.4). The delay makes hospital and depot readings D ticks
+    # old (a stress modifier); fleet, grid and road telemetry are always real-time.
+    telemetry_delay_ticks: int = 0
+    confirm_delay_ticks: int = 8
+    confirm_limit: int = 4
 
     def weight(self, priority: Priority) -> int:
         """How much one kW-minute of unmet demand counts, by zone priority."""

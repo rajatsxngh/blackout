@@ -9,13 +9,20 @@ A small simulated city loses power. Different contestants try to keep three hosp
 
 ## Status
 
-Milestones **M0–M3** of 17 are done: foundation, the engine with its logistics, the power grid, and run logs. A deterministic city now runs end to end:
+Milestones **M0–M4** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, and the information layer. A deterministic city now runs end to end:
 - Trucks haul fuel from depots to hospitals, and generators burn down.
 - Hidden road blocks stop vehicles until somebody reroutes them.
 - Substations fail, overload and trip in cascades unless load is shed.
 - Crews repair or reset substations.
 
-Every run leaves a small, deterministic log that can be replayed and checked tick by tick, and scored independently of the contestant. AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
+Contestants never see the truth, only observations:
+- Telemetry, filtered by role (power, hospitals, fuel, transport, or all of them), optionally with delayed hospital and depot readings.
+- Radio reports, routed to roles by the channel they came in on.
+- Replies to `confirm_report`: verified dispatch checks a report, 8 minutes later, at most 4 times a run.
+
+Every contestant is woken only by changes in its own observations, so a hidden block can't wake anybody; a property test checks this. Each contestant keeps a belief built from what it was told, and a dependency graph built from that belief answers five questions: what depends on X, when does a hospital fail, what's its critical resupply path, what cascades if a substation goes, and which hospitals are at risk.
+
+Every run leaves a small, deterministic log that can be replayed and checked tick by tick, and scored independently of the contestant. Since M4 the log also records what the contestant believed at each decision. AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
 
 ## Try it
 
@@ -52,6 +59,8 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 |---|---|
 | `src/blackout/sim/` | The engine: map, routing, entities, events, actions, validation, power flow, physics |
 | `src/blackout/env.py` | The `reset` / `act` / `advance` / `step` API that every contestant drives |
+| `src/blackout/info/` | The information layer: telemetry, roles, reports, `confirm_report`, wake triggers, beliefs |
+| `src/blackout/graph/` | The dependency graph built from a belief, and its five queries |
 | `src/blackout/controllers/` | Contestants (do-nothing and scripted so far) |
 | `src/blackout/logs/` | Run logs: writer, reader and verified replay |
 | `src/blackout/scoring/` | The scorer: metrics from a log alone, cross-checked |

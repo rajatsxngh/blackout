@@ -13,7 +13,7 @@ import pytest
 SRC = Path(__file__).resolve().parents[1] / "src" / "blackout"
 
 # Packages whose behaviour must be a pure function of their inputs (PRD sections 8.2 and 8.7).
-DETERMINISTIC_PACKAGES = ("sim", "controllers/solver")
+DETERMINISTIC_PACKAGES = ("sim", "info", "graph", "controllers/solver")
 FORBIDDEN_MODULES = frozenset({"random", "secrets", "time", "uuid", "numpy.random"})
 CLOCK_METHODS = frozenset({"now", "utcnow", "today"})
 CLOCK_OWNERS = frozenset({"datetime", "date"})

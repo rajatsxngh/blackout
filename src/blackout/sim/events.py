@@ -11,6 +11,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, PositiveInt
 
+from blackout.info.reports import ConfirmDue, Report
+
 
 class _Event(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -57,9 +59,10 @@ class SubstationFail(_Event):
 
 
 ScenarioEvent = Annotated[
-    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail,
+    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail | Report,
     Field(discriminator="kind"),
 ]
+"""Physical events change the world; a ``Report`` (blackout.info.reports) only informs."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,7 +73,14 @@ class TruckRepair:
 
 
 type QueueItem = (
-    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail | TruckRepair
+    RoadBlock
+    | RoadClear
+    | TruckBreakdown
+    | BurnRateChange
+    | SubstationFail
+    | TruckRepair
+    | Report
+    | ConfirmDue
 )
 
 
@@ -78,10 +88,15 @@ def event_dict(item: QueueItem) -> dict[str, object]:
     """A JSON-ready description of an applied event, for run logs."""
     if isinstance(item, TruckRepair):
         return {"kind": "truck_repair", "truck": item.truck}
+    if isinstance(item, ConfirmDue):
+        return {"kind": "confirm_reply", "report": item.report_id, "role": item.role}
+    if isinstance(item, Report):
+        return {"kind": "report", "id": item.id}  # the full report is in the embedded scenario
     return item.model_dump(mode="json")
 
 
-# Order within one tick: clears before blocks, and repairs before new breakdowns.
+# Order within one tick: clears before blocks, and repairs before new breakdowns. Reports and
+# confirm replies come last, so a confirm reply describes the world after the tick's events.
 _PRIORITY: dict[type, int] = {
     RoadClear: 0,
     RoadBlock: 1,
@@ -89,6 +104,8 @@ _PRIORITY: dict[type, int] = {
     SubstationFail: 3,
     TruckRepair: 4,
     TruckBreakdown: 5,
+    Report: 6,
+    ConfirmDue: 7,
 }
 
 

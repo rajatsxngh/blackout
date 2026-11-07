@@ -2,6 +2,7 @@
 
 Movement actions (dispatch_truck, reroute, assign_crew) give a vehicle a path; a vehicle gets at
 most one per decision point. Switching actions (shed_load, restore_load) act on a zone instantly.
+``confirm_report`` asks verified dispatch to check a report; the reply comes 8 ticks later.
 """
 
 from dataclasses import dataclass
@@ -78,12 +79,20 @@ class RestoreLoad(_Action):
     zone_id: str
 
 
+class ConfirmReport(_Action):
+    """Ask verified dispatch whether a report's claims are true (at most 4 per run)."""
+
+    kind: Literal["confirm_report"] = "confirm_report"
+    report_id: str
+
+
 type MovementAction = DispatchTruck | Reroute | AssignCrew
 type SwitchAction = ShedLoad | RestoreLoad
-type AnyAction = DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad
+type AnyAction = DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad | ConfirmReport
 
 Action = Annotated[
-    DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad, Field(discriminator="kind")
+    DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad | ConfirmReport,
+    Field(discriminator="kind"),
 ]
 
 
@@ -112,6 +121,8 @@ class RejectReason(StrEnum):
     UNKNOWN_ZONE = "unknown_zone"
     ZONE_ALREADY_SHED = "zone_already_shed"
     ZONE_NOT_SHED = "zone_not_shed"
+    UNKNOWN_REPORT = "unknown_report"
+    CONFIRM_LIMIT = "confirm_limit"
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,6 +147,8 @@ class ActionResult:
             what = f"{action.vehicle_id} reroute"
         elif isinstance(action, ShedLoad):
             what = f"shed {action.zone_id}"
+        elif isinstance(action, ConfirmReport):
+            what = f"confirm {action.report_id}"
         else:
             what = f"restore {action.zone_id}"
         outcome = "ok" if self.accepted else f"REJECTED ({self.reason})"

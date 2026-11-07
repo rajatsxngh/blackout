@@ -17,6 +17,7 @@ from blackout.scenarios.schema import Scenario, load_scenario
 from blackout.sim.actions import (
     AnyAction,
     AssignCrew,
+    ConfirmReport,
     DispatchTruck,
     Reroute,
     RestoreLoad,
@@ -122,6 +123,27 @@ def grid(**overrides: Any) -> dict[str, Any]:
     return spec
 
 
+def report(
+    report_id: str,
+    tick: int,
+    *facts: dict[str, Any],
+    channel: str = "public",
+    source_class: str = "field",
+    **extra: Any,
+) -> dict[str, Any]:
+    """A report event. Without facts, it claims road A1-B1 is blocked."""
+    claims = list(facts) or [{"type": "road_blocked", "subject": "A1-B1"}]
+    return {
+        "kind": "report",
+        "tick": tick,
+        "id": report_id,
+        "channel": channel,
+        "source_class": source_class,
+        "source": f"Source of {report_id}",
+        "facts": claims,
+    } | extra
+
+
 def zone(
     zone_id: str, column: str, demand_kw: int, priority: str, primary: str, alternate: str | None
 ) -> dict[str, Any]:
@@ -214,6 +236,9 @@ class RandomController:
         for _ in range(rng.randint(0, 2) if observation.zones else 0):
             switch = rng.choice([ShedLoad, RestoreLoad])
             actions.append(switch(zone_id=rng.choice(zones)))
+        reports = [r.id for r in observation.reports] + ["R99"]
+        if rng.random() < 0.3:
+            actions.append(ConfirmReport(report_id=rng.choice(reports)))
         return actions
 
 

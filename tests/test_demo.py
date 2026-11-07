@@ -51,7 +51,7 @@ def test_scripted_demo_tells_the_story() -> None:
     }
 
     stuck = by_tick[18]
-    assert {t.kind for t in stuck.triggers} == {TriggerKind.VEHICLE_STUCK}
+    assert {t.kind for t in stuck.triggers} == {TriggerKind.VEHICLE_STUCK, TriggerKind.ROAD_STATUS}
     reroute = stuck.results[0]
     assert reroute.accepted
     assert reroute.route == ("M3", "E3", "E4", "M4", "M5")

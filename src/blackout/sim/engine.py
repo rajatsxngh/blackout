@@ -9,6 +9,7 @@ matches the state the next minute starts from.
 
 from collections.abc import Sequence
 
+from blackout.info.reports import ConfirmDue, Report
 from blackout.scenarios.schema import Scenario
 from blackout.sim.actions import (
     AssignCrew,
@@ -124,6 +125,8 @@ class Engine:
         for event in scenario.events:
             self.queue.push(event.tick, event)
         self.applied: list[QueueItem] = []  # events applied at the current tick (for run logs)
+        # Reports and confirm replies that fell due at the current tick, for the info layer.
+        self.released: list[Report | ConfirmDue] = []
         self._signals: list[Trigger] = []
         self._refresh_power()
         self._signals.clear()  # the starting state isn't news
@@ -202,9 +205,11 @@ class Engine:
     def apply_due_events(self) -> None:
         due = self.queue.pop_due(self.tick)
         self.applied = due
-        for item in due:
+        self.released = [item for item in due if isinstance(item, Report | ConfirmDue)]
+        physical = [item for item in due if not isinstance(item, Report | ConfirmDue)]
+        for item in physical:
             self._apply_event(item)
-        if due:
+        if physical:
             self._refresh_power()
 
     def _apply_event(self, item: QueueItem) -> None:
@@ -221,6 +226,8 @@ class Engine:
                 self._break_down(self.trucks[truck_id], repair_minutes)
             case TruckRepair(truck=truck_id):
                 self._repair_truck(self.trucks[truck_id])
+            case Report() | ConfirmDue():  # information only: the info layer delivers these
+                pass
 
     def _fail(self, substation: Substation, repair_minutes: int) -> None:
         lost = ""
@@ -278,6 +285,7 @@ class Engine:
     def run_minute(self) -> None:
         """Advance the world by one minute, from ``tick`` to ``tick + 1``."""
         self.applied = []
+        self.released = []
         self._power_step()
         self._burn_fuel()
         for truck_id in sorted(self.trucks):

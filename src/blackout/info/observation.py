@@ -1,114 +1,43 @@
 """Observations: the only window contestants have onto the world (invariant I2).
 
-M1-M2 provide the full view: every piece of telemetry, with no delay and no role filtering. It
-still never includes hidden truth: road blocks nobody has discovered, how long a failed
-substation will take to repair (until a crew is on site), or future events. M4 adds roles,
-telemetry delays and radio reports on top of this.
+An observation is one role's view at a decision point (docs/PRD.md section 8.4): the header
+(tick and the triggers that woke it), the telemetry in its scope, reports routed to it since
+its last decision point, confirm replies that arrived, its confirm requests still waiting for a
+reply, and how many confirmations the run has left.
+Sections outside a role's scope are empty. Nothing in an observation is hidden truth.
 """
 
-from dataclasses import asdict, dataclass, field, fields
+from dataclasses import dataclass, field, fields
+from enum import Enum
 
-from blackout.sim.city import City, EdgeId, NodeId
-from blackout.sim.engine import Engine
-from blackout.sim.entities import (
-    Crew,
-    HospitalStatus,
-    Priority,
-    SubstationState,
-    Task,
-    Truck,
-    VehicleState,
+from pydantic import BaseModel
+
+from blackout.info.reports import ConfirmReply, ReportView
+from blackout.info.roles import Section, sees
+from blackout.info.telemetry import (
+    CrewView,
+    DepotView,
+    HospitalView,
+    SubstationView,
+    Telemetry,
+    TruckView,
+    ZoneView,
 )
+from blackout.sim.city import City, EdgeId
 from blackout.sim.hashing import digest
 from blackout.sim.triggers import Trigger
 
-
-@dataclass(frozen=True, slots=True)
-class TruckView:
-    id: str
-    state: VehicleState
-    at: NodeId
-    next_node: NodeId | None
-    elapsed: int
-    route: tuple[NodeId, ...]
-    load_l: int
-    capacity_l: int
-    task: Task | None
-    work_left: int
-
-    @property
-    def anchor(self) -> NodeId:
-        """Where a new route must start: the node ahead while driving a road, else here."""
-        return self.at if self.next_node is None else self.next_node
-
-
-@dataclass(frozen=True, slots=True)
-class CrewView:
-    id: str
-    state: VehicleState
-    at: NodeId
-    next_node: NodeId | None
-    elapsed: int
-    route: tuple[NodeId, ...]
-    substation: str | None
-
-    @property
-    def anchor(self) -> NodeId:
-        return self.at if self.next_node is None else self.next_node
-
-
-@dataclass(frozen=True, slots=True)
-class HospitalView:
-    id: str
-    name: str
-    node: NodeId
-    zone: str | None
-    status: HospitalStatus
-    powered: bool
-    fuel_l: int
-    tank_l: int
-    burn_lpm: int
-    ttf_minutes: int | None
-
-
-@dataclass(frozen=True, slots=True)
-class DepotView:
-    id: str
-    name: str
-    node: NodeId
-    stock_l: int
-
-
-@dataclass(frozen=True, slots=True)
-class SubstationView:
-    """Substation telemetry. ``work_left`` is known only once a crew is working on it."""
-
-    id: str
-    name: str
-    node: NodeId
-    state: SubstationState
-    capacity_kw: int
-    load_kw: int
-    overloaded_minutes: int
-    work_left: int | None
-    crew: str | None
-
-
-@dataclass(frozen=True, slots=True)
-class ZoneView:
-    id: str
-    name: str
-    nodes: tuple[NodeId, ...]
-    priority: Priority
-    demand_kw: int
-    primary: str
-    alternate: str | None
-    shed: bool
-    fed_by: str | None
-
-    @property
-    def powered(self) -> bool:
-        return self.fed_by is not None
+__all__ = [
+    "CrewView",
+    "DepotView",
+    "HospitalView",
+    "Observation",
+    "SubstationView",
+    "TruckView",
+    "ZoneView",
+    "build_observation",
+    "plain",
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,6 +54,10 @@ class Observation:
     zones: tuple[ZoneView, ...]
     known_blocks: tuple[EdgeId, ...]
     city: City = field(repr=False)
+    reports: tuple[ReportView, ...] = ()
+    confirmations: tuple[ConfirmReply, ...] = ()
+    confirms_left: int = 0
+    confirms_pending: tuple[str, ...] = ()
 
     def truck(self, truck_id: str) -> TruckView:
         return next(t for t in self.trucks if t.id == truck_id)
@@ -146,104 +79,61 @@ class Observation:
 
     def to_dict(self) -> dict[str, object]:
         """Everything in the observation except the static map, in JSON-ready form."""
-        return {f.name: _plain(getattr(self, f.name)) for f in fields(self) if f.name != "city"}
+        return {f.name: plain(getattr(self, f.name)) for f in fields(self) if f.name != "city"}
 
     def digest(self) -> str:
         """A content hash, so run logs can record exactly what a contestant was shown."""
         return digest(self.to_dict())
 
 
-def _plain(value: object) -> object:
-    if isinstance(value, tuple):
-        return [_plain(item) for item in value]
+def plain(value: object) -> object:
+    """``value`` as JSON-ready data: dataclasses and models become dicts, tuples lists."""
+    if isinstance(value, BaseModel):
+        return value.model_dump(mode="json")
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, tuple | list):
+        return [plain(item) for item in value]
+    if isinstance(value, dict):
+        return {key: plain(item) for key, item in value.items()}
     if hasattr(value, "__dataclass_fields__"):
-        return asdict(value)  # type: ignore[arg-type]
+        return {f.name: plain(getattr(value, f.name)) for f in fields(value)}  # type: ignore[arg-type]
     return value
 
 
-def full_view(engine: Engine, role: str, triggers: tuple[Trigger, ...]) -> Observation:
-    """Everything telemetry shows right now. Excludes hidden truth and future events."""
+def build_observation(
+    role: str,
+    tick: int,
+    horizon: int,
+    city: City,
+    seen: Telemetry,
+    *,
+    triggers: tuple[Trigger, ...] = (),
+    reports: tuple[ReportView, ...] = (),
+    confirmations: tuple[ConfirmReply, ...] = (),
+    confirms_left: int = 0,
+    confirms_pending: tuple[str, ...] = (),
+) -> Observation:
+    """``role``'s observation: the telemetry sections in its scope, and its own inbox."""
+
+    def part[T](section: Section, views: tuple[T, ...]) -> tuple[T, ...]:
+        return views if sees(role, section) else ()
+
     return Observation(
         role=role,
-        tick=engine.tick,
-        horizon=engine.horizon,
+        tick=tick,
+        horizon=horizon,
         triggers=triggers,
-        trucks=tuple(_truck(engine.trucks[k]) for k in sorted(engine.trucks)),
-        crews=tuple(_crew(engine.crews[k]) for k in sorted(engine.crews)),
-        hospitals=tuple(
-            HospitalView(
-                id=h.id,
-                name=h.name,
-                node=h.node,
-                zone=h.zone,
-                status=h.status,
-                powered=h.powered,
-                fuel_l=h.fuel_l,
-                tank_l=h.tank_l,
-                burn_lpm=h.burn_lpm,
-                ttf_minutes=h.ttf_minutes,
-            )
-            for h in (engine.hospitals[k] for k in sorted(engine.hospitals))
-        ),
-        depots=tuple(
-            DepotView(id=d.id, name=d.name, node=d.node, stock_l=d.stock_l)
-            for d in (engine.depots[k] for k in sorted(engine.depots))
-        ),
-        substations=tuple(
-            SubstationView(
-                id=s.id,
-                name=s.name,
-                node=s.node,
-                state=s.state,
-                capacity_kw=s.capacity_kw,
-                load_kw=s.load_kw,
-                overloaded_minutes=s.over_minutes,
-                work_left=s.work_left if s.state is SubstationState.REPAIRING else None,
-                crew=s.crew,
-            )
-            for s in (engine.substations[k] for k in sorted(engine.substations))
-        ),
-        zones=tuple(
-            ZoneView(
-                id=z.id,
-                name=z.name,
-                nodes=z.nodes,
-                priority=z.priority,
-                demand_kw=z.demand_kw,
-                primary=z.primary,
-                alternate=z.alternate,
-                shed=z.shed,
-                fed_by=z.fed_by,
-            )
-            for z in (engine.zones[k] for k in sorted(engine.zones))
-        ),
-        known_blocks=tuple(sorted(engine.known_blocks)),
-        city=engine.city,
-    )
-
-
-def _truck(truck: Truck) -> TruckView:
-    return TruckView(
-        id=truck.id,
-        state=truck.state,
-        at=truck.at,
-        next_node=truck.next_node,
-        elapsed=truck.elapsed,
-        route=tuple(truck.route),
-        load_l=truck.load_l,
-        capacity_l=truck.capacity_l,
-        task=truck.task,
-        work_left=truck.work_left,
-    )
-
-
-def _crew(crew: Crew) -> CrewView:
-    return CrewView(
-        id=crew.id,
-        state=crew.state,
-        at=crew.at,
-        next_node=crew.next_node,
-        elapsed=crew.elapsed,
-        route=tuple(crew.route),
-        substation=crew.substation,
+        trucks=part(Section.TRUCKS, seen.trucks),
+        crews=part(Section.CREWS, seen.crews),
+        hospitals=part(Section.HOSPITALS, seen.hospitals),
+        depots=part(Section.DEPOTS, seen.depots),
+        substations=part(Section.SUBSTATIONS, seen.substations),
+        zones=part(Section.ZONES, seen.zones),
+        known_blocks=part(Section.ROADS, seen.known_blocks),
+        city=city,
+        reports=reports,
+        confirmations=confirmations,
+        confirms_left=confirms_left,
+        confirms_pending=confirms_pending,
     )

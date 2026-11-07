@@ -9,6 +9,7 @@ from blackout.env import BlackoutEnv, DecisionRequest
 from blackout.sim.actions import (
     AnyAction,
     AssignCrew,
+    ConfirmReport,
     DispatchTruck,
     RejectReason,
     Reroute,
@@ -16,7 +17,7 @@ from blackout.sim.actions import (
     ShedLoad,
 )
 from blackout.sim.entities import TaskKind
-from tests.helpers import grid, open_env, substation
+from tests.helpers import grid, open_env, report, substation
 
 type Case = Callable[[], tuple[BlackoutEnv, AnyAction]]
 
@@ -100,7 +101,22 @@ def _zone_not_shed() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(**grid()), RestoreLoad(zone_id="ZA")
 
 
+def _unknown_report() -> tuple[BlackoutEnv, AnyAction]:
+    # R2 exists but arrives later: a role can only confirm reports it has received.
+    env = open_env(events=[report("R1", 0), report("R2", 30)])
+    return env, ConfirmReport(report_id="R2")
+
+
+def _confirm_limit() -> tuple[BlackoutEnv, AnyAction]:
+    env = open_env(events=[report("R1", 0)])
+    for _ in range(4):
+        assert env.act("all", ConfirmReport(report_id="R1")).accepted
+    return env, ConfirmReport(report_id="R1")
+
+
 CASES: dict[RejectReason, Case] = {
+    RejectReason.UNKNOWN_REPORT: _unknown_report,
+    RejectReason.CONFIRM_LIMIT: _confirm_limit,
     RejectReason.UNKNOWN_ZONE: _unknown_zone,
     RejectReason.ZONE_ALREADY_SHED: _zone_already_shed,
     RejectReason.ZONE_NOT_SHED: _zone_not_shed,

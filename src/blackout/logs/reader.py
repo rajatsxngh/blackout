@@ -22,7 +22,7 @@ from blackout.logs.schema import (
     TickRecord,
     UnsupportedLogVersionError,
 )
-from blackout.scenarios.schema import Scenario
+from blackout.scenarios.schema import SCHEMA_VERSION, Scenario
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,8 +34,18 @@ class RunLog:
     end: EndRecord | None  # None if the run never finished
 
     def scenario(self) -> Scenario:
-        """The scenario embedded in the header."""
-        return Scenario.model_validate(self.header.scenario.spec)
+        """The scenario embedded in the header. Raises LogFormatError if this build can't read
+        it, for example because it was written in an older scenario schema version."""
+        spec = self.header.scenario.spec
+        try:
+            return Scenario.model_validate(spec)
+        except ValidationError as error:
+            version = spec.get("schema_version")
+            raise LogFormatError(
+                f"the embedded scenario (schema version {version})"
+                f" can't be read by this build (schema version {SCHEMA_VERSION}):"
+                f" {error.error_count()} problem(s)"
+            ) from error
 
 
 def find_log(path: Path) -> Path:

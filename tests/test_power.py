@@ -225,7 +225,7 @@ def test_crews_get_stuck_on_hidden_blocks_too() -> None:
     )
     env.act("all", AssignCrew(crew_id="C1", substation_id="S1"))
     stuck = next_decision(env)
-    assert (stuck.tick, kinds(stuck)) == (1, {TriggerKind.VEHICLE_STUCK})
+    assert (stuck.tick, kinds(stuck)) == (1, {TriggerKind.VEHICLE_STUCK, TriggerKind.ROAD_STATUS})
     detour = env.act("all", Reroute(vehicle_id="C1"))
     assert detour.accepted
     assert detour.route == ("B2", "B1", "A1", "A2")

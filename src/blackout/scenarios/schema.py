@@ -1,9 +1,10 @@
 """The scenario file: the engine's complete, self-contained input (docs/PRD.md section 8.6).
 
-Version 2 (M2) adds the power grid: zones, substations and repair crews. A hospital gets grid
+Version 2 (M2) added the power grid: zones, substations and repair crews. A hospital gets grid
 power from the zone that contains its intersection; a hospital outside every zone is off the
-grid and always runs on its generator. Later milestones add reports (M4) and generator
-metadata (M5), bumping ``schema_version`` whenever the shape changes.
+grid and always runs on its generator. Version 3 (M4) adds radio reports (``kind: "report"``
+events) and the messiness ``level`` that decides whether contestants see a report's facts (L0)
+or only its text (L1 and up). M5 adds generator metadata, bumping ``schema_version`` again.
 """
 
 from collections import Counter
@@ -12,6 +13,7 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, PositiveInt, model_validator
 
+from blackout.info.reports import SUBJECT_KIND, Report
 from blackout.sim.city import MAX_HEIGHT, MAX_WIDTH, edge_ids, node_ids
 from blackout.sim.events import (
     BurnRateChange,
@@ -23,7 +25,7 @@ from blackout.sim.events import (
 )
 from blackout.sim.hashing import digest
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 _ID = r"^[A-Za-z][A-Za-z0-9_]*$"
 
 
@@ -109,9 +111,10 @@ class ZoneSpec(_Spec):
 
 
 class Scenario(_Spec):
-    schema_version: Literal[2] = SCHEMA_VERSION
+    schema_version: Literal[3] = SCHEMA_VERSION
     id: str = Field(pattern=_ID)
     description: str = ""
+    level: int = Field(default=0, ge=0, le=3, description="Messiness: L0 clean to L3 adversarial.")
     horizon: PositiveInt = 240
     city: CitySpec = Field(default_factory=CitySpec)
     hospitals: list[HospitalSpec]
@@ -180,8 +183,17 @@ class Scenario(_Spec):
         hospitals = {h.id for h in self.hospitals}
         trucks = {t.id for t in self.trucks}
         substations = {s.id for s in self.substations}
+        subjects = {
+            "road": edges,
+            "substation": substations,
+            "hospital": hospitals,
+            "depot": {d.id for d in self.depots},
+        }
         problems: list[str] = []
+        report_ids: set[str] = set()
         for event in self.events:
+            if isinstance(event, Report):
+                problems += self._report_problems(event, subjects, report_ids)
             if event.tick >= self.horizon:
                 problems.append(f"{event.kind} at tick {event.tick} is not before the horizon")
             match event:
@@ -195,6 +207,23 @@ class Scenario(_Spec):
                     problems.append(f"substation_fail for unknown substation {substation!r}")
                 case _:
                     pass
+        return problems
+
+    def _report_problems(
+        self, report: Report, subjects: dict[str, set[str]], seen: set[str]
+    ) -> list[str]:
+        problems: list[str] = []
+        if report.id in seen:
+            problems.append(f"duplicate report id {report.id!r}")
+        seen.add(report.id)
+        if self.level > 0 and not report.text:
+            problems.append(f"report {report.id} needs text at level L{self.level}")
+        for fact in report.facts:
+            kind = SUBJECT_KIND[fact.type]
+            if fact.subject not in subjects[kind]:
+                problems.append(
+                    f"report {report.id}: {fact.type} about unknown {kind} {fact.subject!r}"
+                )
         return problems
 
 

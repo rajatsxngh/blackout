@@ -1,8 +1,10 @@
 """Why a contestant is woken up (docs/PRD.md section 8.2).
 
-Every trigger comes from something the contestant can observe: its own vehicles, hospital,
-zone and substation telemetry, or the heartbeat. Hidden events, such as a road being blocked,
-never wake anyone. Vehicle triggers cover both trucks and crews.
+Every contestant's triggers come from its own observation stream (blackout.info.wake): its
+vehicles, hospital, zone, substation and road telemetry, reports routed to it, confirm replies,
+and the heartbeat. Hidden events, such as a road being blocked, never wake anyone. Vehicle
+triggers cover both trucks and crews. The engine also emits the same kinds of signal from
+ground truth; only the reference contestant (M7) is woken by those.
 """
 
 from collections.abc import Mapping
@@ -23,6 +25,9 @@ class TriggerKind(StrEnum):
     ZONE_STATUS = "zone_status"
     SUBSTATION_STATUS = "substation_status"
     OVERLOAD = "overload"
+    ROAD_STATUS = "road_status"
+    REPORT = "report"
+    CONFIRM_REPLY = "confirm_reply"
 
 
 @dataclass(frozen=True, slots=True, order=True)

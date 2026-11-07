@@ -15,8 +15,9 @@ from typing import Self
 from pydantic import BaseModel
 
 from blackout import __version__
-from blackout.controllers.base import Controller
-from blackout.env import ROLE_ALL, BlackoutEnv, DecisionRequest, EpisodeResult, run_episode
+from blackout.controllers.base import Controller, belief_of
+from blackout.env import BlackoutEnv, DecisionRequest, EpisodeResult, run_episode
+from blackout.info.belief import BeliefState
 from blackout.logs.schema import (
     LOG_FILE,
     SUMMARY_FILE,
@@ -103,13 +104,16 @@ def header_record(
 
 
 def decision_record(
-    request: DecisionRequest, results: tuple[ActionResult, ...]
+    request: DecisionRequest,
+    results: tuple[ActionResult, ...],
+    belief: BeliefState | None = None,
 ) -> DecisionPointRecord:
-    observation = request.observations[ROLE_ALL]
+    (role,) = request.roles
+    observation = request.observations[role]
     return DecisionPointRecord(
         t=request.tick,
         i=request.index,
-        role=ROLE_ALL,
+        role=role,
         triggers=[
             TriggerRecord(kind=t.kind.value, subject=t.subject, detail=t.detail)
             for t in request.triggers
@@ -126,6 +130,7 @@ def decision_record(
             )
             for result in results
         ],
+        belief=None if belief is None else belief.digest(),
     )
 
 
@@ -158,7 +163,7 @@ def record_episode(
             writer.write(TickRecord(t=engine.tick, h=env.tick_hashes[-1], ev=events))
 
         def decided(request: DecisionRequest, results: tuple[ActionResult, ...]) -> None:
-            writer.write(decision_record(request, results))
+            writer.write(decision_record(request, results, belief_of(controller)))
             if on_decision is not None:
                 on_decision(request, results)
 

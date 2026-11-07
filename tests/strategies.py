@@ -86,6 +86,15 @@ def scenarios(draw: st.DrawFn) -> Scenario:
                 }
             )
         )
+    subjects = {
+        "road": edges,
+        "hospital": [h["id"] for h in hospitals],
+        "depot": [d["id"] for d in depots],
+        "substation": [s["id"] for s in substations],
+    }
+    reports = draw(st.lists(report_specs(subjects, tick), max_size=4))
+    for i, spec in enumerate(reports):
+        spec["id"] = f"R{i + 1}"
     return Scenario.model_validate(
         {
             "id": "random",
@@ -102,7 +111,7 @@ def scenarios(draw: st.DrawFn) -> Scenario:
             "crews": crews,
             "substations": substations,
             "zones": zones,
-            "events": draw(st.lists(st.one_of(*kinds), max_size=8)),
+            "events": draw(st.lists(st.one_of(*kinds), max_size=8)) + reports,
         }
     )
 
@@ -166,3 +175,48 @@ def zone_specs(
             }
         )
     return specs
+
+
+FACT_SUBJECTS = {
+    "road_blocked": "road",
+    "road_cleared": "road",
+    "substation_status": "substation",
+    "repair_eta": "substation",
+    "hospital_fuel": "hospital",
+    "burn_spike": "hospital",
+    "depot_stock": "depot",
+}
+
+
+@st.composite
+def report_specs(
+    draw: st.DrawFn, subjects: dict[str, list[str]], tick: st.SearchStrategy[int]
+) -> dict[str, Any]:
+    """A report with one to three facts about things that exist (true or not)."""
+    usable = sorted(kind for kind, subject in FACT_SUBJECTS.items() if subjects[subject])
+    facts: list[dict[str, Any]] = []
+    for _ in range(draw(st.integers(1, 3))):
+        kind = draw(st.sampled_from(usable))
+        fact: dict[str, Any] = {
+            "type": kind,
+            "subject": draw(st.sampled_from(subjects[FACT_SUBJECTS[kind]])),
+        }
+        if kind == "substation_status":
+            fact["value"] = draw(st.sampled_from(["online", "failed", "tripped", "repairing"]))
+        elif FACT_SUBJECTS[kind] != "road":
+            fact["value"] = draw(st.integers(0, 600))
+        facts.append(fact)
+    return {
+        "kind": "report",
+        "tick": draw(tick),
+        "id": "R0",
+        "channel": draw(
+            st.sampled_from(
+                ["crew_radio", "hospital_staff", "police_radio", "depot_staff", "public"]
+            )
+        ),
+        "source_class": draw(st.sampled_from(["verified", "field", "unverified"])),
+        "source": "someone",
+        "facts": facts,
+        "truth": {"is_true": draw(st.booleans())},
+    }

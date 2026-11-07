@@ -2,7 +2,8 @@
 
 The checks use the fleet's real-time status, public depot stock, zone and substation
 telemetry, and the road blocks that are already known. A route through an undiscovered block
-is accepted: the vehicle finds the block when it gets there.
+is accepted: the vehicle finds the block when it gets there. ``confirm_report`` is checked by
+the info layer instead (blackout.info.layer).
 """
 
 from collections.abc import Container, Sequence
@@ -10,13 +11,13 @@ from dataclasses import dataclass
 from itertools import pairwise
 
 from blackout.sim.actions import (
-    AnyAction,
     AssignCrew,
     DispatchTruck,
     MovementAction,
     RejectReason,
     RestoreLoad,
     ShedLoad,
+    SwitchAction,
     vehicle_of,
 )
 from blackout.sim.city import City, NodeId
@@ -40,7 +41,7 @@ class Verdict:
         return self.reason is None
 
 
-def check(engine: Engine, action: AnyAction, moved: Container[str]) -> Verdict:
+def check(engine: Engine, action: MovementAction | SwitchAction, moved: Container[str]) -> Verdict:
     """Validate ``action``. ``moved`` holds vehicles already given a route this decision point."""
     if isinstance(action, ShedLoad | RestoreLoad):
         return _check_switch(engine, action)
