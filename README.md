@@ -9,16 +9,26 @@ A small simulated city loses power. Different contestants try to keep three hosp
 
 ## Status
 
-Milestones **M0 (Foundation)** and **M1 (Engine core and logistics)** of 17 are done. A deterministic city now runs end to end: trucks haul fuel from depots to hospitals, generators burn down, and hidden road blocks stop trucks until somebody reroutes them. The power grid arrives in M2, and AI contestants in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
+Milestones **M0–M2** of 17 are done: foundation, the engine with its logistics, and the power grid. A deterministic city now runs end to end:
+- Trucks haul fuel from depots to hospitals, and generators burn down.
+- Hidden road blocks stop vehicles until somebody reroutes them.
+- Substations fail, overload and trip in cascades unless load is shed.
+- Crews repair or reset substations.
+
+AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
 
 ## Try it
 
 ```bash
 uv run blackout run --scenario hello_blackout --controller scripted --render ascii
 uv run blackout run --scenario hello_blackout --quiet   # the do-nothing baseline: 200 dark minutes
+uv run blackout run --scenario cascade --controller scripted
+uv run blackout run --scenario cascade --quiet          # do nothing: two substations trip
 ```
 
-In the demo, St. Mary's Hospital is on its backup generator with 40 minutes of fuel. The truck takes the fast route, runs into a block on Maple St that nobody knew about, takes the detour, and delivers with 6 minutes to spare.
+**hello_blackout.** A storm has taken out the East substation, so St. Mary's Hospital is on its backup generator with 40 minutes of fuel. A crew heads out on the two-hour repair. Meanwhile the fuel truck takes the fast route, runs into a block on Maple St that nobody knew about, takes the detour, and delivers with 6 minutes to spare.
+
+**cascade.** When the North substation fails, its zones fall back to East, which can't carry them. Shedding one residential zone at once keeps East up. Doing nothing trips East, then West, and the whole city goes dark.
 
 ## Quickstart
 
@@ -38,7 +48,7 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 
 | Path | What it is |
 |---|---|
-| `src/blackout/sim/` | The engine: map, routing, entities, events, actions, validation, physics |
+| `src/blackout/sim/` | The engine: map, routing, entities, events, actions, validation, power flow, physics |
 | `src/blackout/env.py` | The `reset` / `act` / `advance` / `step` API that every contestant drives |
 | `src/blackout/controllers/` | Contestants (do-nothing and scripted so far) |
 | `scenarios/handmade/` | Hand-made scenarios and their scripts |

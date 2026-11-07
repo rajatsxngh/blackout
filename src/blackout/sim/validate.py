@@ -1,24 +1,35 @@
 """Checks an action using only what the contestant can see, never hidden truth.
 
-The checks use the fleet's real-time status, public depot stock, and the road blocks that are
-already known. A route through an undiscovered block is accepted: the truck finds the block
-when it gets there.
+The checks use the fleet's real-time status, public depot stock, zone and substation
+telemetry, and the road blocks that are already known. A route through an undiscovered block
+is accepted: the vehicle finds the block when it gets there.
 """
 
 from collections.abc import Container, Sequence
 from dataclasses import dataclass
 from itertools import pairwise
 
-from blackout.sim.actions import DispatchTruck, RejectReason, Reroute, vehicle_of
+from blackout.sim.actions import (
+    AnyAction,
+    AssignCrew,
+    DispatchTruck,
+    MovementAction,
+    RejectReason,
+    RestoreLoad,
+    ShedLoad,
+    vehicle_of,
+)
 from blackout.sim.city import City, NodeId
 from blackout.sim.engine import Engine
-from blackout.sim.entities import TaskKind, TruckState
+from blackout.sim.entities import TaskKind, Vehicle, VehicleState
 from blackout.sim.routing import shortest_path
+
+_BUSY = (VehicleState.LOADING, VehicleState.UNLOADING, VehicleState.REPAIRING)
 
 
 @dataclass(frozen=True, slots=True)
 class Verdict:
-    """The outcome of a check. For accepted movement, ``route`` starts at the truck's anchor."""
+    """The outcome of a check. For accepted movement, ``route`` starts at the vehicle's anchor."""
 
     reason: RejectReason | None
     message: str = ""
@@ -29,43 +40,11 @@ class Verdict:
         return self.reason is None
 
 
-def check(engine: Engine, action: DispatchTruck | Reroute, moved: Container[str]) -> Verdict:
+def check(engine: Engine, action: AnyAction, moved: Container[str]) -> Verdict:
     """Validate ``action``. ``moved`` holds vehicles already given a route this decision point."""
-    vehicle = vehicle_of(action)
-    truck = engine.trucks.get(vehicle)
-    if truck is None:
-        return Verdict(RejectReason.UNKNOWN_VEHICLE, f"there is no vehicle {vehicle!r}")
-    if vehicle in moved:
-        return Verdict(RejectReason.CONFLICT, f"{vehicle} was already given a route this turn")
-    if truck.state is TruckState.BROKEN:
-        return Verdict(RejectReason.VEHICLE_BROKEN, f"{vehicle} is broken down")
-    if truck.state in (TruckState.LOADING, TruckState.UNLOADING):
-        busy = f"{vehicle} is {truck.state.value} for {truck.work_left} more min"
-        return Verdict(RejectReason.VEHICLE_BUSY, busy)
-
-    if isinstance(action, DispatchTruck):
-        target = _dispatch_target(engine, action)
-        if isinstance(target, Verdict):
-            return target
-    elif truck.task is None:
-        return Verdict(RejectReason.NO_TASK, f"{vehicle} has no task to reroute; dispatch it")
-    else:
-        target = truck.task.target_node
-
-    unknown = sorted({e for e in action.avoid_edges if e not in engine.city.edges})
-    if unknown:
-        return Verdict(RejectReason.UNKNOWN_EDGE, f"no such road segment: {', '.join(unknown)}")
-    if action.route is not None:
-        problem = route_problem(engine.city, action.route, truck.anchor, target)
-        if problem is not None:
-            return Verdict(RejectReason.BAD_ROUTE, problem)
-        return Verdict(None, route=tuple(action.route))
-    closed = engine.known_blocks | set(action.avoid_edges)
-    path = shortest_path(engine.city, truck.anchor, target, closed)
-    if path is None:
-        no_route = f"no route from {truck.anchor} to {target} avoiding known and listed blocks"
-        return Verdict(RejectReason.NO_ROUTE, no_route)
-    return Verdict(None, route=tuple(path))
+    if isinstance(action, ShedLoad | RestoreLoad):
+        return _check_switch(engine, action)
+    return _check_movement(engine, action, moved)
 
 
 def route_problem(city: City, route: Sequence[NodeId], start: NodeId, end: NodeId) -> str | None:
@@ -83,6 +62,71 @@ def route_problem(city: City, route: Sequence[NodeId], start: NodeId, end: NodeI
         if city.edge_between(a, b) is None:
             return f"{a} and {b} are not joined by a road"
     return None
+
+
+def _check_switch(engine: Engine, action: ShedLoad | RestoreLoad) -> Verdict:
+    zone = engine.zones.get(action.zone_id)
+    if zone is None:
+        return Verdict(RejectReason.UNKNOWN_ZONE, f"there is no zone {action.zone_id!r}")
+    if isinstance(action, ShedLoad) and zone.shed:
+        return Verdict(RejectReason.ZONE_ALREADY_SHED, f"{zone.id} is already shed")
+    if isinstance(action, RestoreLoad) and not zone.shed:
+        return Verdict(RejectReason.ZONE_NOT_SHED, f"{zone.id} isn't shed")
+    return Verdict(None)
+
+
+def _check_movement(engine: Engine, action: MovementAction, moved: Container[str]) -> Verdict:
+    vehicle_id = vehicle_of(action)
+    vehicle = _find_vehicle(engine, action, vehicle_id)
+    if vehicle is None:
+        kind = {DispatchTruck: "truck", AssignCrew: "crew"}.get(type(action), "vehicle")
+        return Verdict(RejectReason.UNKNOWN_VEHICLE, f"there is no {kind} {vehicle_id!r}")
+    if vehicle_id in moved:
+        return Verdict(RejectReason.CONFLICT, f"{vehicle_id} was already given a route this turn")
+    if vehicle.state is VehicleState.BROKEN:
+        return Verdict(RejectReason.VEHICLE_BROKEN, f"{vehicle_id} is broken down")
+    if vehicle.state in _BUSY:
+        return Verdict(RejectReason.VEHICLE_BUSY, f"{vehicle_id} is busy {vehicle.state.value}")
+
+    if isinstance(action, DispatchTruck):
+        target = _dispatch_target(engine, action)
+        if isinstance(target, Verdict):
+            return target
+    elif isinstance(action, AssignCrew):
+        substation = engine.substations.get(action.substation_id)
+        if substation is None:
+            return Verdict(
+                RejectReason.INVALID_TARGET, f"{action.substation_id!r} is not a substation"
+            )
+        target = substation.node
+    else:
+        heading_for = engine.vehicle_target(vehicle)
+        if heading_for is None:
+            return Verdict(RejectReason.NO_TASK, f"{vehicle_id} has no task to reroute")
+        target = heading_for
+
+    unknown = sorted({e for e in action.avoid_edges if e not in engine.city.edges})
+    if unknown:
+        return Verdict(RejectReason.UNKNOWN_EDGE, f"no such road segment: {', '.join(unknown)}")
+    if action.route is not None:
+        problem = route_problem(engine.city, action.route, vehicle.anchor, target)
+        if problem is not None:
+            return Verdict(RejectReason.BAD_ROUTE, problem)
+        return Verdict(None, route=tuple(action.route))
+    closed = engine.known_blocks | set(action.avoid_edges)
+    path = shortest_path(engine.city, vehicle.anchor, target, closed)
+    if path is None:
+        no_route = f"no route from {vehicle.anchor} to {target} avoiding known and listed blocks"
+        return Verdict(RejectReason.NO_ROUTE, no_route)
+    return Verdict(None, route=tuple(path))
+
+
+def _find_vehicle(engine: Engine, action: MovementAction, vehicle_id: str) -> Vehicle | None:
+    if isinstance(action, DispatchTruck):
+        return engine.trucks.get(vehicle_id)
+    if isinstance(action, AssignCrew):
+        return engine.crews.get(vehicle_id)
+    return engine.vehicle(vehicle_id)
 
 
 def _dispatch_target(engine: Engine, action: DispatchTruck) -> NodeId | Verdict:

@@ -48,8 +48,17 @@ class BurnRateChange(_Event):
     burn_lpm: PositiveInt
 
 
+class SubstationFail(_Event):
+    """A substation is damaged. Fixing it takes a crew ``repair_minutes`` on site (hidden)."""
+
+    kind: Literal["substation_fail"] = "substation_fail"
+    substation: str
+    repair_minutes: PositiveInt
+
+
 ScenarioEvent = Annotated[
-    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange, Field(discriminator="kind")
+    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail,
+    Field(discriminator="kind"),
 ]
 
 
@@ -60,15 +69,18 @@ class TruckRepair:
     truck: str
 
 
-type QueueItem = RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | TruckRepair
+type QueueItem = (
+    RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail | TruckRepair
+)
 
 # Order within one tick: clears before blocks, and repairs before new breakdowns.
 _PRIORITY: dict[type, int] = {
     RoadClear: 0,
     RoadBlock: 1,
     BurnRateChange: 2,
-    TruckRepair: 3,
-    TruckBreakdown: 4,
+    SubstationFail: 3,
+    TruckRepair: 4,
+    TruckBreakdown: 5,
 }
 
 

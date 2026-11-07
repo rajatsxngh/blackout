@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 
 from blackout.info.observation import Observation
-from blackout.sim.actions import DispatchTruck, Reroute
+from blackout.sim.actions import AnyAction
 
 
 class DoNothingController:
@@ -12,5 +12,5 @@ class DoNothingController:
     def reset(self) -> None:
         pass
 
-    def decide(self, observation: Observation) -> Sequence[DispatchTruck | Reroute]:
+    def decide(self, observation: Observation) -> Sequence[AnyAction]:
         return ()

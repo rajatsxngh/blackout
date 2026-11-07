@@ -121,6 +121,12 @@ def run(
         f"  driving            {m.drive_minutes} min over {m.edges_traversed} road segments,"
         f" stuck {m.stuck_events} time(s)"
     )
+    restored = env.engine.report()["power_restored_at"]
+    typer.echo(
+        f"  power              unmet {m.unmet_kw_min} kW-min, {m.trips} trip(s),"
+        f" {m.repairs_completed} repair(s), fully restored at"
+        f" {'never' if restored is None else f't={restored}'}"
+    )
     typer.echo(f"  actions            {m.actions_accepted} accepted, {rejected} rejected")
     typer.echo(f"  run hash           {result.run_hash}")
 

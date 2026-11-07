@@ -1,0 +1,164 @@
+{
+  "schema_version": 2,
+  "id": "cascade",
+  "description": "At minute 10 the North substation fails. Its zones switch to their backup feeds, and East can't carry the extra load: it trips 3 minutes after the overload starts unless someone sheds load. When East trips, St. Mary's switches to West, which overloads and trips in turn, leaving the whole city dark.",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 3,
+    "landmarks": {
+      "City Hall": "C3",
+      "Riverside Park": "B6"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "St. Mary's Hospital",
+      "node": "M5",
+      "tank_l": 600,
+      "fuel_l": 300,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "Riverside Clinic",
+      "node": "B6",
+      "tank_l": 600,
+      "fuel_l": 200,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Northside Fuel Depot",
+      "node": "A1",
+      "stock_l": 3000
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "A1"
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "C3"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "North Substation",
+      "node": "C2",
+      "capacity_kw": 30000
+    },
+    {
+      "id": "S2",
+      "name": "East Substation",
+      "node": "O4",
+      "capacity_kw": 30000
+    },
+    {
+      "id": "S3",
+      "name": "West Substation",
+      "node": "A4",
+      "capacity_kw": 30000
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": ["A1", "A2", "B1", "B2"],
+      "demand_kw": 5000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": ["C1", "C2", "E1", "E2"],
+      "demand_kw": 6000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": ["M1", "M2", "O1", "O2"],
+      "demand_kw": 6000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": ["A3", "A4", "B3", "B4"],
+      "demand_kw": 6000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": ["C3", "C4", "E3", "E4"],
+      "demand_kw": 8000,
+      "priority": "essential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": ["M3", "M4", "O3", "O4"],
+      "demand_kw": 7000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z7",
+      "name": "Riverside",
+      "nodes": ["A5", "A6", "B5", "B6"],
+      "demand_kw": 8000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": ["C5", "C6", "E5", "E6"],
+      "demand_kw": 6000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z9",
+      "name": "St. Mary's",
+      "nodes": ["M5", "M6", "O5", "O6"],
+      "demand_kw": 9000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S3"
+    }
+  ],
+  "events": [
+    {
+      "kind": "substation_fail",
+      "tick": 10,
+      "substation": "S1",
+      "repair_minutes": 90
+    }
+  ]
+}

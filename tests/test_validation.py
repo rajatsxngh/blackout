@@ -6,32 +6,40 @@ import pytest
 from pydantic import ValidationError
 
 from blackout.env import BlackoutEnv, DecisionRequest
-from blackout.sim.actions import DispatchTruck, RejectReason, Reroute
+from blackout.sim.actions import (
+    AnyAction,
+    AssignCrew,
+    DispatchTruck,
+    RejectReason,
+    Reroute,
+    RestoreLoad,
+    ShedLoad,
+)
 from blackout.sim.entities import TaskKind
-from tests.helpers import open_env
+from tests.helpers import grid, open_env, substation
 
-type Case = Callable[[], tuple[BlackoutEnv, DispatchTruck | Reroute]]
+type Case = Callable[[], tuple[BlackoutEnv, AnyAction]]
 
 
 def move(target: str = "B1", truck: str = "T1", **kwargs: object) -> DispatchTruck:
     return DispatchTruck(truck_id=truck, task=TaskKind.MOVE, target_id=target, **kwargs)  # type: ignore[arg-type]
 
 
-def _unknown_vehicle() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _unknown_vehicle() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), move(truck="T9")
 
 
-def _conflict() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _conflict() -> tuple[BlackoutEnv, AnyAction]:
     env = open_env()
     assert env.act("all", move("B1")).accepted
     return env, move("A2")
 
 
-def _broken() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _broken() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(events=[{"kind": "truck_breakdown", "tick": 0, "truck": "T1"}]), move()
 
 
-def _busy() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _busy() -> tuple[BlackoutEnv, AnyAction]:
     env = open_env(
         trucks=[{"id": "T1", "node": "A1"}, {"id": "T2", "node": "C1"}],
         events=[{"kind": "truck_breakdown", "tick": 2, "truck": "T2"}],
@@ -44,41 +52,58 @@ def _busy() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
     return env, move()
 
 
-def _no_task() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _no_task() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), Reroute(vehicle_id="T1")
 
 
-def _invalid_target() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _invalid_target() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), DispatchTruck(truck_id="T1", task=TaskKind.LOAD, target_id="H1")
 
 
-def _truck_full() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _truck_full() -> tuple[BlackoutEnv, AnyAction]:
     env = open_env(trucks=[{"id": "T1", "node": "A1", "load_l": 500}])
     return env, DispatchTruck(truck_id="T1", task=TaskKind.LOAD, target_id="D1")
 
 
-def _depot_empty() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _depot_empty() -> tuple[BlackoutEnv, AnyAction]:
     env = open_env(depots=[{"id": "D1", "name": "Dry", "node": "A1", "stock_l": 0}])
     return env, DispatchTruck(truck_id="T1", task=TaskKind.LOAD, target_id="D1")
 
 
-def _empty_truck() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _empty_truck() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), DispatchTruck(truck_id="T1", task=TaskKind.DELIVER, target_id="H1")
 
 
-def _unknown_edge() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _unknown_edge() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), move(avoid_edges=("A1-C3",))
 
 
-def _bad_route() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _bad_route() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), move("C1", route=("A1", "C1"))
 
 
-def _no_route() -> tuple[BlackoutEnv, DispatchTruck | Reroute]:
+def _no_route() -> tuple[BlackoutEnv, AnyAction]:
     return open_env(), move("C3", avoid_edges=("B3-C3", "C2-C3"))
 
 
+def _unknown_zone() -> tuple[BlackoutEnv, AnyAction]:
+    return open_env(**grid()), ShedLoad(zone_id="Z9")
+
+
+def _zone_already_shed() -> tuple[BlackoutEnv, AnyAction]:
+    env = open_env(**grid())
+    assert env.act("all", ShedLoad(zone_id="ZA")).accepted
+    return env, ShedLoad(zone_id="ZA")
+
+
+def _zone_not_shed() -> tuple[BlackoutEnv, AnyAction]:
+    return open_env(**grid()), RestoreLoad(zone_id="ZA")
+
+
 CASES: dict[RejectReason, Case] = {
+    RejectReason.UNKNOWN_ZONE: _unknown_zone,
+    RejectReason.ZONE_ALREADY_SHED: _zone_already_shed,
+    RejectReason.ZONE_NOT_SHED: _zone_not_shed,
     RejectReason.UNKNOWN_VEHICLE: _unknown_vehicle,
     RejectReason.CONFLICT: _conflict,
     RejectReason.VEHICLE_BROKEN: _broken,
@@ -173,3 +198,42 @@ def test_route_and_avoid_edges_together_is_a_schema_error() -> None:
 def test_reasons_are_limited_to_140_characters() -> None:
     with pytest.raises(ValidationError, match="at most 140 characters"):
         Reroute(vehicle_id="T1", reason="x" * 141)
+
+
+def test_truck_and_crew_ids_are_not_interchangeable() -> None:
+    env = open_env(**grid())
+    as_truck = env.act("all", DispatchTruck(truck_id="C1", task=TaskKind.MOVE, target_id="B1"))
+    assert as_truck.reason is RejectReason.UNKNOWN_VEHICLE
+    assert "no truck 'C1'" in as_truck.message
+    as_crew = env.act("all", AssignCrew(crew_id="T1", substation_id="S1"))
+    assert as_crew.reason is RejectReason.UNKNOWN_VEHICLE
+    assert "no crew 'T1'" in as_crew.message
+
+
+def test_crews_are_sent_to_substations() -> None:
+    result = open_env(**grid()).act("all", AssignCrew(crew_id="C1", substation_id="H1"))
+    assert result.reason is RejectReason.INVALID_TARGET
+
+
+def test_an_idle_crew_has_nothing_to_reroute() -> None:
+    result = open_env(**grid()).act("all", Reroute(vehicle_id="C1"))
+    assert result.reason is RejectReason.NO_TASK
+
+
+def test_a_crew_at_work_is_busy() -> None:
+    # The crew starts at B2, where tripped S1 is, so the reset starts at once. Its zones move to
+    # S2 (13 MW on 10 MW), which wakes everyone a minute later with an overload.
+    env = open_env(
+        **grid(
+            substations=[
+                substation("S1", "B2", 10000, state="tripped"),
+                substation("S2", "C2", 10000),
+            ]
+        )
+    )
+    assert env.act("all", AssignCrew(crew_id="C1", substation_id="S1")).accepted
+    request = env.advance()
+    assert isinstance(request, DecisionRequest)
+    assert request.tick == 1
+    busy = env.act("all", AssignCrew(crew_id="C1", substation_id="S2"))
+    assert busy.reason is RejectReason.VEHICLE_BUSY

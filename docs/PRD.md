@@ -165,8 +165,8 @@ Actions are Pydantic models in a union discriminated on `kind`. Each carries `re
 |---|---|---|---|
 | `dispatch_truck` | `truck_id, task ∈ {load, deliver, move}, target_id, amount_l?, route? \| avoid_edges?` | unknown ID; truck `broken`, `loading` or `unloading`; `deliver` with an empty truck; route not contiguous from the truck's next node | Drive, then do the task; amounts clamp to what's available |
 | `reroute` | `vehicle_id, route? \| avoid_edges?` | as above | New path, same task |
-| `assign_crew` | `crew_id, substation_id, route? \| avoid_edges?` | crew is mid-repair; unknown substation | Travel there, then repair or reset |
-| `shed_load` / `restore_load` | `zone_id` | unknown zone; restoring a zone that isn't shed | Instant. Shedding a critical zone is allowed (it's just a bad decision) |
+| `assign_crew` | `crew_id, substation_id, route? \| avoid_edges?` | crew is mid-repair; unknown substation | Travel there, then repair (if failed) or reset (if tripped); at a working substation the crew just waits |
+| `shed_load` / `restore_load` | `zone_id` | unknown zone; shedding a zone that's already shed; restoring a zone that isn't shed | Instant. Shedding a critical zone is allowed (it's just a bad decision) |
 | `confirm_report` | `report_id` | more than 4 used this run | The true status of that report's claims arrives 8 ticks later from verified dispatch |
 
 Further rules:
@@ -593,7 +593,7 @@ Blackout/
 ├─ scenarios/{handmade,dev-v0,dev,test}/ + manifest.json
 ├─ src/blackout/
 │  ├─ cli.py · env.py                                 # env.py = BlackoutEnv stepper (§8.2)
-│  ├─ sim/         city · routing · entities · events · actions · validate · engine · triggers · metrics · config · hashing · render_ascii (power in M2)
+│  ├─ sim/         city · routing · entities · events · actions · validate · power · engine · triggers · metrics · config · hashing · render_ascii
 │  ├─ info/        telemetry · reports · roles · observation · belief
 │  ├─ graph/       dependency · queries
 │  ├─ scenarios/   schema · generator · validity · tiers · templates/t01…t10 · text/{banks,noise,render}
@@ -629,7 +629,7 @@ M0 → M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 ─┬─→ M9 ─�
 |---|---|---|---|---|---|
 | M0 | A Simulation | Foundation | — | 3–4 h | Done locally; CI pending first push |
 | M1 | A Simulation | Engine core and logistics | M0 | 10–14 h | Done locally; CI pending first push |
-| M2 | A Simulation | Power grid and crews | M1 | 6–8 h | Not started |
+| M2 | A Simulation | Power grid and crews | M1 | 6–8 h | Done locally; CI pending first push |
 | M3 | A Simulation | Run logs, replay check, scorer | M2 | 6–8 h | Not started |
 | M4 | B Information and scenarios | Information layer and dependency graph | M2, M3 | 10–12 h | Not started |
 | M5 | B Information and scenarios | Scenario generator v1 | M4 | 8–10 h | Not started |

@@ -10,7 +10,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, NonNegativeInt
 
 from blackout.info.observation import Observation
-from blackout.sim.actions import Action, DispatchTruck, Reroute
+from blackout.sim.actions import Action, AnyAction
 
 
 class ScriptStep(BaseModel):
@@ -41,8 +41,8 @@ class ScriptedController:
     def reset(self) -> None:
         self._next = 0
 
-    def decide(self, observation: Observation) -> Sequence[DispatchTruck | Reroute]:
-        due: list[DispatchTruck | Reroute] = []
+    def decide(self, observation: Observation) -> Sequence[AnyAction]:
+        due: list[AnyAction] = []
         while self._next < len(self._steps) and self._steps[self._next].at_tick <= observation.tick:
             due.append(self._steps[self._next].action)
             self._next += 1

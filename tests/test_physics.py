@@ -2,9 +2,9 @@
 
 from blackout.env import BlackoutEnv, DecisionRequest, Done
 from blackout.sim.actions import DispatchTruck
-from blackout.sim.entities import HospitalStatus, TaskKind, TruckState
+from blackout.sim.entities import HospitalStatus, TaskKind, VehicleState
 from blackout.sim.triggers import TriggerKind
-from tests.helpers import make_scenario, open_env
+from tests.helpers import grid, make_scenario, open_env
 
 
 def dispatch(task: TaskKind, target: str, truck: str = "T1", **kwargs: object) -> DispatchTruck:
@@ -65,7 +65,7 @@ def test_driving_a_road_takes_its_travel_time() -> None:
     assert request.tick == 2
     assert TriggerKind.VEHICLE_ARRIVED in kinds(request)
     truck = env.engine.trucks["T1"]
-    assert (truck.at, truck.state) == ("B1", TruckState.IDLE)
+    assert (truck.at, truck.state) == ("B1", VehicleState.IDLE)
 
 
 def test_hidden_block_stops_the_truck_and_becomes_known() -> None:
@@ -75,7 +75,7 @@ def test_hidden_block_stops_the_truck_and_becomes_known() -> None:
     request = next_decision(env)
     assert request.tick == 1
     assert TriggerKind.VEHICLE_STUCK in kinds(request)
-    assert env.engine.trucks["T1"].state is TruckState.STUCK
+    assert env.engine.trucks["T1"].state is VehicleState.STUCK
     assert request.observations["all"].known_blocks == ("A1-B1",)
 
 
@@ -100,7 +100,7 @@ def test_breakdown_freezes_the_truck_until_it_is_repaired() -> None:
     assert (broken.tick, kinds(broken)) == (1, {TriggerKind.VEHICLE_BROKEN})
     truck = env.engine.trucks["T1"]
     assert (truck.state, truck.at, truck.next_node, truck.elapsed) == (
-        TruckState.BROKEN,
+        VehicleState.BROKEN,
         "A1",
         "B1",
         1,
@@ -172,22 +172,11 @@ def test_heartbeat_every_15_minutes_when_nothing_else_happens() -> None:
 
 
 def test_run_ends_early_once_nothing_more_can_happen() -> None:
-    env = open_env(
-        hospitals=[
-            {
-                "id": "H1",
-                "name": "X",
-                "node": "C3",
-                "tank_l": 600,
-                "fuel_l": 10,
-                "burn_lpm": 2,
-                "grid_powered": True,
-            }
-        ]
-    )
+    env = open_env(**grid())  # every zone and the hospital have power, and no events are due
     done = env.advance()
     assert isinstance(done, Done)
     assert (done.tick, done.reason) == (1, "stable")
+    assert done.metrics["power_restored_at"] == 0
 
 
 def test_run_ends_at_the_horizon() -> None:

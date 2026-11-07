@@ -1,4 +1,8 @@
-"""Actions contestants can take, and the result of trying one (docs/PRD.md section 8.3)."""
+"""Actions contestants can take, and the result of trying one (docs/PRD.md section 8.3).
+
+Movement actions (dispatch_truck, reroute, assign_crew) give a vehicle a path; a vehicle gets at
+most one per decision point. Switching actions (shed_load, restore_load) act on a zone instantly.
+"""
 
 from dataclasses import dataclass
 from enum import StrEnum
@@ -11,12 +15,15 @@ from blackout.sim.entities import TaskKind
 REASON_MAX_CHARS = 140
 
 
-class _Movement(BaseModel):
+class _Action(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     reason: str = Field(
         default="", max_length=REASON_MAX_CHARS, description="Why, in a few words (for replays)."
     )
+
+
+class _Movement(_Action):
     route: tuple[str, ...] | None = Field(
         default=None,
         description="Exact path as intersection IDs, starting where the vehicle can next turn.",
@@ -43,18 +50,50 @@ class DispatchTruck(_Movement):
 
 
 class Reroute(_Movement):
-    """Give a vehicle a new path to the place it's already heading for."""
+    """Give a truck or crew a new path to the place it's already heading for."""
 
     kind: Literal["reroute"] = "reroute"
     vehicle_id: str
 
 
-Action = Annotated[DispatchTruck | Reroute, Field(discriminator="kind")]
+class AssignCrew(_Movement):
+    """Send a crew to a substation to repair it (if failed) or reset it (if tripped)."""
+
+    kind: Literal["assign_crew"] = "assign_crew"
+    crew_id: str
+    substation_id: str
 
 
-def vehicle_of(action: DispatchTruck | Reroute) -> str:
-    """The ID of the vehicle an action moves."""
-    return action.truck_id if isinstance(action, DispatchTruck) else action.vehicle_id
+class ShedLoad(_Action):
+    """Disconnect a zone, taking its demand off the substation that feeds it."""
+
+    kind: Literal["shed_load"] = "shed_load"
+    zone_id: str
+
+
+class RestoreLoad(_Action):
+    """Reconnect a zone that was shed."""
+
+    kind: Literal["restore_load"] = "restore_load"
+    zone_id: str
+
+
+type MovementAction = DispatchTruck | Reroute | AssignCrew
+type SwitchAction = ShedLoad | RestoreLoad
+type AnyAction = DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad
+
+Action = Annotated[
+    DispatchTruck | Reroute | AssignCrew | ShedLoad | RestoreLoad, Field(discriminator="kind")
+]
+
+
+def vehicle_of(action: MovementAction) -> str:
+    """The ID of the vehicle a movement action moves."""
+    if isinstance(action, DispatchTruck):
+        return action.truck_id
+    if isinstance(action, AssignCrew):
+        return action.crew_id
+    return action.vehicle_id
 
 
 class RejectReason(StrEnum):
@@ -70,13 +109,16 @@ class RejectReason(StrEnum):
     UNKNOWN_EDGE = "unknown_edge"
     BAD_ROUTE = "bad_route"
     NO_ROUTE = "no_route"
+    UNKNOWN_ZONE = "unknown_zone"
+    ZONE_ALREADY_SHED = "zone_already_shed"
+    ZONE_NOT_SHED = "zone_not_shed"
 
 
 @dataclass(frozen=True, slots=True)
 class ActionResult:
     """What happened when a contestant tried an action. Never reveals hidden facts."""
 
-    action: DispatchTruck | Reroute
+    action: AnyAction
     accepted: bool
     message: str
     reason: RejectReason | None = None
@@ -88,7 +130,13 @@ class ActionResult:
         action = self.action
         if isinstance(action, DispatchTruck):
             what = f"{action.truck_id} {action.task.value} {action.target_id}"
-        else:
+        elif isinstance(action, AssignCrew):
+            what = f"{action.crew_id} repair {action.substation_id}"
+        elif isinstance(action, Reroute):
             what = f"{action.vehicle_id} reroute"
+        elif isinstance(action, ShedLoad):
+            what = f"shed {action.zone_id}"
+        else:
+            what = f"restore {action.zone_id}"
         outcome = "ok" if self.accepted else f"REJECTED ({self.reason})"
         return f"{what}: {outcome}, {self.message}"

@@ -6,14 +6,62 @@ import pytest
 from pydantic import ValidationError
 
 from blackout.scenarios.schema import load_scenario
-from tests.helpers import DEMO, make_scenario
+from tests.helpers import CASCADE, DEMO, grid, make_scenario, substation, zone
 
 
-def test_demo_scenario_loads() -> None:
-    scenario = load_scenario(DEMO)
-    assert scenario.id == "hello_blackout"
-    assert [h.id for h in scenario.hospitals] == ["H1", "H2"]
-    assert scenario.events[0].kind == "road_block"
+def test_handmade_scenarios_load() -> None:
+    demo = load_scenario(DEMO)
+    assert demo.id == "hello_blackout"
+    assert [h.id for h in demo.hospitals] == ["H1", "H2"]
+    assert (len(demo.substations), len(demo.zones), len(demo.crews)) == (3, 9, 1)
+    assert demo.events[0].kind == "road_block"
+    cascade = load_scenario(CASCADE)
+    assert cascade.events[0].kind == "substation_fail"
+
+
+def test_version_1_files_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="schema_version"):
+        make_scenario(schema_version=1)
+
+
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    [
+        (
+            grid(zones=[{**zone("ZA", "A", 4000, "residential", "S1", None), "nodes": ["Q7"]}]),
+            "unknown intersection 'Q7'",
+        ),
+        (
+            grid(
+                zones=[
+                    zone("ZA", "A", 4000, "residential", "S1", None),
+                    {**zone("ZB", "B", 4000, "residential", "S1", None), "nodes": ["A1"]},
+                ]
+            ),
+            "A1 is in both ZA and ZB",
+        ),
+        (grid(zones=[zone("ZA", "A", 4000, "residential", "S7", None)]), "unknown substation 'S7'"),
+        (
+            grid(zones=[zone("ZA", "A", 4000, "residential", "S1", "S1")]),
+            "same primary and alternate",
+        ),
+        (grid(zones=[zone("ZC", "C", 5000, "residential", "S2", None)]), "must be critical"),
+        (grid(substations=[substation("S1", "A2", 9000, state="failed")]), "repair_minutes"),
+        (grid(substations=[substation("S1", "A2", 9000, repair_minutes=5)]), "repair_minutes"),
+        (
+            grid(
+                events=[
+                    {"kind": "substation_fail", "tick": 1, "substation": "S7", "repair_minutes": 5}
+                ]
+            ),
+            "unknown substation 'S7'",
+        ),
+        (grid(crews=[{"id": "ZA", "node": "B2"}]), "duplicate id 'ZA'"),
+    ],
+)
+def test_invalid_grids_are_rejected(overrides: dict[str, Any], message: str) -> None:
+    with pytest.raises(ValidationError, match=message):
+        make_scenario(**overrides)
 
 
 @pytest.mark.parametrize(

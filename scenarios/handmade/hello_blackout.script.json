@@ -1,5 +1,5 @@
 {
-  "description": "Load up, head for St. Mary's, find the blocked road, and take the detour.",
+  "description": "Send the crew to the East substation, load up, head for St. Mary's, find the blocked road, and take the detour.",
   "steps": [
     {
       "at_tick": 0,
@@ -9,6 +9,15 @@
         "task": "load",
         "target_id": "D1",
         "reason": "Fill up at the depot first"
+      }
+    },
+    {
+      "at_tick": 0,
+      "action": {
+        "kind": "assign_crew",
+        "crew_id": "C1",
+        "substation_id": "S2",
+        "reason": "East substation is down and St. Mary's has no backup feed"
       }
     },
     {

@@ -72,6 +72,17 @@ def test_run_do_nothing_by_path_with_ascii_map() -> None:
     assert result.exit_code == 0, result.output
     assert "Alder    Birch" in result.output
     assert "critical downtime  200 min (hospitals that lost power: 1)" in result.output
+    assert "fully restored at never" in result.output
+
+
+@pytest.mark.usefixtures("in_repo_root")
+def test_run_cascade_scenarios() -> None:
+    saved = runner.invoke(app, ["run", "-s", "cascade", "-c", "scripted"])
+    assert saved.exit_code == 0, saved.output
+    assert "shed Z3: ok, Z3 shed (6000 kW); S2 at 30000/30000 kW" in saved.output
+    assert "0 trip(s), 1 repair(s), fully restored at t=103" in saved.output
+    collapsed = runner.invoke(app, ["run", "-s", "cascade", "-q"])
+    assert "2 trip(s)" in collapsed.output
 
 
 @pytest.mark.usefixtures("in_repo_root")

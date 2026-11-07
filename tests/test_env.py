@@ -4,7 +4,7 @@ import pytest
 
 from blackout.env import ROLE_ALL, BlackoutEnv, DecisionRequest, Done
 from blackout.sim.actions import DispatchTruck
-from blackout.sim.entities import TaskKind, TruckState
+from blackout.sim.entities import TaskKind, VehicleState
 from blackout.sim.triggers import Trigger, TriggerKind
 from tests.helpers import make_scenario, open_env
 
@@ -47,11 +47,11 @@ def test_unknown_roles_are_rejected() -> None:
 
 def test_actions_apply_immediately_while_the_clock_is_paused() -> None:
     env = open_env()
-    assert env.observe().truck("T1").state is TruckState.IDLE
+    assert env.observe().truck("T1").state is VehicleState.IDLE
     env.act(ROLE_ALL, load())
     after = env.observe()
     assert after.tick == 0
-    assert after.truck("T1").state is TruckState.LOADING
+    assert after.truck("T1").state is VehicleState.LOADING
 
 
 def test_step_is_act_then_advance() -> None:

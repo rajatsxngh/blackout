@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import Protocol
 
 from blackout.info.observation import Observation
-from blackout.sim.actions import DispatchTruck, Reroute
+from blackout.sim.actions import AnyAction
 
 
 class Controller(Protocol):
@@ -16,6 +16,6 @@ class Controller(Protocol):
         """Forget everything from a previous run."""
         ...
 
-    def decide(self, observation: Observation) -> Sequence[DispatchTruck | Reroute]:
+    def decide(self, observation: Observation) -> Sequence[AnyAction]:
         """Actions to take at this decision point (possibly none)."""
         ...

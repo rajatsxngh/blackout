@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from blackout.controllers.base import Controller
 from blackout.info.observation import Observation, full_view
 from blackout.scenarios.schema import Scenario
-from blackout.sim.actions import ActionResult, DispatchTruck, Reroute, vehicle_of
+from blackout.sim.actions import ActionResult, AnyAction, RestoreLoad, ShedLoad, vehicle_of
 from blackout.sim.city import edge_id
 from blackout.sim.config import SimConfig
 from blackout.sim.engine import Engine
@@ -102,7 +102,7 @@ class BlackoutEnv:
         triggers = self._pending.triggers if self._pending is not None else ()
         return full_view(self.engine, role, triggers)
 
-    def act(self, role: str, action: DispatchTruck | Reroute) -> ActionResult:
+    def act(self, role: str, action: AnyAction) -> ActionResult:
         """Validate ``action`` and, if it's accepted, apply it immediately."""
         self._check_role(role)
         if self._pending is None:
@@ -114,15 +114,24 @@ class BlackoutEnv:
             rejected[verdict.reason.value] = rejected.get(verdict.reason.value, 0) + 1
             return ActionResult(action, False, verdict.message, reason=verdict.reason)
 
-        engine.apply(action, verdict.route)
-        self._moved.add(vehicle_of(action))
         engine.metrics.actions_accepted += 1
-        truck = engine.trucks[vehicle_of(action)]
+        if isinstance(action, ShedLoad | RestoreLoad):
+            message = self._switch(action)
+            engine.drain_signals()  # the contestant just did this: it isn't news to wake it with
+            return ActionResult(action, True, message)
+
+        engine.apply(action, verdict.route)
+        engine.drain_signals()
+        vehicle_id = vehicle_of(action)
+        self._moved.add(vehicle_id)
+        vehicle = engine.vehicle(vehicle_id)
+        assert vehicle is not None
         eta = path_minutes(engine.city, verdict.route)
-        if truck.next_node is not None:
-            eta += engine.city.edges[edge_id(truck.at, truck.next_node)].minutes - truck.elapsed
-        if truck.next_node is None and len(verdict.route) == 1:
-            message = f"already at {verdict.route[0]}; now {truck.state.value}"
+        if vehicle.next_node is not None:
+            road = engine.city.edges[edge_id(vehicle.at, vehicle.next_node)]
+            eta += road.minutes - vehicle.elapsed
+        if vehicle.next_node is None and len(verdict.route) == 1:
+            message = f"already at {verdict.route[0]}; now {vehicle.state.value}"
         else:
             message = f"route {'>'.join(verdict.route)}, arriving in {eta} min"
         return ActionResult(action, True, message, route=verdict.route, eta_minutes=eta)
@@ -152,7 +161,7 @@ class BlackoutEnv:
                 return self._open_decision(triggers)
 
     def step(
-        self, actions_by_role: Mapping[str, Sequence[DispatchTruck | Reroute]]
+        self, actions_by_role: Mapping[str, Sequence[AnyAction]]
     ) -> tuple[list[ActionResult], DecisionRequest | Done]:
         """Act on every action (roles in their fixed order), then advance."""
         unknown = sorted(set(actions_by_role) - set(self.roles))
@@ -170,6 +179,24 @@ class BlackoutEnv:
     def _check_role(self, role: str) -> None:
         if role not in self.roles:
             raise ValueError(f"unknown role {role!r}; this run has roles {self.roles}")
+
+    def _switch(self, action: ShedLoad | RestoreLoad) -> str:
+        """Shed or restore a zone, and describe what that did to the substation loads."""
+        engine = self.engine
+        zone = engine.zones[action.zone_id]
+        before = zone.fed_by
+        engine.switch(action)
+
+        def load(substation_id: str) -> str:
+            substation = engine.substations[substation_id]
+            return f"{substation_id} at {substation.load_kw}/{substation.capacity_kw} kW"
+
+        if isinstance(action, ShedLoad):
+            relief = f"; {load(before)}" if before is not None else ""
+            return f"{zone.id} shed ({zone.demand_kw} kW){relief}"
+        if zone.fed_by is None:
+            return f"{zone.id} reconnected, but no substation can feed it right now"
+        return f"{zone.id} restored, fed by {load(zone.fed_by)}"
 
     def _record_tick(self) -> None:
         engine = self.engine
@@ -192,7 +219,7 @@ class BlackoutEnv:
         engine = self.engine
         engine.drain_signals()
         self._pending = None
-        self._done = Done(engine.tick, reason, engine.metrics.to_dict())
+        self._done = Done(engine.tick, reason, engine.report())
         return self._done
 
 

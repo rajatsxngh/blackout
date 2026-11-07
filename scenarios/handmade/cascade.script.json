@@ -1,0 +1,30 @@
+{
+  "description": "Shed one residential zone the moment North fails so East never overloads, send the crew to North, and reconnect the zone once North is back.",
+  "steps": [
+    {
+      "at_tick": 10,
+      "action": {
+        "kind": "shed_load",
+        "zone_id": "Z3",
+        "reason": "East would carry 36 MW on a 30 MW rating; drop a residential zone"
+      }
+    },
+    {
+      "at_tick": 10,
+      "action": {
+        "kind": "assign_crew",
+        "crew_id": "C1",
+        "substation_id": "S1",
+        "reason": "Repair North so its zones can come home"
+      }
+    },
+    {
+      "at_tick": 103,
+      "action": {
+        "kind": "restore_load",
+        "zone_id": "Z3",
+        "reason": "North is back online and has room"
+      }
+    }
+  ]
+}

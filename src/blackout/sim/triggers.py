@@ -1,7 +1,8 @@
 """Why a contestant is woken up (docs/PRD.md section 8.2).
 
-Every trigger comes from something the contestant can observe: its own fleet's status, hospital
-telemetry, or the heartbeat. Hidden events, such as a road being blocked, never wake anyone.
+Every trigger comes from something the contestant can observe: its own vehicles, hospital,
+zone and substation telemetry, or the heartbeat. Hidden events, such as a road being blocked,
+never wake anyone. Vehicle triggers cover both trucks and crews.
 """
 
 from collections.abc import Mapping
@@ -19,6 +20,9 @@ class TriggerKind(StrEnum):
     TASK_COMPLETED = "task_completed"
     HOSPITAL_STATUS = "hospital_status"
     TTF_THRESHOLD = "ttf_threshold"
+    ZONE_STATUS = "zone_status"
+    SUBSTATION_STATUS = "substation_status"
+    OVERLOAD = "overload"
 
 
 @dataclass(frozen=True, slots=True, order=True)
