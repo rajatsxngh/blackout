@@ -13,4 +13,4 @@ Research sandbox: Claude agents vs a rules script vs OR-Tools in a simulated cit
 - Handy: `uv run blackout run -s hello_blackout -c scripted --render ascii` (or `-s cascade`) shows a demo and logs it to runs/adhoc; `uv run blackout replay <run dir>` verifies a log; `uv run blackout score runs/adhoc` scores every logged run; `uv run blackout gen --suite dev-v0` regenerates scenarios/dev-v0 (`--check` verifies it, `--sample 20` prints L1 reports); `HYPOTHESIS_PROFILE=thorough uv run pytest tests/test_properties.py tests/test_replay.py` runs a deep property check; `uv run blackout batch --matrix configs/matrices/dev_baselines.yaml [--resume]` runs do-nothing and Rules over dev-v0 and writes results/dev_baselines/ (tables and parse F1).
 - Run logs must stay deterministic (docs/DECISIONS.md D033): never put wall-clock time or machine details in run.jsonl.gz, only in summary.json.
 
-Current milestone: M0–M5 are done (CI green). M6 is done locally; it still needs its CI run (push to GitHub). Next: M7.
+Current milestone: M0–M6 are done (CI green). Next: M7.
