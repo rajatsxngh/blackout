@@ -6,7 +6,7 @@ substation will take to repair (until a crew is on site), or future events. M4 a
 telemetry delays and radio reports on top of this.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 
 from blackout.sim.city import City, EdgeId, NodeId
 from blackout.sim.engine import Engine
@@ -19,6 +19,7 @@ from blackout.sim.entities import (
     Truck,
     VehicleState,
 )
+from blackout.sim.hashing import digest
 from blackout.sim.triggers import Trigger
 
 
@@ -142,6 +143,22 @@ class Observation:
 
     def zone(self, zone_id: str) -> ZoneView:
         return next(z for z in self.zones if z.id == zone_id)
+
+    def to_dict(self) -> dict[str, object]:
+        """Everything in the observation except the static map, in JSON-ready form."""
+        return {f.name: _plain(getattr(self, f.name)) for f in fields(self) if f.name != "city"}
+
+    def digest(self) -> str:
+        """A content hash, so run logs can record exactly what a contestant was shown."""
+        return digest(self.to_dict())
+
+
+def _plain(value: object) -> object:
+    if isinstance(value, tuple):
+        return [_plain(item) for item in value]
+    if hasattr(value, "__dataclass_fields__"):
+        return asdict(value)  # type: ignore[arg-type]
+    return value
 
 
 def full_view(engine: Engine, role: str, triggers: tuple[Trigger, ...]) -> Observation:

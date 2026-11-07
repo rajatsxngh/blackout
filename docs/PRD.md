@@ -486,15 +486,17 @@ After the freeze, only documented bug fixes are allowed, and every affected syst
 
 | Record | Contents |
 |---|---|
-| `header` | scenario id and hash; contestant; model; effort; run index; code, config and prompt hashes; git commit; tool versions |
+| `header` | run id; the full scenario embedded with its hash, so a log stands alone; contestant; model; effort; run index; prompt hash (reserved); engine version and config, with the config's hash |
 | `tick` | state hash + events applied |
 | `dp` | role; triggers; observation hash; belief digest (known blocks and estimates, for the viewer); raw and validated actions with reasons; results; notes; LLM cache keys; usage; cost; latency |
-| `msg` / `fact` | team only |
-| `end` | final metrics |
+| `msg` / `fact` | team only (added with M14) |
+| `end` | final metrics, run hash, decision point count |
 
   Fields for usage, ASR and parse metrics are reserved from M3 onward.
+- **Deterministic text.** Records are canonical JSON lines, and gzip is written with a fixed header, so the same run gives a byte-identical log on any machine. Anything about the machine or the wall clock goes in `summary.json`: recording time, platform, Python version, git commit.
 - **No full frames in run logs.** `export-viewer` re-simulates selected runs to produce frames, so logs stay small (≪ 1 MB).
-- `blackout replay <run> --verify` re-simulates from the scenario plus the accepted actions and asserts every state hash matches (I4).
+- `blackout replay <run>` re-simulates from the embedded scenario plus every logged action, rejected ones included. It checks every state hash (I4), decision tick, observation hash and action outcome, and stops at the first difference.
+- `blackout score <runs...>` gets outcomes by replaying with the referee and counts process metrics from the decision records. It cross-checks both against the end record and reports any difference as a discrepancy (I5).
 
 ### 8.13 Replay viewer (`viewer/`)
 
@@ -525,10 +527,10 @@ After the freeze, only documented bug fixes are allowed, and every affected syst
 |---|---|
 | `gen --suite dev-v0\|dev\|test` | Generate a scenario suite |
 | `validate-suite` | Check validity and tiers |
-| `run --scenario <id> --controller <name> [--model --effort --run-index] [--render ascii]` | Run one contestant on one scenario |
+| `run --scenario <id> --controller <name> [--model --effort --run-index] [--render ascii] [--out <dir>] [--no-log]` | Run one contestant on one scenario, and log it (by default under `runs/adhoc`) |
 | `batch --matrix configs/matrices/<x>.yaml [--resume] [--pilot] [--estimate-cost]` | Run an experiment matrix |
-| `score` | Score runs from their logs |
-| `replay --verify` | Re-simulate a run and check its state hashes |
+| `score <runs...> [--json]` | Score runs from their logs, with cross-checks |
+| `replay <run>` | Re-simulate a run and check every state, decision and action against its log |
 | `analyze <experiment>` | Statistics, tables and charts |
 | `export-viewer <experiment> --select curated.yaml` | Build the viewer's data files |
 | `budget` | Show the spend ledger |
@@ -630,7 +632,7 @@ M0 → M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 ─┬─→ M9 ─�
 | M0 | A Simulation | Foundation | — | 3–4 h | Done locally; CI pending first push |
 | M1 | A Simulation | Engine core and logistics | M0 | 10–14 h | Done locally; CI pending first push |
 | M2 | A Simulation | Power grid and crews | M1 | 6–8 h | Done locally; CI pending first push |
-| M3 | A Simulation | Run logs, replay check, scorer | M2 | 6–8 h | Not started |
+| M3 | A Simulation | Run logs, replay check, scorer | M2 | 6–8 h | Done locally; CI pending first push |
 | M4 | B Information and scenarios | Information layer and dependency graph | M2, M3 | 10–12 h | Not started |
 | M5 | B Information and scenarios | Scenario generator v1 | M4 | 8–10 h | Not started |
 | M6 | C Baselines | Rules baseline and batch runner | M3, M5 | 5–7 h | Not started |

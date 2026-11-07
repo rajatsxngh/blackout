@@ -1,13 +1,19 @@
 """Builders and checkers shared by the tests."""
 
+import gzip
+import json
 import random
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from blackout.controllers.base import Controller
+from blackout.controllers.do_nothing import DoNothingController
+from blackout.controllers.scripted import ScriptedController, load_script
 from blackout.env import BlackoutEnv
 from blackout.info.observation import Observation
-from blackout.scenarios.schema import Scenario
+from blackout.logs.writer import RecordedRun, record_episode, run_dir_for
+from blackout.scenarios.schema import Scenario, load_scenario
 from blackout.sim.actions import (
     AnyAction,
     AssignCrew,
@@ -27,6 +33,42 @@ ROOT = Path(__file__).resolve().parents[1]
 HANDMADE = ROOT / "scenarios" / "handmade"
 DEMO = HANDMADE / "hello_blackout.json"
 CASCADE = HANDMADE / "cascade.json"
+HANDMADE_RUNS = [
+    (DEMO, "scripted"),
+    (DEMO, "do-nothing"),
+    (CASCADE, "scripted"),
+    (CASCADE, "do-nothing"),
+]
+
+
+def handmade_controller(scenario_path: Path, contestant: str) -> Controller:
+    """The scripted or do-nothing contestant for a hand-made scenario."""
+    if contestant == "scripted":
+        return ScriptedController(load_script(scenario_path.with_suffix(".script.json")))
+    return DoNothingController()
+
+
+def record(
+    scenario: Scenario | Path, controller: Controller, out: Path, *, run_index: int = 0
+) -> RecordedRun:
+    """Run ``controller`` on ``scenario`` and log it under ``out``."""
+    loaded = load_scenario(scenario) if isinstance(scenario, Path) else scenario
+    env = BlackoutEnv(loaded)
+    run_dir = run_dir_for(out, loaded.id, controller.name, run_index=run_index)
+    return record_episode(env, controller, run_dir, run_index=run_index)
+
+
+def read_lines(log_path: Path) -> list[dict[str, Any]]:
+    """A run log's records as plain dicts (for tampering with in tests)."""
+    with gzip.open(log_path, "rt", encoding="utf-8") as stream:
+        return [json.loads(line) for line in stream]
+
+
+def write_lines(records: list[dict[str, Any]], path: Path) -> Path:
+    """Write records as an uncompressed JSONL run log (the reader accepts both)."""
+    text = "".join(json.dumps(r, sort_keys=True, separators=(",", ":")) + "\n" for r in records)
+    path.write_text(text, encoding="ascii", newline="\n")
+    return path
 
 
 def make_scenario(**overrides: Any) -> Scenario:

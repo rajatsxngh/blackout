@@ -59,7 +59,7 @@ class BlackoutEnv:
         self.scenario = scenario
         self.config = config or SimConfig()
         self.roles: tuple[str, ...] = (ROLE_ALL,)
-        self._on_tick = on_tick
+        self._tick_listeners: list[Callable[[Engine], None]] = [] if on_tick is None else [on_tick]
         self._engine: Engine | None = None
         self._ttf: TtfWatch | None = None
         self._pending: DecisionRequest | None = None
@@ -68,6 +68,13 @@ class BlackoutEnv:
         self._tick_hashes: list[str] = []
         self._decisions = 0
         self._last_decision_tick = 0
+
+    def add_tick_listener(self, listener: Callable[[Engine], None]) -> None:
+        """Call ``listener`` with the engine at every recorded tick, after its hash is taken."""
+        self._tick_listeners.append(listener)
+
+    def remove_tick_listener(self, listener: Callable[[Engine], None]) -> None:
+        self._tick_listeners.remove(listener)
 
     @property
     def engine(self) -> Engine:
@@ -201,8 +208,8 @@ class BlackoutEnv:
     def _record_tick(self) -> None:
         engine = self.engine
         self._tick_hashes.append(engine.state_hash())
-        if self._on_tick is not None:
-            self._on_tick(engine)
+        for listener in self._tick_listeners:
+            listener(engine)
 
     def _open_decision(self, triggers: list[Trigger]) -> DecisionRequest:
         engine = self.engine

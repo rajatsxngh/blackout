@@ -3,6 +3,7 @@
 Commands arrive milestone by milestone; docs/PRD.md section 8.14 lists the full set.
 """
 
+import json
 import platform
 import sys
 from collections.abc import Callable
@@ -18,13 +19,19 @@ from blackout.controllers.base import Controller
 from blackout.controllers.do_nothing import DoNothingController
 from blackout.controllers.scripted import ScriptedController, load_script
 from blackout.env import BlackoutEnv, DecisionRequest, run_episode
+from blackout.logs.reader import read_log
+from blackout.logs.replay import replay
+from blackout.logs.schema import LOG_FILE, LogError
+from blackout.logs.writer import record_episode, run_dir_for
 from blackout.scenarios.schema import load_scenario
+from blackout.scoring.scorer import ScoreCard, score
 from blackout.sim.actions import ActionResult
 from blackout.sim.render_ascii import render_ascii
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
 SCENARIO_DIR = Path("scenarios")
+DEFAULT_OUT = Path("runs") / "adhoc"
 
 
 class ControllerName(StrEnum):
@@ -85,8 +92,12 @@ def run(
         RenderMode, typer.Option(help="Draw the city at every decision point.")
     ] = RenderMode.NONE,
     quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Print only the summary.")] = False,
+    out: Annotated[
+        Path, typer.Option(help="Where run logs go: <out>/<scenario>/<contestant>__<model>__r0/.")
+    ] = DEFAULT_OUT,
+    log: Annotated[bool, typer.Option("--log/--no-log", help="Write a run log.")] = True,
 ) -> None:
-    """Run one contestant on one scenario and print what happened."""
+    """Run one contestant on one scenario, print what happened, and log it."""
     scenario_path = _find_scenario(scenario)
     loaded = _load(load_scenario, scenario_path, "scenario")
     contestant = _make_controller(controller, script or scenario_path.with_suffix(".script.json"))
@@ -100,7 +111,14 @@ def run(
             typer.echo(render_ascii(env.engine) + "\n")
 
     typer.echo(f"{loaded.id}: {contestant.name}, horizon {loaded.horizon} min")
-    result = run_episode(env, contestant, on_decision=None if quiet else show)
+    shown = None if quiet else show
+    log_path: Path | None = None
+    if log:
+        run_dir = run_dir_for(out, loaded.id, contestant.name)
+        recorded = record_episode(env, contestant, run_dir, on_decision=shown)
+        result, log_path = recorded.episode, recorded.log_path
+    else:
+        result = run_episode(env, contestant, on_decision=shown)
     m = env.engine.metrics
     rejected = sum(m.actions_rejected.values())
     typer.echo("")
@@ -129,6 +147,84 @@ def run(
     )
     typer.echo(f"  actions            {m.actions_accepted} accepted, {rejected} rejected")
     typer.echo(f"  run hash           {result.run_hash}")
+    if log_path is not None:
+        size = log_path.stat().st_size
+        typer.echo(f"  log                {log_path} ({size / 1024:.1f} KB)")
+
+
+@app.command("replay")
+def replay_command(
+    path: Annotated[Path, typer.Argument(help="A run directory, or its run.jsonl.gz.")],
+) -> None:
+    """Re-simulate a logged run and check every state, decision and action against the log."""
+    try:
+        log = read_log(path)
+        result = replay(log)
+    except LogError as error:
+        typer.echo(f"replay failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    episode = result.episode
+    typer.echo(
+        f"{log.header.run_id}: verified {len(episode.tick_hashes)} ticks"
+        f" and {len(episode.decisions)} decision points"
+    )
+    typer.echo(f"  run hash  {episode.run_hash}")
+
+
+@app.command("score")
+def score_command(
+    paths: Annotated[
+        list[Path], typer.Argument(help="Run directories, run logs, or folders to search.")
+    ],
+    as_json: Annotated[bool, typer.Option("--json", help="Print score cards as JSON.")] = False,
+) -> None:
+    """Score runs from their logs alone, cross-checking each against its end record."""
+    logs = _collect_logs(paths)
+    if not logs:
+        raise typer.BadParameter("no run logs found", param_hint="'PATHS...'")
+    cards: list[ScoreCard] = []
+    failed = 0
+    for log_path in logs:
+        try:
+            card = score(log_path)
+        except LogError as error:
+            failed += 1
+            typer.echo(f"{log_path}: cannot score: {error}", err=True)
+            continue
+        cards.append(card)
+        failed += 0 if card.ok else 1
+    if as_json:
+        typer.echo(json.dumps([card.to_dict() for card in cards], indent=2, sort_keys=True))
+    else:
+        for card in cards:
+            typer.echo(_score_line(card))
+            for problem in card.discrepancies:
+                typer.echo(f"    discrepancy: {problem}")
+    if failed:
+        raise typer.Exit(code=1)
+
+
+def _collect_logs(paths: list[Path]) -> list[Path]:
+    found: list[Path] = []
+    for path in paths:
+        if path.is_file():
+            found.append(path)
+        elif (path / LOG_FILE).is_file():
+            found.append(path / LOG_FILE)
+        elif path.is_dir():
+            found.extend(sorted(path.rglob(LOG_FILE)))
+    return found
+
+
+def _score_line(card: ScoreCard) -> str:
+    rejected = sum(card.actions_rejected.values())
+    restored = "never" if card.power_restored_at is None else f"t={card.power_restored_at}"
+    status = "ok" if card.ok else f"{len(card.discrepancies)} DISCREPANCIES"
+    return (
+        f"{card.run_id}: downtime {card.critical_downtime_min} min,"
+        f" unmet {card.unmet_kw_min} kW-min, restored {restored},"
+        f" {card.actions} actions ({rejected} rejected) - {status}"
+    )
 
 
 def _find_scenario(name: str) -> Path:

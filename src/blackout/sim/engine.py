@@ -123,6 +123,7 @@ class Engine:
         self.queue = EventQueue()
         for event in scenario.events:
             self.queue.push(event.tick, event)
+        self.applied: list[QueueItem] = []  # events applied at the current tick (for run logs)
         self._signals: list[Trigger] = []
         self._refresh_power()
         self._signals.clear()  # the starting state isn't news
@@ -165,12 +166,13 @@ class Engine:
             and not any(_overloaded(s) for s in self.substations.values())
         )
 
+    def power_restored_at(self) -> int | None:
+        """The tick from which every zone had power, or None if some zone still has none."""
+        return self.metrics.outage_until if all(z.powered for z in self.zones.values()) else None
+
     def report(self) -> dict[str, object]:
-        """Final metrics, plus when power was fully restored (None if it never was)."""
-        restored = (
-            self.metrics.outage_until if all(z.powered for z in self.zones.values()) else None
-        )
-        return {**self.metrics.to_dict(), "power_restored_at": restored}
+        """Final metrics, plus when power was fully restored."""
+        return {**self.metrics.to_dict(), "power_restored_at": self.power_restored_at()}
 
     def snapshot(self) -> dict[str, object]:
         """The complete ground-truth state in canonical form, for hashing and replay checks."""
@@ -199,6 +201,7 @@ class Engine:
 
     def apply_due_events(self) -> None:
         due = self.queue.pop_due(self.tick)
+        self.applied = due
         for item in due:
             self._apply_event(item)
         if due:
@@ -274,6 +277,7 @@ class Engine:
 
     def run_minute(self) -> None:
         """Advance the world by one minute, from ``tick`` to ``tick + 1``."""
+        self.applied = []
         self._power_step()
         self._burn_fuel()
         for truck_id in sorted(self.trucks):

@@ -1,6 +1,8 @@
 """Engine rules that are the same for every scenario."""
 
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import asdict, dataclass, fields
+from typing import Self
 
 from blackout.sim.entities import Priority
 
@@ -26,3 +28,19 @@ class SimConfig:
         if priority is Priority.ESSENTIAL:
             return self.weight_essential
         return self.weight_residential
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            key: list(value) if isinstance(value, tuple) else value
+            for key, value in asdict(self).items()
+        }
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, object]) -> Self:
+        """Inverse of ``to_dict`` (JSON turns tuples into lists, so they're turned back)."""
+        values = dict(data)
+        for field in fields(cls):
+            value = values.get(field.name)
+            if isinstance(field.default, tuple) and isinstance(value, list):
+                values[field.name] = tuple(value)
+        return cls(**values)  # type: ignore[arg-type]

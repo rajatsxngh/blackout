@@ -21,6 +21,7 @@ from blackout.sim.events import (
     SubstationFail,
     TruckBreakdown,
 )
+from blackout.sim.hashing import digest
 
 SCHEMA_VERSION = 2
 _ID = r"^[A-Za-z][A-Za-z0-9_]*$"
@@ -200,3 +201,8 @@ class Scenario(_Spec):
 def load_scenario(path: Path) -> Scenario:
     """Read and validate a scenario file."""
     return Scenario.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def scenario_digest(scenario: Scenario) -> str:
+    """Content hash of a validated scenario (defaults included), independent of file layout."""
+    return digest(scenario.model_dump(mode="json"))

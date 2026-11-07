@@ -73,6 +73,14 @@ type QueueItem = (
     RoadBlock | RoadClear | TruckBreakdown | BurnRateChange | SubstationFail | TruckRepair
 )
 
+
+def event_dict(item: QueueItem) -> dict[str, object]:
+    """A JSON-ready description of an applied event, for run logs."""
+    if isinstance(item, TruckRepair):
+        return {"kind": "truck_repair", "truck": item.truck}
+    return item.model_dump(mode="json")
+
+
 # Order within one tick: clears before blocks, and repairs before new breakdowns.
 _PRIORITY: dict[type, int] = {
     RoadClear: 0,
