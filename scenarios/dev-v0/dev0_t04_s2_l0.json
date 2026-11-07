@@ -1,0 +1,518 @@
+{
+  "schema_version": 4,
+  "id": "dev0_t04_s2_l0",
+  "description": "T04 Breakdown mid-delivery. Millbrook Substation (S3) is down from the start (180 min of crew work) and Southeast's backup feeder is out, so Lakeview Medical Center (H3) is on its generator. T4 starts at B1 with 500 L, 14 min from H3, and breaks down for good at t=7. H3 has 56 L: enough for T1 to load and deliver after the breakdown with 5 min to spare. A side block on Oak St between 1st and 2nd (O1-O2) from t=33 to t=95 touches no fast route.",
+  "template": "T04",
+  "seed": 167251218375679,
+  "level": 0,
+  "split": "dev-v0",
+  "tier": null,
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 5,
+      "A1-B1": 2,
+      "A2-A3": 2,
+      "A2-B2": 3,
+      "A3-A4": 2,
+      "A3-B3": 2,
+      "A4-A5": 5,
+      "A4-B4": 2,
+      "A5-A6": 4,
+      "A5-B5": 4,
+      "A6-B6": 4,
+      "B1-B2": 2,
+      "B1-C1": 3,
+      "B2-B3": 5,
+      "B2-C2": 3,
+      "B3-B4": 4,
+      "B3-C3": 4,
+      "B4-B5": 4,
+      "B4-C4": 1,
+      "B5-B6": 4,
+      "B5-C5": 4,
+      "B6-C6": 2,
+      "C1-C2": 2,
+      "C1-E1": 3,
+      "C2-C3": 2,
+      "C2-E2": 2,
+      "C3-C4": 5,
+      "C3-E3": 2,
+      "C4-C5": 2,
+      "C4-E4": 1,
+      "C5-C6": 4,
+      "C5-E5": 4,
+      "C6-E6": 2,
+      "E1-E2": 2,
+      "E1-M1": 2,
+      "E2-E3": 2,
+      "E2-M2": 2,
+      "E3-E4": 1,
+      "E3-M3": 4,
+      "E4-E5": 1,
+      "E4-M4": 2,
+      "E5-E6": 1,
+      "E5-M5": 3,
+      "E6-M6": 5,
+      "M1-M2": 2,
+      "M1-O1": 5,
+      "M2-M3": 2,
+      "M2-O2": 3,
+      "M3-M4": 2,
+      "M3-O3": 4,
+      "M4-M5": 5,
+      "M4-O4": 1,
+      "M5-M6": 5,
+      "M5-O5": 4,
+      "M6-O6": 4,
+      "O1-O2": 5,
+      "O2-O3": 4,
+      "O3-O4": 4,
+      "O4-O5": 3,
+      "O5-O6": 3
+    },
+    "landmarks": {
+      "Central Library": "M3",
+      "City Hall": "O6",
+      "St. Paul's Church": "A2",
+      "the Water Tower": "C2"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "St. Mary's Hospital",
+      "node": "B3",
+      "tank_l": 600,
+      "fuel_l": 340,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "Mercy General Hospital",
+      "node": "B6",
+      "tank_l": 600,
+      "fuel_l": 240,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "Lakeview Medical Center",
+      "node": "M5",
+      "tank_l": 600,
+      "fuel_l": 56,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Northside Fuel Depot",
+      "node": "O4",
+      "stock_l": 2500
+    },
+    {
+      "id": "D2",
+      "name": "Harbor Fuel Depot",
+      "node": "E2",
+      "stock_l": 1700
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "O4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "E2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "O4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "B1",
+      "capacity_l": 500,
+      "load_l": 500
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "A4"
+    },
+    {
+      "id": "C2",
+      "node": "O5"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Foundry Substation",
+      "node": "B3",
+      "capacity_kw": 38000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S2",
+      "name": "Quarry Substation",
+      "node": "E3",
+      "capacity_kw": 34000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Millbrook Substation",
+      "node": "O5",
+      "capacity_kw": 29000,
+      "state": "failed",
+      "repair_minutes": 180
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 10000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 5000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 6000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 4500,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 9000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 5000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 10500,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 6000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 10500,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    }
+  ],
+  "events": [
+    {
+      "tick": 7,
+      "kind": "truck_breakdown",
+      "truck": "T4",
+      "repair_minutes": null
+    },
+    {
+      "tick": 33,
+      "kind": "road_block",
+      "edge": "O1-O2"
+    },
+    {
+      "tick": 95,
+      "kind": "road_clear",
+      "edge": "O1-O2"
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R02",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Fuel dispatcher Murphy, Harbor Fuel Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 1700
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Charge nurse Okafor, Lakeview Medical Center",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 50
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R04",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        },
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 180
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01",
+          "F04"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 37,
+      "id": "R05",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Lindqvist, Unit 26",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "O1-O2",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 97,
+      "id": "R06",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Lindqvist, Unit 36",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "O1-O2",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 1,
+    "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+    "attempt": 0,
+    "world_hash": "332d7af659970ca6c8d5834d85a7c0bb"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 212,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": null
+  },
+  "content_hash": "6e0d4cc2c50eb29038a303f9f4a59e17"
+}

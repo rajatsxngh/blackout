@@ -1,0 +1,26 @@
+# Train phrasing bank: repair_eta (crew minutes still needed on site).
+# Slots: {substation}, {duration}.
+fact_type: repair_eta
+phrasings:
+  - id: re01
+    text: "{substation} is going to take {duration} of work once we're on site."
+  - id: re02
+    text: "damage assessment on {substation}: figure {duration} to fix it."
+  - id: re03
+    text: "the repair estimate for {substation} is {duration}."
+  - id: re04
+    text: "we'll need {duration} at {substation} to get it back up."
+  - id: re05
+    text: "best guess for {substation} is {duration} of repair time."
+  - id: re06
+    text: "once a crew gets to {substation} it's {duration} before it's back."
+  - id: re07
+    text: "{substation} needs {duration} of crew time."
+  - id: re08
+    text: "planning number for {substation}: {duration} on site."
+  - id: re09
+    text: "fixing {substation} will take {duration}."
+  - id: re10
+    text: "tell control {substation} is {duration} of work, not a quick reset."
+  - id: re11
+    text: "rough ETA on {substation} is {duration} once we start."

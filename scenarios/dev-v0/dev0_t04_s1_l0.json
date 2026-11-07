@@ -1,0 +1,418 @@
+{
+  "schema_version": 4,
+  "id": "dev0_t04_s1_l0",
+  "description": "T04 Breakdown mid-delivery. Foundry Substation (S1) is down from the start (200 min of crew work) and West's backup feeder is out, so County General Hospital (H2) is on its generator. T1 starts at B1 with 500 L, 10 min from H2, and breaks down for good at t=7. H2 has 58 L: enough for T2 to load and deliver after the breakdown with 7 min to spare.",
+  "template": "T04",
+  "seed": 256422600597857,
+  "level": 0,
+  "split": "dev-v0",
+  "tier": null,
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 4,
+      "A1-B1": 5,
+      "A2-A3": 5,
+      "A2-B2": 2,
+      "A3-A4": 3,
+      "A3-B3": 1,
+      "A4-A5": 3,
+      "A4-B4": 3,
+      "A5-A6": 4,
+      "A5-B5": 5,
+      "A6-B6": 3,
+      "B1-B2": 2,
+      "B1-C1": 5,
+      "B2-B3": 4,
+      "B2-C2": 4,
+      "B3-B4": 2,
+      "B3-C3": 1,
+      "B4-B5": 2,
+      "B4-C4": 4,
+      "B5-B6": 4,
+      "B5-C5": 4,
+      "B6-C6": 3,
+      "C1-C2": 5,
+      "C1-E1": 5,
+      "C2-C3": 4,
+      "C2-E2": 2,
+      "C3-C4": 3,
+      "C3-E3": 1,
+      "C4-C5": 5,
+      "C4-E4": 5,
+      "C5-C6": 3,
+      "C5-E5": 2,
+      "C6-E6": 2,
+      "E1-E2": 2,
+      "E1-M1": 3,
+      "E2-E3": 2,
+      "E2-M2": 5,
+      "E3-E4": 3,
+      "E3-M3": 2,
+      "E4-E5": 3,
+      "E4-M4": 2,
+      "E5-E6": 4,
+      "E5-M5": 2,
+      "E6-M6": 2,
+      "M1-M2": 1,
+      "M1-O1": 5,
+      "M2-M3": 2,
+      "M2-O2": 2,
+      "M3-M4": 1,
+      "M3-O3": 2,
+      "M4-M5": 2,
+      "M4-O4": 2,
+      "M5-M6": 2,
+      "M5-O5": 4,
+      "M6-O6": 3,
+      "O1-O2": 4,
+      "O2-O3": 5,
+      "O3-O4": 2,
+      "O4-O5": 3,
+      "O5-O6": 4
+    },
+    "landmarks": {
+      "Central Library": "A6",
+      "Riverside Park": "E6",
+      "the Courthouse": "B5",
+      "the Water Tower": "B4"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Mercy General Hospital",
+      "node": "M1",
+      "tank_l": 600,
+      "fuel_l": 350,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "County General Hospital",
+      "node": "A4",
+      "tank_l": 600,
+      "fuel_l": 58,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "Lakeview Medical Center",
+      "node": "O3",
+      "tank_l": 600,
+      "fuel_l": 170,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Southfield Fuel Yard",
+      "node": "M2",
+      "stock_l": 3600
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "B5",
+      "stock_l": 3600
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "B1",
+      "capacity_l": 500,
+      "load_l": 500
+    },
+    {
+      "id": "T2",
+      "node": "B5",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "M2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "B5",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "A3"
+    },
+    {
+      "id": "C2",
+      "node": "B2"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Foundry Substation",
+      "node": "B4",
+      "capacity_kw": 29000,
+      "state": "failed",
+      "repair_minutes": 200
+    },
+    {
+      "id": "S2",
+      "name": "Millbrook Substation",
+      "node": "C4",
+      "capacity_kw": 38000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Ridgeway Substation",
+      "node": "M6",
+      "capacity_kw": 30000,
+      "state": "online",
+      "repair_minutes": null
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 4500,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 5500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 11500,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 5500,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 8500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 7000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 4500,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 8000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 7,
+      "kind": "truck_breakdown",
+      "truck": "T1",
+      "repair_minutes": null
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Nurse supervisor Haddad, County General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 56
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R02",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 5,
+      "id": "R03",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 200
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 1,
+    "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+    "attempt": 0,
+    "world_hash": "45e06f983817f0ac802bce34c15891ac"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 211,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": null
+  },
+  "content_hash": "4474b273ff2be4ae8f4a2954bd1b2a02"
+}

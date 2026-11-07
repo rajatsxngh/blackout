@@ -154,3 +154,35 @@ def test_run_scripted_without_a_script_fails(tmp_path: Path) -> None:
     result = runner.invoke(app, ["run", "-s", str(lonely), "-c", "scripted"])
     assert result.exit_code == 2
     assert "script not found" in result.output
+
+
+@pytest.mark.usefixtures("in_repo_root")
+def test_gen_check_passes_on_the_committed_suite() -> None:
+    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--check", "--sample", "3"])
+    assert result.exit_code == 0, result.output
+    assert "18 scenarios in" in result.output
+    assert "Sample of 3 L1 reports" in result.output
+
+
+@pytest.mark.usefixtures("in_repo_root")
+def test_gen_writes_a_suite_elsewhere(tmp_path: Path) -> None:
+    out = tmp_path / "suite"
+    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--out", str(out)])
+    assert result.exit_code == 0, result.output
+    assert len(list(out.glob("dev0_*.json"))) == 18
+    assert (out / "manifest.json").read_text(encoding="utf-8") == (
+        ROOT / "scenarios" / "dev-v0" / "manifest.json"
+    ).read_text(encoding="utf-8")
+
+
+@pytest.mark.usefixtures("in_repo_root")
+def test_gen_check_fails_when_files_differ(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["gen", "--suite", "dev-v0", "--check", "--out", str(tmp_path)])
+    assert result.exit_code == 1
+    assert "missing" in result.output
+
+
+def test_gen_refuses_unknown_suites() -> None:
+    result = runner.invoke(app, ["gen", "--suite", "test"])
+    assert result.exit_code != 0
+    assert "M8" in result.output

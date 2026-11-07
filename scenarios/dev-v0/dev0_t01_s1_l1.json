@@ -1,0 +1,538 @@
+{
+  "schema_version": 4,
+  "id": "dev0_t01_s1_l1",
+  "description": "T01 Blocked fuel route. Quarry Substation (S3) is down from the start (170 min of crew work) and Southeast's backup feeder is out, so Hillcrest Hospital (H3) is on its generator. The fast route from Westpoint Fuel Depot is blocked on 6th Ave between Maple and Oak (M6-O6) from t=0 to t=165. H3 has 62 L: enough for the 15-minute detour with 6 min to spare, not for getting stuck first (10 min lost).",
+  "template": "T01",
+  "seed": 203818529856864,
+  "level": 1,
+  "split": "dev-v0",
+  "tier": null,
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 5,
+      "A1-B1": 5,
+      "A2-A3": 4,
+      "A2-B2": 1,
+      "A3-A4": 4,
+      "A3-B3": 3,
+      "A4-A5": 2,
+      "A4-B4": 4,
+      "A5-A6": 5,
+      "A5-B5": 5,
+      "A6-B6": 2,
+      "B1-B2": 3,
+      "B1-C1": 3,
+      "B2-B3": 3,
+      "B2-C2": 1,
+      "B3-B4": 5,
+      "B3-C3": 3,
+      "B4-B5": 5,
+      "B4-C4": 3,
+      "B5-B6": 5,
+      "B5-C5": 2,
+      "B6-C6": 5,
+      "C1-C2": 2,
+      "C1-E1": 2,
+      "C2-C3": 2,
+      "C2-E2": 1,
+      "C3-C4": 1,
+      "C3-E3": 2,
+      "C4-C5": 1,
+      "C4-E4": 4,
+      "C5-C6": 2,
+      "C5-E5": 3,
+      "C6-E6": 3,
+      "E1-E2": 5,
+      "E1-M1": 3,
+      "E2-E3": 2,
+      "E2-M2": 2,
+      "E3-E4": 2,
+      "E3-M3": 5,
+      "E4-E5": 3,
+      "E4-M4": 5,
+      "E5-E6": 4,
+      "E5-M5": 3,
+      "E6-M6": 4,
+      "M1-M2": 2,
+      "M1-O1": 3,
+      "M2-M3": 4,
+      "M2-O2": 1,
+      "M3-M4": 5,
+      "M3-O3": 2,
+      "M4-M5": 4,
+      "M4-O4": 5,
+      "M5-M6": 5,
+      "M5-O5": 5,
+      "M6-O6": 2,
+      "O1-O2": 2,
+      "O2-O3": 3,
+      "O3-O4": 2,
+      "O4-O5": 4,
+      "O5-O6": 4
+    },
+    "landmarks": {
+      "Central Library": "E2",
+      "Grand Theater": "M5",
+      "Riverside Park": "O1",
+      "the Water Tower": "M1"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "St. Mary's Hospital",
+      "node": "C1",
+      "tank_l": 600,
+      "fuel_l": 200,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "St. Jude's Hospital",
+      "node": "C3",
+      "tank_l": 600,
+      "fuel_l": 130,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "Hillcrest Hospital",
+      "node": "O6",
+      "tank_l": 600,
+      "fuel_l": 62,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Ironworks Depot",
+      "node": "A2",
+      "stock_l": 1600
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "E4",
+      "stock_l": 4000
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "A2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "E4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "A2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "E4",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "O6"
+    },
+    {
+      "id": "C2",
+      "node": "E1"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Millbrook Substation",
+      "node": "B3",
+      "capacity_kw": 29000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S2",
+      "name": "Kingsley Substation",
+      "node": "C3",
+      "capacity_kw": 45000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Quarry Substation",
+      "node": "O4",
+      "capacity_kw": 40000,
+      "state": "failed",
+      "repair_minutes": 170
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 9000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 6000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 10500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 7000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 11000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 8000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 9500,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 11000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "kind": "road_block",
+      "edge": "M6-O6"
+    },
+    {
+      "tick": 165,
+      "kind": "road_clear",
+      "edge": "M6-O6"
+    },
+    {
+      "kind": "report",
+      "tick": 0,
+      "id": "R01",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the non-emergency line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": "Hi there. Um, there's smoke coming off the Quarry substation, & the power's out all around here.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss08"
+        ],
+        "noise": [
+          "abbreviations",
+          "filler",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R02",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Nurse supervisor Tanaka, Hillcrest Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 60
+        }
+      ],
+      "text": "Hi, this is Nurse supervisor Tanaka. Just dipped the tank at Hillcrest Hospital, 60 litres remainig. Thanks.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "hospital_fuel/hf05"
+        ],
+        "noise": [
+          "typos",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R03",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Fischer, Unit 8",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M6-O6",
+          "value": null
+        }
+      ],
+      "text": "We have a full closre on Sixth Avenue between Oak and Maple due to a car fire. Expect it to stay shut for a while. Over.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb09"
+        ],
+        "noise": [
+          "typos",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R04",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": "Grid control on the crew channel. Um, the Quarry substation is don hard, a transformer fire, last I checked.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss01"
+        ],
+        "noise": [
+          "typos",
+          "hedge",
+          "filler",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R05",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 170
+        }
+      ],
+      "text": "Best guess for Quarry sub is 2h50 of repair time. Out.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "repair_eta/re05"
+        ],
+        "noise": [
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 169,
+      "id": "R06",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 4",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "M6-O6",
+          "value": null
+        }
+      ],
+      "text": "Update on Sixth Ave between Oak and Maple: it's clear as of about 4 minutes ago. Traffic is moving.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc02"
+        ],
+        "noise": [
+          "abbreviations"
+        ]
+      }
+    }
+  ],
+  "generator": {
+    "version": 1,
+    "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+    "attempt": 1,
+    "world_hash": "5a200e0f3b9d6ac4dbb4bfd917f96441"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 209,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": null
+  },
+  "content_hash": "6e88d35db56ac54d7a1ff58a11b6c410"
+}

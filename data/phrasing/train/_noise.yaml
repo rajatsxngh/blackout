@@ -1,0 +1,60 @@
+# Noise lexicon for the train bank (docs/PRD.md section 8.4). The operators run in this order:
+# typos, abbreviations, slang, hedges, chatter. Bundling several facts into one report is
+# decided when reports are planned, so L0 and L1 carry the same facts at the same ticks.
+# Rates are whole percentages. Digits and number words are never typo'd or replaced, so the
+# numbers a report states stay intact.
+rates:
+  typo_pct: [3, 6]          # of eligible words, drawn once per report
+  abbreviation_pct: 35      # per matching word
+  slang_pct: 30             # per matching word
+  hedge_pct: 30             # per report
+  open_pct: 60              # per report: a radio opener
+  filler_pct: 25            # per report: an "uh," after the opener
+  close_pct: 35             # per report: a sign-off
+abbreviations:
+  Street: St
+  Avenue: Ave
+  between: btwn
+  and: "&"
+  minutes: mins
+  liters: L
+  about: abt
+  hospital: hosp
+  generator: gen
+  please: pls
+  with: w/
+slang:
+  blocked: [jammed up, shut]
+  truck: [rig]
+  trucks: [rigs]
+  generator: [genny]
+  completely: [totally]
+  offline: [down]
+  diesel: [fuel]
+hedges:
+  prefix:
+    - "I think "
+    - "Looks like "
+    - "As far as I can tell, "
+    - "Pretty sure "
+    - "From what I'm seeing, "
+  suffix:
+    - ", I think"
+    - ", far as we can tell"
+    - ", don't quote me"
+    - ", last I checked"
+chatter:
+  open:
+    police_radio: ["Dispatch, {callsign}.", "{callsign} to dispatch.", "Dispatch, {callsign}, priority traffic.", "This is {callsign}."]
+    crew_radio: ["This is {callsign}.", "{callsign} on the crew channel.", "{callsign} here."]
+    hospital_staff: ["Hi, this is {callsign}.", "Hello? {callsign} calling.", "{callsign} here."]
+    depot_staff: ["Dispatch, {callsign}.", "{callsign} here.", "Morning, {callsign} calling."]
+    public: ["Um, hi.", "Hello, yes.", "Hi there.", "Hi, I'm calling about the outage."]
+  filler: ["Uh, ", "Um, ", "Okay, ", "So "]
+  close:
+    police_radio: ["Over.", "Copy?", "Out.", "How copy?"]
+    crew_radio: ["Over.", "Copy?", "Out.", "Standing by."]
+    hospital_staff: ["Thanks.", "Please hurry.", "Call us back."]
+    depot_staff: ["Over.", "Thanks.", "Let us know."]
+    public: ["Thanks.", "Somebody should look at it.", "Okay, bye."]
+  connectors: [" Also, ", " And another thing, ", " Second thing: ", " One more thing: "]

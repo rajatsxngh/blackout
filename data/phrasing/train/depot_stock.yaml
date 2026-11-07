@@ -1,0 +1,24 @@
+# Train phrasing bank: depot_stock (liters available at a depot).
+# Slots: {depot}, {liters}.
+fact_type: depot_stock
+phrasings:
+  - id: ds01
+    text: "{depot} has {liters} available for loading."
+  - id: ds02
+    text: "stock check at {depot}: {liters} in the tanks."
+  - id: ds03
+    text: "we're holding {liters} at {depot}."
+  - id: ds04
+    text: "{depot} is reporting {liters} on hand, and the pumps are working."
+  - id: ds05
+    text: "inventory at {depot} is {liters}."
+  - id: ds06
+    text: "you can pull up to {liters} from {depot}."
+  - id: ds07
+    text: "{depot} here, we've got {liters} ready to go."
+  - id: ds08
+    text: "the tank gauges at {depot} say {liters}."
+  - id: ds09
+    text: "current fuel at {depot}: {liters}."
+  - id: ds10
+    text: "send trucks to {depot} if you need it, there's {liters} here."

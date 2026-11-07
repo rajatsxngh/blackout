@@ -104,11 +104,22 @@ class Fact(_Model):
 
 
 class ReportTruth(_Model):
-    """Ground truth about a report, for scoring only. Contestants never see it."""
+    """Ground truth about a report, for scoring only. Contestants never see it.
+
+    ``fact_ids`` name the scenario's world facts that the report's claims state, in the same
+    order as ``Report.facts`` (generated scenarios only; a claim repeated in a later report
+    keeps its ID). ``bank`` and ``phrasings`` say which phrasing bank and entries the text was
+    rendered from, and ``noise`` which noise operators changed it (L1 and up).
+    """
 
     is_true: bool = True
     cue: str | None = None
     stale_of: str | None = None
+    injection: str | None = None
+    fact_ids: list[str] = Field(default_factory=list)
+    bank: str | None = None
+    phrasings: list[str] = Field(default_factory=list)
+    noise: list[str] = Field(default_factory=list)
 
 
 class Report(_Model):
@@ -123,6 +134,15 @@ class Report(_Model):
     facts: list[Fact] = Field(min_length=1, description="What the report claims (ground truth).")
     text: str | None = Field(default=None, description="Free text, shown instead of facts at L1+.")
     truth: ReportTruth = Field(default_factory=ReportTruth)
+
+    @model_validator(mode="after")
+    def _fact_ids_match(self) -> Self:
+        ids = self.truth.fact_ids
+        if ids and self.truth.is_true and len(ids) != len(self.facts):
+            raise ValueError(
+                f"report {self.id}: {len(ids)} fact_ids for {len(self.facts)} true claims"
+            )
+        return self
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,0 +1,189 @@
+{
+  "suite": "dev-v0",
+  "generator_version": 1,
+  "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+  "bank": "train",
+  "bank_digest": "ca7ede9bb2077af27ebedb12758aca79",
+  "scenarios": [
+    {
+      "id": "dev0_t01_s0_l0",
+      "template": "T01",
+      "seed": 169343902193755,
+      "level": 0,
+      "content_hash": "4d955f1adb372b37e55a00caf916ab71",
+      "world_hash": "4dba87eadda04204788ca156b19b1fa1",
+      "attempt": 3,
+      "do_nothing_critical_downtime": 220
+    },
+    {
+      "id": "dev0_t01_s0_l1",
+      "template": "T01",
+      "seed": 169343902193755,
+      "level": 1,
+      "content_hash": "81ea3e2bac278fd5069b4d1ca3680403",
+      "world_hash": "4dba87eadda04204788ca156b19b1fa1",
+      "attempt": 3,
+      "do_nothing_critical_downtime": 220
+    },
+    {
+      "id": "dev0_t01_s1_l0",
+      "template": "T01",
+      "seed": 203818529856864,
+      "level": 0,
+      "content_hash": "daaeb45b0fa505d3a024ac4f55798cce",
+      "world_hash": "5a200e0f3b9d6ac4dbb4bfd917f96441",
+      "attempt": 1,
+      "do_nothing_critical_downtime": 209
+    },
+    {
+      "id": "dev0_t01_s1_l1",
+      "template": "T01",
+      "seed": 203818529856864,
+      "level": 1,
+      "content_hash": "6e88d35db56ac54d7a1ff58a11b6c410",
+      "world_hash": "5a200e0f3b9d6ac4dbb4bfd917f96441",
+      "attempt": 1,
+      "do_nothing_critical_downtime": 209
+    },
+    {
+      "id": "dev0_t01_s2_l0",
+      "template": "T01",
+      "seed": 47764262321170,
+      "level": 0,
+      "content_hash": "ef9067c410ccfa0fda86c6e37d78203d",
+      "world_hash": "6b0f7e65f159dc485adb28b7b962bcfe",
+      "attempt": 3,
+      "do_nothing_critical_downtime": 214
+    },
+    {
+      "id": "dev0_t01_s2_l1",
+      "template": "T01",
+      "seed": 47764262321170,
+      "level": 1,
+      "content_hash": "fe82f70a68684502be84e22c046d2b11",
+      "world_hash": "6b0f7e65f159dc485adb28b7b962bcfe",
+      "attempt": 3,
+      "do_nothing_critical_downtime": 214
+    },
+    {
+      "id": "dev0_t02_s0_l0",
+      "template": "T02",
+      "seed": 108532122504577,
+      "level": 0,
+      "content_hash": "c81f58ccdf29eb79fa685d1af9762b4a",
+      "world_hash": "d17fd6cd40a17ba7ed6b2755aae0ac95",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 140
+    },
+    {
+      "id": "dev0_t02_s0_l1",
+      "template": "T02",
+      "seed": 108532122504577,
+      "level": 1,
+      "content_hash": "7f0340b0673f5d1a60f92daab1a44a46",
+      "world_hash": "d17fd6cd40a17ba7ed6b2755aae0ac95",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 140
+    },
+    {
+      "id": "dev0_t02_s1_l0",
+      "template": "T02",
+      "seed": 66687637926407,
+      "level": 0,
+      "content_hash": "17b543b68042e0c59178caceb27062e5",
+      "world_hash": "9f2df6eb378ce596a59ae5c80ff7e0b5",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 374
+    },
+    {
+      "id": "dev0_t02_s1_l1",
+      "template": "T02",
+      "seed": 66687637926407,
+      "level": 1,
+      "content_hash": "696bdd4c4c3d208dac4074dfe5a9aabe",
+      "world_hash": "9f2df6eb378ce596a59ae5c80ff7e0b5",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 374
+    },
+    {
+      "id": "dev0_t02_s2_l0",
+      "template": "T02",
+      "seed": 210530657541639,
+      "level": 0,
+      "content_hash": "ed5dca7b4322dd92a92d3681b9a44c86",
+      "world_hash": "99ae419ff16aff6194dc18d52bb9ded3",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 408
+    },
+    {
+      "id": "dev0_t02_s2_l1",
+      "template": "T02",
+      "seed": 210530657541639,
+      "level": 1,
+      "content_hash": "2879f411d07f5d4a7e32d9fe530169f7",
+      "world_hash": "99ae419ff16aff6194dc18d52bb9ded3",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 408
+    },
+    {
+      "id": "dev0_t04_s0_l0",
+      "template": "T04",
+      "seed": 61118566403872,
+      "level": 0,
+      "content_hash": "5e939b4581480040897bd6f4ae1ec5aa",
+      "world_hash": "e4c2dccd074cdc03b5e2b69de5475b23",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 210
+    },
+    {
+      "id": "dev0_t04_s0_l1",
+      "template": "T04",
+      "seed": 61118566403872,
+      "level": 1,
+      "content_hash": "029685c3d7446cf6588023f53e617f27",
+      "world_hash": "e4c2dccd074cdc03b5e2b69de5475b23",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 210
+    },
+    {
+      "id": "dev0_t04_s1_l0",
+      "template": "T04",
+      "seed": 256422600597857,
+      "level": 0,
+      "content_hash": "4474b273ff2be4ae8f4a2954bd1b2a02",
+      "world_hash": "45e06f983817f0ac802bce34c15891ac",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 211
+    },
+    {
+      "id": "dev0_t04_s1_l1",
+      "template": "T04",
+      "seed": 256422600597857,
+      "level": 1,
+      "content_hash": "d0ea36349a2c557ed2ae88a629d39971",
+      "world_hash": "45e06f983817f0ac802bce34c15891ac",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 211
+    },
+    {
+      "id": "dev0_t04_s2_l0",
+      "template": "T04",
+      "seed": 167251218375679,
+      "level": 0,
+      "content_hash": "6e0d4cc2c50eb29038a303f9f4a59e17",
+      "world_hash": "332d7af659970ca6c8d5834d85a7c0bb",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 212
+    },
+    {
+      "id": "dev0_t04_s2_l1",
+      "template": "T04",
+      "seed": 167251218375679,
+      "level": 1,
+      "content_hash": "bd6b320b900cfdf4b132ebab7218e3f8",
+      "world_hash": "332d7af659970ca6c8d5834d85a7c0bb",
+      "attempt": 0,
+      "do_nothing_critical_downtime": 212
+    }
+  ]
+}

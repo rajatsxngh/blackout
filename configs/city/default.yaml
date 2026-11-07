@@ -1,0 +1,66 @@
+# The scenario generator's world: grid size, entity counts and parameter ranges
+# (docs/PRD.md sections 8.1 and 8.6). Every range is [low, high], inclusive, in whole units
+# (minutes, liters, kW). Validated by blackout.scenarios.config.CityConfig; its digest is
+# recorded in every generated scenario, so changing anything here changes the scenarios.
+# Calibration (validity filter, tiers) comes in M8: these are first, reasonable ranges.
+
+horizon: 240
+grid: {width: 6, height: 6}
+travel_minutes: [2, 5]
+arterials:              # one north-south street and one east-west avenue, faster than the rest
+  travel_minutes: [1, 2]
+landmarks: 4
+
+zones:                  # the grid is split into blocks; each block is one zone
+  blocks: [3, 3]        # columns x rows of zones
+  demand_kw: [4000, 12000]
+  demand_step_kw: 500
+  critical: 3           # one hospital in each critical zone
+  essential: 2          # the rest are residential
+
+substations:            # one per column of zones; each zone has one primary and one alternate
+  capacity_kw: [25000, 40000]
+  capacity_step_kw: 1000
+  headroom_kw: 3000     # normal load stays at least this far below capacity
+
+hospitals:
+  tank_l: 600
+  fuel_l: [120, 400]
+  fuel_step_l: 10
+  burn_lpm: 2
+
+depots:
+  count: 2
+  stock_l: [1500, 4000]
+  stock_step_l: 100
+  min_separation: 4     # grid steps (Manhattan) between the two depots
+
+trucks: {count: 4, capacity_l: 500}
+crews: {count: 2}
+repair_minutes: [30, 90]
+repair_step_minutes: 10
+
+templates:
+  T01:                  # blocked fuel route
+    block_tick: [0, 2]       # with report_delay, word arrives by t=4, before loading ends
+    report_delay: [1, 2]
+    repair_minutes: [150, 210]
+    slack_minutes: [3, 12]
+    min_naive_loss_minutes: 3   # getting stuck and rerouting must cost at least this much
+    clear_tick: [120, 180]
+  T02:                  # cascade
+    fail_tick: [5, 20]
+    repair_minutes: [60, 120]
+    overload_kw: [1000, 6000]
+    hospital_fuel_l: [120, 240]
+  T04:                  # breakdown mid-delivery
+    loaded_drive_minutes: [10, 18]
+    breakdown_pct: [30, 70]     # how far along the loaded truck's drive it breaks down
+    repair_minutes: [150, 210]
+    slack_minutes: [5, 15]
+    side_block_pct: 50          # chance of an unrelated block somewhere else, with a report
+
+reports:
+  bundle_pct: 50        # chance that a crew's status and repair ETA come in one report
+  public_echo_pct: 50   # chance that a public caller also reports an event (true, unverified)
+  depot_report_pct: 50

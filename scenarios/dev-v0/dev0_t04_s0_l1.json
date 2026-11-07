@@ -1,0 +1,432 @@
+{
+  "schema_version": 4,
+  "id": "dev0_t04_s0_l1",
+  "description": "T04 Breakdown mid-delivery. Quarry Substation (S1) is down from the start (200 min of crew work) and West's backup feeder is out, so Good Samaritan Hospital (H1) is on its generator. T2 starts at O5 with 500 L, 16 min from H1, and breaks down for good at t=7. H1 has 60 L: enough for T1 to load and deliver after the breakdown with 5 min to spare.",
+  "template": "T04",
+  "seed": 61118566403872,
+  "level": 1,
+  "split": "dev-v0",
+  "tier": null,
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 5,
+      "A1-B1": 3,
+      "A2-A3": 3,
+      "A2-B2": 2,
+      "A3-A4": 4,
+      "A3-B3": 5,
+      "A4-A5": 4,
+      "A4-B4": 5,
+      "A5-A6": 2,
+      "A5-B5": 2,
+      "A6-B6": 3,
+      "B1-B2": 2,
+      "B1-C1": 3,
+      "B2-B3": 1,
+      "B2-C2": 5,
+      "B3-B4": 2,
+      "B3-C3": 5,
+      "B4-B5": 1,
+      "B4-C4": 5,
+      "B5-B6": 2,
+      "B5-C5": 2,
+      "B6-C6": 4,
+      "C1-C2": 4,
+      "C1-E1": 2,
+      "C2-C3": 2,
+      "C2-E2": 5,
+      "C3-C4": 5,
+      "C3-E3": 5,
+      "C4-C5": 5,
+      "C4-E4": 4,
+      "C5-C6": 3,
+      "C5-E5": 2,
+      "C6-E6": 2,
+      "E1-E2": 5,
+      "E1-M1": 4,
+      "E2-E3": 5,
+      "E2-M2": 2,
+      "E3-E4": 2,
+      "E3-M3": 3,
+      "E4-E5": 5,
+      "E4-M4": 5,
+      "E5-E6": 4,
+      "E5-M5": 2,
+      "E6-M6": 2,
+      "M1-M2": 3,
+      "M1-O1": 4,
+      "M2-M3": 5,
+      "M2-O2": 2,
+      "M3-M4": 5,
+      "M3-O3": 2,
+      "M4-M5": 5,
+      "M4-O4": 2,
+      "M5-M6": 3,
+      "M5-O5": 2,
+      "M6-O6": 3,
+      "O1-O2": 3,
+      "O2-O3": 3,
+      "O3-O4": 2,
+      "O4-O5": 4,
+      "O5-O6": 5
+    },
+    "landmarks": {
+      "St. Paul's Church": "C5",
+      "the Courthouse": "B4",
+      "the Fire Station": "C6",
+      "the Water Tower": "C4"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Good Samaritan Hospital",
+      "node": "A3",
+      "tank_l": 600,
+      "fuel_l": 60,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "Riverside Clinic",
+      "node": "E4",
+      "tank_l": 600,
+      "fuel_l": 230,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "St. Mary's Hospital",
+      "node": "A5",
+      "tank_l": 600,
+      "fuel_l": 310,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Ironworks Depot",
+      "node": "A1",
+      "stock_l": 1900
+    },
+    {
+      "id": "D2",
+      "name": "Eastgate Depot",
+      "node": "A6",
+      "stock_l": 3600
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "A1",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "O5",
+      "capacity_l": 500,
+      "load_l": 500
+    },
+    {
+      "id": "T3",
+      "node": "A1",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "A6",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "M3"
+    },
+    {
+      "id": "C2",
+      "node": "A1"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Quarry Substation",
+      "node": "B4",
+      "capacity_kw": 29000,
+      "state": "failed",
+      "repair_minutes": 200
+    },
+    {
+      "id": "S2",
+      "name": "Foundry Substation",
+      "node": "C3",
+      "capacity_kw": 45000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Ridgeway Substation",
+      "node": "O3",
+      "capacity_kw": 31000,
+      "state": "online",
+      "repair_minutes": null
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 4000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 10000,
+      "priority": "essential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 10500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 11000,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 8000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 8000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 11000,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 8500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 8000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 7,
+      "kind": "truck_breakdown",
+      "truck": "T2",
+      "repair_minutes": null
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R01",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Abara, Good Samaritan Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 54
+        }
+      ],
+      "text": "Good Samaritan Hospital is running on 54 liters of fuel right now. Please hurry.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "hospital_fuel/hf08"
+        ],
+        "noise": [
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R02",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": "This is Grid control. Confirming the Quarry substation is offfline as of abt 3 mins ago. Cause is a blown main breaker.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss03"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 5,
+      "id": "R03",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 200
+        }
+      ],
+      "text": "We'll need three hours and twenty mins at the Quarry substation to get it back up.",
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "repair_eta/re04"
+        ],
+        "noise": [
+          "abbreviations"
+        ]
+      }
+    }
+  ],
+  "generator": {
+    "version": 1,
+    "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+    "attempt": 0,
+    "world_hash": "e4c2dccd074cdc03b5e2b69de5475b23"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 210,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": null
+  },
+  "content_hash": "029685c3d7446cf6588023f53e617f27"
+}

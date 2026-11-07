@@ -10,7 +10,7 @@ Research sandbox: Claude agents vs a rules script vs OR-Tools in a simulated cit
 - LLM code: official `anthropic` SDK; read the claude-api skill's Python docs before writing it; no network calls in tests (recorded fixtures); every batch goes through the budget guard.
 - Log decisions in docs/DECISIONS.md.
 - Golden run hashes in tests/test_demo.py change only when physics changes on purpose: update them, and say why in docs/DECISIONS.md.
-- Handy: `uv run blackout run -s hello_blackout -c scripted --render ascii` (or `-s cascade`) shows a demo and logs it to runs/adhoc; `uv run blackout replay <run dir>` verifies a log; `uv run blackout score runs/adhoc` scores every logged run; `HYPOTHESIS_PROFILE=thorough uv run pytest tests/test_properties.py tests/test_replay.py` runs a deep property check.
+- Handy: `uv run blackout run -s hello_blackout -c scripted --render ascii` (or `-s cascade`) shows a demo and logs it to runs/adhoc; `uv run blackout replay <run dir>` verifies a log; `uv run blackout score runs/adhoc` scores every logged run; `uv run blackout gen --suite dev-v0` regenerates scenarios/dev-v0 (`--check` verifies it, `--sample 20` prints L1 reports); `HYPOTHESIS_PROFILE=thorough uv run pytest tests/test_properties.py tests/test_replay.py` runs a deep property check.
 - Run logs must stay deterministic (docs/DECISIONS.md D033): never put wall-clock time or machine details in run.jsonl.gz, only in summary.json.
 
-Current milestone: M0–M4 are done locally; they still need their first CI run (push to GitHub). Next: M5.
+Current milestone: M0–M5 are done locally; they still need their first CI run (push to GitHub). Next: M6.

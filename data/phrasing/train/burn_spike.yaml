@@ -1,0 +1,24 @@
+# Train phrasing bank: burn_spike (the generator's new burn rate).
+# Slots: {hospital}, {rate}.
+fact_type: burn_spike
+phrasings:
+  - id: bs01
+    text: "the generator at {hospital} is burning {rate} now, we switched the OR wing over."
+  - id: bs02
+    text: "heads up, fuel use at {hospital} jumped to {rate}."
+  - id: bs03
+    text: "we're pulling {rate} at {hospital} since the chillers came on."
+  - id: bs04
+    text: "the burn rate at {hospital} is up to {rate}."
+  - id: bs05
+    text: "our generator at {hospital} is using {rate}, a lot more than before."
+  - id: bs06
+    text: "fuel consumption at {hospital} spiked to {rate}."
+  - id: bs07
+    text: "{hospital} here, the genset is drinking {rate} with the extra load."
+  - id: bs08
+    text: "new burn figure for {hospital}: {rate}."
+  - id: bs09
+    text: "we had to bring the second unit online at {hospital}, so we're at {rate}."
+  - id: bs10
+    text: "the tank at {hospital} is draining faster, {rate}."

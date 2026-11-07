@@ -4,7 +4,11 @@ Version 2 (M2) added the power grid: zones, substations and repair crews. A hosp
 power from the zone that contains its intersection; a hospital outside every zone is off the
 grid and always runs on its generator. Version 3 (M4) adds radio reports (``kind: "report"``
 events) and the messiness ``level`` that decides whether contestants see a report's facts (L0)
-or only its text (L1 and up). M5 adds generator metadata, bumping ``schema_version`` again.
+or only its text (L1 and up). Version 4 (M5) adds what the generator records: template, seed,
+split and tier, generator details, validity results, and a content hash checked on load.
+
+``description`` and everything outside the world itself are metadata for people and the
+scorer; contestants only ever see observations (blackout.info.observation).
 """
 
 from collections import Counter
@@ -25,7 +29,7 @@ from blackout.sim.events import (
 )
 from blackout.sim.hashing import digest
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 _ID = r"^[A-Za-z][A-Za-z0-9_]*$"
 
 
@@ -110,11 +114,35 @@ class ZoneSpec(_Spec):
     alternate: str | None = None
 
 
+class GeneratorInfo(_Spec):
+    """How a generated scenario was made (blackout.scenarios.generator)."""
+
+    version: PositiveInt
+    config_digest: str = Field(description="Digest of the city config the world was drawn from.")
+    attempt: NonNegativeInt = Field(description="Re-roll sub-seed that gave a valid world.")
+    world_hash: str = Field(description="world_digest(): equal for every level of one seed.")
+
+
+class Validity(_Spec):
+    """Validity results recorded at generation. The full filter (with the reference) is M8."""
+
+    do_nothing_critical_downtime: NonNegativeInt
+    do_nothing_trips: NonNegativeInt
+    reference_critical_downtime: NonNegativeInt | None = None
+
+
+Split = Literal["handmade", "dev-v0", "dev", "test"]
+
+
 class Scenario(_Spec):
-    schema_version: Literal[3] = SCHEMA_VERSION
+    schema_version: Literal[4] = SCHEMA_VERSION
     id: str = Field(pattern=_ID)
     description: str = ""
+    template: str | None = Field(default=None, pattern=r"^T\d\d$")
+    seed: NonNegativeInt | None = None
     level: int = Field(default=0, ge=0, le=3, description="Messiness: L0 clean to L3 adversarial.")
+    split: Split = "handmade"
+    tier: Literal["easy", "medium", "hard"] | None = None
     horizon: PositiveInt = 240
     city: CitySpec = Field(default_factory=CitySpec)
     hospitals: list[HospitalSpec]
@@ -124,12 +152,26 @@ class Scenario(_Spec):
     substations: list[SubstationSpec] = Field(default_factory=list)
     zones: list[ZoneSpec] = Field(default_factory=list)
     events: list[ScenarioEvent] = Field(default_factory=list)
+    generator: GeneratorInfo | None = None
+    validity: Validity | None = None
+    content_hash: str | None = Field(
+        default=None, description="content_digest() of everything else; checked on load."
+    )
 
     @model_validator(mode="after")
     def _check_references(self) -> Self:
         problems = [*self._city_problems(), *self._grid_problems(), *self._event_problems()]
         if problems:
             raise ValueError("; ".join(problems))
+        return self
+
+    @model_validator(mode="after")
+    def _check_content_hash(self) -> Self:
+        if self.content_hash is not None and self.content_hash != content_digest(self):
+            raise ValueError(
+                f"content_hash {self.content_hash} doesn't match the content: the file was"
+                " edited after it was generated"
+            )
         return self
 
     def _city_problems(self) -> list[str]:
@@ -235,3 +277,29 @@ def load_scenario(path: Path) -> Scenario:
 def scenario_digest(scenario: Scenario) -> str:
     """Content hash of a validated scenario (defaults included), independent of file layout."""
     return digest(scenario.model_dump(mode="json"))
+
+
+def content_digest(scenario: Scenario) -> str:
+    """Digest of everything in the scenario except its own ``content_hash`` field."""
+    return digest(scenario.model_dump(mode="json", exclude={"content_hash"}))
+
+
+_RENDERING = ("text", "bank", "phrasings", "noise")
+
+
+def world_digest(scenario: Scenario) -> str:
+    """Digest of the physical world and the facts reported about it, at what ticks.
+
+    It leaves out the scenario's ID and level, its content hash, the world hash it records,
+    and how each report was worded (text, bank, phrasings, noise). Every level made from one
+    seed must give the same value: same world, same facts at the same ticks (PRD 8.4).
+    """
+    data = scenario.model_dump(mode="json", exclude={"id", "level", "content_hash"})
+    if data["generator"] is not None:
+        del data["generator"]["world_hash"]
+    for event in data["events"]:
+        if event["kind"] == "report":
+            event.pop("text")
+            for key in _RENDERING[1:]:
+                event["truth"].pop(key)
+    return digest(data)

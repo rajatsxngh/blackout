@@ -1,0 +1,51 @@
+# Train phrasing bank: road_blocked (docs/PRD.md section 8.4). Written with LLM help.
+# Slots: {road} (a road segment, named through the gazetteer), {cause}, {when} (a relative
+# time). `channels` lists the radio channels a phrasing fits (default: every channel).
+fact_type: road_blocked
+vocab:
+  cause:
+    - a tree down across both lanes
+    - downed power lines
+    - a jackknifed box truck
+    - a car fire
+    - flooding over the curbs
+    - a collapsed scaffold
+    - debris all over the road
+    - a sinkhole
+phrasings:
+  - id: rb01
+    text: "{road} is blocked, {cause}. Nobody's getting through."
+    channels: [police_radio]
+  - id: rb02
+    text: "be advised, {road} is closed as of {when}. We've got {cause}."
+    channels: [police_radio]
+  - id: rb03
+    text: "we've shut down {road} because of {cause}, so route everything around it."
+    channels: [police_radio]
+  - id: rb04
+    text: "heads up for any trucks: {road} is impassable, {cause}."
+    channels: [police_radio]
+  - id: rb05
+    text: "I'm standing at {road} and it's completely blocked. There's {cause}."
+    channels: [police_radio, public]
+  - id: rb06
+    text: "{road}, no through traffic. We've had {cause} there since {when}."
+    channels: [police_radio]
+  - id: rb07
+    text: "can't get past {road}, there's {cause}. Somebody should tell the drivers."
+    channels: [public]
+  - id: rb08
+    text: "there's {cause} on {road}, it's totally blocked. Happened {when}."
+    channels: [public]
+  - id: rb09
+    text: "we have a full closure on {road} due to {cause}. Expect it to stay shut for a while."
+    channels: [police_radio]
+  - id: rb10
+    text: "just drove up to {road} and had to turn around. There's {cause}, the whole road is blocked."
+    channels: [public]
+  - id: rb11
+    text: "traffic unit reporting {road} blocked {when}, {cause}. Detour your vehicles."
+    channels: [police_radio]
+  - id: rb12
+    text: "{road} is blocked, there's {cause}. Nobody can drive through."
+    channels: [public]

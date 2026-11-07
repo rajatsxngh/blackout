@@ -23,7 +23,11 @@ from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.schema import LOG_FILE, LogError
 from blackout.logs.writer import record_episode, run_dir_for
-from blackout.scenarios.schema import load_scenario
+from blackout.scenarios.config import DEFAULT_CITY_CONFIG, load_city_config
+from blackout.scenarios.generator import GenerationError, generate_all
+from blackout.scenarios.schema import Scenario, load_scenario
+from blackout.scenarios.suites import SUITES, differences, manifest, write_suite
+from blackout.scenarios.text.banks import TRAIN_BANK, load_bank
 from blackout.scoring.scorer import ScoreCard, score
 from blackout.sim.actions import ActionResult
 from blackout.sim.render_ascii import render_ascii
@@ -150,6 +154,78 @@ def run(
     if log_path is not None:
         size = log_path.stat().st_size
         typer.echo(f"  log                {log_path} ({size / 1024:.1f} KB)")
+
+
+@app.command("gen")
+def gen_command(
+    suite: Annotated[str, typer.Option(help="Which suite to generate (dev-v0; dev and test: M8).")],
+    out: Annotated[
+        Path | None, typer.Option(help="Where to write it [default: scenarios/<suite>].")
+    ] = None,
+    config: Annotated[Path, typer.Option(help="The city config.")] = DEFAULT_CITY_CONFIG,
+    bank: Annotated[Path, typer.Option(help="The phrasing bank.")] = TRAIN_BANK,
+    check: Annotated[
+        bool, typer.Option("--check", help="Write nothing; fail if the files on disk differ.")
+    ] = False,
+    sample: Annotated[int, typer.Option(help="Print this many L1 reports afterwards.")] = 0,
+) -> None:
+    """Generate a scenario suite: one file per scenario, plus manifest.json with hashes."""
+    if suite not in SUITES:
+        raise typer.BadParameter(
+            f"unknown suite {suite!r}; available: {', '.join(SUITES)} (dev and test arrive in M8)",
+            param_hint="'--suite'",
+        )
+    spec = SUITES[suite]
+    city = _load(load_city_config, config, "city config")
+    phrasing = _load(load_bank, bank, "phrasing bank")
+    try:
+        scenarios = generate_all(spec.requests(), city, phrasing)
+    except GenerationError as error:
+        typer.echo(f"generation failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    data = manifest(spec, scenarios, city, phrasing)
+    target = out or SCENARIO_DIR / suite
+    if check:
+        problems = differences(target, scenarios, data)
+        for problem in problems:
+            typer.echo(problem, err=True)
+        if problems:
+            raise typer.Exit(code=1)
+        typer.echo(f"{suite}: {len(scenarios)} scenarios in {target} match a fresh generation")
+    else:
+        write_suite(target, scenarios, data)
+        typer.echo(f"{suite}: wrote {len(scenarios)} scenarios and the manifest to {target}")
+    for scenario in scenarios:
+        assert scenario.validity is not None
+        assert scenario.generator is not None
+        typer.echo(
+            f"  {scenario.id:<18} L{scenario.level}  world {scenario.generator.world_hash[:12]}"
+            f"  do-nothing loses {scenario.validity.do_nothing_critical_downtime} min"
+        )
+    if sample:
+        _print_sample(scenarios, sample)
+
+
+def _print_sample(scenarios: list[Scenario], count: int) -> None:
+    """Up to ``count`` L1 reports, spread evenly over the suite."""
+    reports = [
+        (scenario.id, event)
+        for scenario in scenarios
+        if scenario.level > 0
+        for event in scenario.events
+        if event.kind == "report"
+    ]
+    if not reports:
+        return
+    step = max(1, len(reports) // count)
+    typer.echo(f"\nSample of {min(count, len(reports))} L1 reports (of {len(reports)}):")
+    for scenario_id, report in reports[::step][:count]:
+        assert report.kind == "report"
+        claims = "; ".join(fact.describe() for fact in report.facts)
+        typer.echo(
+            f"\n[{scenario_id} {report.id} t={report.tick} {report.channel}] {report.source}"
+            f"\n  {report.text}\n  facts: {claims}"
+        )
 
 
 @app.command("replay")

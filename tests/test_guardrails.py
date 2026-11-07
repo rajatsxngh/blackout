@@ -109,3 +109,20 @@ def test_nondeterminism_checker_catches_violations(source: str) -> None:
 def test_nondeterminism_checker_allows_seeded_and_pure_code() -> None:
     fine = "import hashlib\nfrom dataclasses import dataclass\nnow = 5\nx = sorted({1, 2})\n"
     assert nondeterminism(fine) == []
+
+
+def test_generator_draws_randomness_only_through_seeding() -> None:
+    """The scenario generator may be random, but only via blackout.scenarios.seeding (seeded,
+    blake2b-derived streams): no other module imports random, secrets, or numpy's RNG."""
+    scenarios = SRC / "scenarios"
+    offenders = {}
+    for path in _python_files(scenarios):
+        if path.name == "seeding.py":
+            continue
+        source = path.read_text(encoding="utf-8")
+        problems = nondeterminism(source)
+        if "np.random" in source or "numpy.random" in source:
+            problems.append("uses numpy's RNG directly")
+        if problems:
+            offenders[str(path.relative_to(SRC))] = problems
+    assert not offenders, f"draw randomness through scenarios.seeding.Rng: {offenders}"

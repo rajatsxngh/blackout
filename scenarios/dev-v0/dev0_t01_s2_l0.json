@@ -1,0 +1,540 @@
+{
+  "schema_version": 4,
+  "id": "dev0_t01_s2_l0",
+  "description": "T01 Blocked fuel route. Kingsley Substation (S1) is down from the start (200 min of crew work) and Southwest's backup feeder is out, so Riverside Clinic (H3) is on its generator. The fast route from Westpoint Fuel Depot is blocked on 6th Ave between Birch and Cedar (B6-C6) from t=1 to t=146. H3 has 52 L: enough for the 13-minute detour with 3 min to spare, not for getting stuck first (4 min lost).",
+  "template": "T01",
+  "seed": 47764262321170,
+  "level": 0,
+  "split": "dev-v0",
+  "tier": null,
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 4,
+      "A1-B1": 4,
+      "A2-A3": 4,
+      "A2-B2": 1,
+      "A3-A4": 3,
+      "A3-B3": 4,
+      "A4-A5": 3,
+      "A4-B4": 2,
+      "A5-A6": 5,
+      "A5-B5": 5,
+      "A6-B6": 5,
+      "B1-B2": 2,
+      "B1-C1": 2,
+      "B2-B3": 2,
+      "B2-C2": 1,
+      "B3-B4": 5,
+      "B3-C3": 3,
+      "B4-B5": 5,
+      "B4-C4": 2,
+      "B5-B6": 5,
+      "B5-C5": 4,
+      "B6-C6": 5,
+      "C1-C2": 2,
+      "C1-E1": 3,
+      "C2-C3": 4,
+      "C2-E2": 2,
+      "C3-C4": 3,
+      "C3-E3": 4,
+      "C4-C5": 4,
+      "C4-E4": 3,
+      "C5-C6": 5,
+      "C5-E5": 2,
+      "C6-E6": 3,
+      "E1-E2": 3,
+      "E1-M1": 2,
+      "E2-E3": 5,
+      "E2-M2": 1,
+      "E3-E4": 3,
+      "E3-M3": 2,
+      "E4-E5": 4,
+      "E4-M4": 5,
+      "E5-E6": 2,
+      "E5-M5": 3,
+      "E6-M6": 3,
+      "M1-M2": 2,
+      "M1-O1": 5,
+      "M2-M3": 1,
+      "M2-O2": 2,
+      "M3-M4": 1,
+      "M3-O3": 3,
+      "M4-M5": 2,
+      "M4-O4": 2,
+      "M5-M6": 1,
+      "M5-O5": 4,
+      "M6-O6": 2,
+      "O1-O2": 3,
+      "O2-O3": 4,
+      "O3-O4": 2,
+      "O4-O5": 5,
+      "O5-O6": 4
+    },
+    "landmarks": {
+      "Grand Theater": "A4",
+      "Riverside Park": "C2",
+      "St. Paul's Church": "B4",
+      "the Farmers Market": "A3"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "St. Jude's Hospital",
+      "node": "B4",
+      "tank_l": 600,
+      "fuel_l": 350,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H2",
+      "name": "County General Hospital",
+      "node": "C3",
+      "tank_l": 600,
+      "fuel_l": 400,
+      "burn_lpm": 2
+    },
+    {
+      "id": "H3",
+      "name": "Riverside Clinic",
+      "node": "B6",
+      "tank_l": 600,
+      "fuel_l": 52,
+      "burn_lpm": 2
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Ironworks Depot",
+      "node": "C2",
+      "stock_l": 1500
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "E6",
+      "stock_l": 2100
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "E6",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "E6",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "O5"
+    },
+    {
+      "id": "C2",
+      "node": "C5"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Kingsley Substation",
+      "node": "B4",
+      "capacity_kw": 27000,
+      "state": "failed",
+      "repair_minutes": 200
+    },
+    {
+      "id": "S2",
+      "name": "Quarry Substation",
+      "node": "C6",
+      "capacity_kw": 44000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Foundry Substation",
+      "node": "M2",
+      "capacity_kw": 28000,
+      "state": "online",
+      "repair_minutes": null
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 9000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 6500,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 5000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 7000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 5000,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 8500,
+      "priority": "essential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 5500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 1,
+      "kind": "road_block",
+      "edge": "B6-C6"
+    },
+    {
+      "tick": 146,
+      "kind": "road_clear",
+      "edge": "B6-C6"
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the non-emergency line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R02",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Yard manager Brennan, Ironworks Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D1",
+          "value": 1500
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Abara, Unit 28",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B6-C6",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R04",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        },
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 200
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F01",
+          "F04"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R05",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Fischer, Riverside Clinic",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 44
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 6,
+      "id": "R06",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B6-C6",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 149,
+      "id": "R07",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Moreau, Unit 35",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "B6-C6",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "cue": null,
+        "stale_of": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 1,
+    "config_digest": "b97054402dbac563bdba669bb2ff88a7",
+    "attempt": 3,
+    "world_hash": "6b0f7e65f159dc485adb28b7b962bcfe"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 214,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": null
+  },
+  "content_hash": "ef9067c410ccfa0fda86c6e37d78203d"
+}

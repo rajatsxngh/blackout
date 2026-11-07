@@ -1,0 +1,88 @@
+# Train phrasing bank: substation_status. Each phrasing is for one state (`value`).
+# Slots: {substation}, {damage} (failed only), {when}.
+fact_type: substation_status
+vocab:
+  damage:
+    - a transformer fire
+    - storm damage to the switchgear
+    - a blown main breaker
+    - water in the control house
+    - a lightning strike
+    - a line down across the bus
+phrasings:
+  - id: ss01
+    value: failed
+    text: "{substation} is down hard, {damage}."
+    channels: [crew_radio]
+  - id: ss02
+    value: failed
+    text: "we've lost {substation} completely. Looks like {damage}."
+    channels: [crew_radio]
+  - id: ss03
+    value: failed
+    text: "confirming {substation} is offline as of {when}. Cause is {damage}."
+    channels: [crew_radio]
+  - id: ss04
+    value: failed
+    text: "{substation} has failed. It's not a trip, it's real damage: {damage}."
+    channels: [crew_radio]
+  - id: ss05
+    value: failed
+    text: "be aware {substation} is out of service with {damage}. Expect outages around it."
+    channels: [crew_radio]
+  - id: ss06
+    value: failed
+    text: "{substation} went dark {when}. We're seeing {damage}."
+    channels: [crew_radio]
+  - id: ss07
+    value: failed
+    text: "there was a huge bang from {substation} and then everything went out. Maybe {damage}?"
+    channels: [public]
+  - id: ss08
+    value: failed
+    text: "there's smoke coming off {substation}, and the power's out all around here."
+    channels: [public]
+  - id: ss09
+    value: failed
+    text: "{substation} is offline and needs a crew on site. Damage looks like {damage}."
+    channels: [crew_radio]
+  - id: ss10
+    value: failed
+    text: "{substation} died on us {when}. It won't reset, we've got {damage}."
+    channels: [crew_radio]
+  - id: ss11
+    value: online
+    text: "{substation} is back online and carrying load."
+    channels: [crew_radio]
+  - id: ss12
+    value: online
+    text: "good news, {substation} is energized again as of {when}."
+    channels: [crew_radio]
+  - id: ss13
+    value: online
+    text: "the lights are back on near {substation}."
+    channels: [public]
+  - id: ss14
+    value: tripped
+    text: "{substation} tripped on overload {when}. It needs a reset."
+    channels: [crew_radio]
+  - id: ss15
+    value: tripped
+    text: "{substation} kicked offline when the breakers opened on overload. No damage, it just needs resetting."
+    channels: [crew_radio]
+  - id: ss16
+    value: tripped
+    text: "we lost {substation} to a trip. Somebody has to go reset it."
+    channels: [crew_radio]
+  - id: ss17
+    value: repairing
+    text: "we're on site at {substation} and working on it now."
+    channels: [crew_radio]
+  - id: ss18
+    value: repairing
+    text: "repairs are underway at {substation}."
+    channels: [crew_radio]
+  - id: ss19
+    value: repairing
+    text: "the crew started work at {substation} {when}."
+    channels: [crew_radio]

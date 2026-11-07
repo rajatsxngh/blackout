@@ -1,0 +1,26 @@
+# Train phrasing bank: hospital_fuel (liters in the generator tank).
+# Slots: {hospital}, {liters}.
+fact_type: hospital_fuel
+phrasings:
+  - id: hf01
+    text: "{hospital} here, we're down to {liters} in the generator tank."
+  - id: hf02
+    text: "fuel check at {hospital}: {liters} left for the generator."
+  - id: hf03
+    text: "we have {liters} of diesel left at {hospital}. Please send a truck."
+  - id: hf04
+    text: "the generator tank at {hospital} reads {liters}."
+  - id: hf05
+    text: "just dipped the tank at {hospital}, {liters} remaining."
+  - id: hf06
+    text: "our generator at {hospital} has {liters} on hand. We need a delivery."
+  - id: hf07
+    text: "update from {hospital}: the tank's at {liters}."
+  - id: hf08
+    text: "{hospital} is running on {liters} of fuel right now."
+  - id: hf09
+    text: "the backup tank at {hospital} is showing {liters}, and the ICU is on that generator."
+  - id: hf10
+    text: "can someone get fuel to {hospital}? We've only got {liters}."
+  - id: hf11
+    text: "generator room at {hospital}, the level is {liters}."

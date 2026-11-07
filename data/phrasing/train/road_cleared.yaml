@@ -1,0 +1,40 @@
+# Train phrasing bank: road_cleared. Slots: {road}, {cleared_by}, {when}.
+fact_type: road_cleared
+vocab:
+  cleared_by:
+    - the tow truck just hauled it off
+    - public works cleared it
+    - the utility crew made it safe
+    - the debris is cleaned up
+    - the water's gone down
+phrasings:
+  - id: rc01
+    text: "{road} is open again, {cleared_by}."
+    channels: [police_radio]
+  - id: rc02
+    text: "update on {road}: it's clear as of {when}. Traffic is moving."
+    channels: [police_radio]
+  - id: rc03
+    text: "we've reopened {road}. {cleared_by}, so it's good to use."
+    channels: [police_radio]
+  - id: rc04
+    text: "you can send trucks down {road} again, it's clear."
+    channels: [police_radio]
+  - id: rc05
+    text: "{road} reopened {when}, {cleared_by}."
+    channels: [police_radio]
+  - id: rc06
+    text: "cars are getting through on {road} again, looks like {cleared_by}."
+    channels: [public]
+  - id: rc07
+    text: "lifting the closure on {road}, all lanes are open."
+    channels: [police_radio]
+  - id: rc08
+    text: "the blockage on {road} is gone, {cleared_by}."
+    channels: [police_radio, public]
+  - id: rc09
+    text: "just drove through {road}, it's open now."
+    channels: [public]
+  - id: rc10
+    text: "{road} is passable again, {cleared_by}. Cancel the detour."
+    channels: [police_radio]

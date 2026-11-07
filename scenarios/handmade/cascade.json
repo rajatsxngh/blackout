@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "id": "cascade",
   "description": "At minute 10 the North substation fails. Its zones switch to their backup feeds, and East can't carry the extra load: it trips 3 minutes after the overload starts unless someone sheds load. When East trips, St. Mary's switches to West, which overloads and trips in turn, leaving the whole city dark.",
   "horizon": 240,
