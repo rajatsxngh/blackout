@@ -5,7 +5,7 @@ import io
 import json
 import platform
 import subprocess
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
@@ -151,8 +151,13 @@ def record_episode(
     effort: str | None = None,
     run_index: int = 0,
     on_decision: Callable[[DecisionRequest, tuple[ActionResult, ...]], None] | None = None,
+    summary_extra: Mapping[str, object] | None = None,
 ) -> RecordedRun:
-    """Run ``controller`` on a fresh ``env``, logging everything to ``run_dir``."""
+    """Run ``controller`` on a fresh ``env``, logging everything to ``run_dir``.
+
+    ``summary_extra`` adds fields to summary.json only (never to the log), such as the batch
+    runner's config hash.
+    """
     log_path = run_dir / LOG_FILE
     header = header_record(env, controller.name, model=model, effort=effort, run_index=run_index)
     with RunLogWriter(log_path) as writer:
@@ -182,7 +187,7 @@ def record_episode(
             )
         )
         records = writer.records
-    summary = _summary(header, episode, log_path, records)
+    summary = {**_summary(header, episode, log_path, records), **(summary_extra or {})}
     text = json.dumps(summary, indent=2, sort_keys=True) + "\n"
     (run_dir / SUMMARY_FILE).write_text(text, encoding="utf-8", newline="\n")
     return RecordedRun(episode, run_dir, log_path, summary)

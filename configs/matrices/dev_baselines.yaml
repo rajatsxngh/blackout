@@ -1,0 +1,7 @@
+# Baselines on the dev-v0 suite (docs/PRD.md section 12, M6): do-nothing (C0) and Rules (C1).
+# Run with: uv run blackout batch --matrix configs/matrices/dev_baselines.yaml [--resume]
+# Logs go to runs/dev_baselines/, tables to results/dev_baselines/.
+experiment: dev_baselines
+suite: dev-v0
+contestants: [do-nothing, rules]
+runs: 1  # both are deterministic, so one run each is the whole story

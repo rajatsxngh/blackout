@@ -9,7 +9,7 @@ A small simulated city loses power. Different contestants try to keep three hosp
 
 ## Status
 
-Milestones **M0–M5** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, and the scenario generator. A deterministic city now runs end to end:
+Milestones **M0–M6** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, the scenario generator, and the first real baseline with a batch runner. A deterministic city now runs end to end:
 - Trucks haul fuel from depots to hospitals, and generators burn down.
 - Hidden road blocks stop vehicles until somebody reroutes them.
 - Substations fail, overload and trip in cascades unless load is shed.
@@ -26,6 +26,8 @@ Scenarios can now be generated from a seed. The generator draws a random city fr
 
 > Hello? Facilities manager Fischer calling. Uh, the backup tank at the hosp at Birch & 6th is showing 44 liters, and the ICU is on that gen.
 
+The first baseline, **Rules** (C1), is the naive "50-line script": it trusts every report, reads L1 text with a keyword parser (built from the train phrasing bank only), serves hospitals by earliest time to failure, reroutes around known blocks, sends crews to the substation carrying the most critical load, and sheds residential then essential zones on an overload. `blackout batch` runs a YAML matrix of contestants over a suite in parallel processes, logs and scores every run, resumes where it left off, and writes tables by template × level. On dev-v0, Rules loses 0 hospital-minutes in all 18 scenarios (do-nothing loses 140–408), and the keyword parser reads the L1 reports with F1 = 1.0 ([results/dev_baselines/results.md](results/dev_baselines/results.md)). That says more about dev-v0 than about Rules: these worlds are too easy, and M8 will calibrate harder ones (docs/DECISIONS.md D059).
+
 Every run leaves a small, deterministic log that can be replayed and checked tick by tick, and scored independently of the contestant. Since M4 the log also records what the contestant believed at each decision. AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
 
 ## Try it
@@ -40,6 +42,9 @@ uv run blackout score runs/adhoc                        # score every logged run
 uv run blackout gen --suite dev-v0 --sample 20          # regenerate the dev-v0 suite, print 20 L1 reports
 uv run blackout gen --suite dev-v0 --check              # check the committed suite matches a fresh run
 uv run blackout run --scenario dev0_t01_s0_l1 --quiet   # run a generated scenario
+uv run blackout run --scenario dev0_t02_s0_l1 --controller rules   # the Rules baseline sheds load
+uv run blackout batch --matrix configs/matrices/dev_baselines.yaml   # baselines over dev-v0
+uv run blackout batch --matrix configs/matrices/dev_baselines.yaml --resume   # skips finished runs
 ```
 
 **hello_blackout.** A storm has taken out the East substation, so St. Mary's Hospital is on its backup generator with 40 minutes of fuel. A crew heads out on the two-hour repair. Meanwhile the fuel truck takes the fast route, runs into a block on Maple St that nobody knew about, takes the detour, and delivers with 6 minutes to spare.
@@ -68,16 +73,18 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 | `src/blackout/env.py` | The `reset` / `act` / `advance` / `step` API that every contestant drives |
 | `src/blackout/info/` | The information layer: telemetry, roles, reports, `confirm_report`, wake triggers, beliefs |
 | `src/blackout/graph/` | The dependency graph built from a belief, and its five queries |
-| `src/blackout/controllers/` | Contestants (do-nothing and scripted so far) |
+| `src/blackout/controllers/` | Contestants (do-nothing, scripted, Rules) and the keyword parser |
+| `src/blackout/experiments/` | Experiment matrices, the batch runner, and result tables |
 | `src/blackout/logs/` | Run logs: writer, reader and verified replay |
-| `src/blackout/scoring/` | The scorer: metrics from a log alone, cross-checked |
+| `src/blackout/scoring/` | The scorer (metrics from a log alone, cross-checked) and parse F1 |
 | `src/blackout/scenarios/` | Scenario schema and the generator: seeding, worlds, templates, report text |
 | `data/phrasing/train/` | The train phrasing bank (one YAML file per fact type, plus the noise lexicon) |
 | `scenarios/dev-v0/` | The generated dev-v0 suite and its manifest of hashes |
 | `scenarios/handmade/` | Hand-made scenarios and their scripts |
 | `runs/` | Run logs and summaries (git-ignored) |
+| `results/` | Generated result tables, committed at milestones |
 | `tests/` | Tests: physics, every rejection reason, property tests, golden run hashes |
-| `configs/` | YAML configuration: `city/default.yaml` holds the generator's ranges |
+| `configs/` | YAML configuration: `city/default.yaml` holds the generator's ranges, `matrices/` the experiment matrices |
 | `docs/PRD.md` | Product requirements and the milestone plan |
 | `docs/DECISIONS.md` | Log of design decisions |
 

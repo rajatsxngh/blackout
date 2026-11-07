@@ -629,13 +629,13 @@ M0 → M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 ─┬─→ M9 ─�
 
 | ID | Phase | Milestone | Depends on | Effort | Status |
 |---|---|---|---|---|---|
-| M0 | A Simulation | Foundation | — | 3–4 h | Done locally; CI pending first push |
-| M1 | A Simulation | Engine core and logistics | M0 | 10–14 h | Done locally; CI pending first push |
-| M2 | A Simulation | Power grid and crews | M1 | 6–8 h | Done locally; CI pending first push |
-| M3 | A Simulation | Run logs, replay check, scorer | M2 | 6–8 h | Done locally; CI pending first push |
-| M4 | B Information and scenarios | Information layer and dependency graph | M2, M3 | 10–12 h | Done locally; CI pending first push |
-| M5 | B Information and scenarios | Scenario generator v1 | M4 | 8–10 h | Done locally; CI pending first push |
-| M6 | C Baselines | Rules baseline and batch runner | M3, M5 | 5–7 h | Not started |
+| M0 | A Simulation | Foundation | — | 3–4 h | Done (CI green) |
+| M1 | A Simulation | Engine core and logistics | M0 | 10–14 h | Done (CI green) |
+| M2 | A Simulation | Power grid and crews | M1 | 6–8 h | Done (CI green) |
+| M3 | A Simulation | Run logs, replay check, scorer | M2 | 6–8 h | Done (CI green) |
+| M4 | B Information and scenarios | Information layer and dependency graph | M2, M3 | 10–12 h | Done (CI green) |
+| M5 | B Information and scenarios | Scenario generator v1 | M4 | 8–10 h | Done (CI green) |
+| M6 | C Baselines | Rules baseline and batch runner | M3, M5 | 5–7 h | Done locally; CI pending push |
 | M7 | C Baselines | Solver and reference | M4, M6 | 12–16 h | Not started |
 | M8 | D Benchmark and viewer | Full scenario suites and freeze | M5, M6, M7 | 12–16 h | Not started |
 | M9 | D Benchmark and viewer | Replay viewer v1 | M3, M8 | 14–20 h | Not started |

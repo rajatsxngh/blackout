@@ -4,6 +4,7 @@ Commands arrive milestone by milestone; docs/PRD.md section 8.14 lists the full 
 """
 
 import json
+import os
 import platform
 import sys
 from collections.abc import Callable
@@ -16,9 +17,12 @@ from pydantic import ValidationError
 
 from blackout import __version__
 from blackout.controllers.base import Controller
-from blackout.controllers.do_nothing import DoNothingController
+from blackout.controllers.registry import make_controller
 from blackout.controllers.scripted import ScriptedController, load_script
 from blackout.env import BlackoutEnv, DecisionRequest, run_episode
+from blackout.experiments.matrix import load_matrix
+from blackout.experiments.results import RESULTS_ROOT, write_results
+from blackout.experiments.runner import RUNS_ROOT, Outcome, plan, run_batch
 from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.schema import LOG_FILE, LogError
@@ -40,6 +44,7 @@ DEFAULT_OUT = Path("runs") / "adhoc"
 
 class ControllerName(StrEnum):
     DO_NOTHING = "do-nothing"
+    RULES = "rules"
     SCRIPTED = "scripted"
 
 
@@ -228,6 +233,46 @@ def _print_sample(scenarios: list[Scenario], count: int) -> None:
         )
 
 
+@app.command("batch")
+def batch_command(
+    matrix: Annotated[Path, typer.Option(help="An experiment matrix (configs/matrices/*.yaml).")],
+    resume: Annotated[
+        bool, typer.Option("--resume", help="Skip runs already logged with the same config.")
+    ] = False,
+    workers: Annotated[
+        int | None,
+        typer.Option(min=1, help="Parallel processes [default: CPU count, at most 8]."),
+    ] = None,
+    out: Annotated[Path, typer.Option(help="Where run logs go: <out>/<experiment>/.")] = RUNS_ROOT,
+    results: Annotated[
+        Path, typer.Option(help="Where tables go: <results>/<experiment>/.")
+    ] = RESULTS_ROOT,
+    scenarios: Annotated[Path, typer.Option(help="The scenario folder.")] = SCENARIO_DIR,
+) -> None:
+    """Run every contestant of a matrix on its scenarios, score the logs, and write tables."""
+    spec = _load(load_matrix, matrix, "matrix")
+    try:
+        jobs = plan(spec, scenario_root=scenarios, runs_root=out)
+    except (FileNotFoundError, ValueError) as error:
+        typer.echo(f"batch failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    count = workers or min(8, os.cpu_count() or 1)
+    typer.echo(f"{spec.experiment}: {len(jobs)} runs on {spec.suite}, {count} worker(s)")
+
+    def done(outcome: Outcome) -> None:
+        card, verb = outcome.card, "ran " if outcome.ran else "kept"
+        flag = "" if card.ok else f"  {len(card.discrepancies)} DISCREPANCIES"
+        typer.echo(f"  {verb} {card.run_id}: downtime {card.critical_downtime_min} min{flag}")
+
+    result = run_batch(jobs, resume=resume, workers=count, on_done=done)
+    paths = write_results(spec.experiment, result.outcomes, results)
+    typer.echo(f"Ran {result.ran}, skipped {result.skipped} already done.")
+    for path in paths:
+        typer.echo(f"  wrote {path}")
+    if any(not o.card.ok for o in result.outcomes):
+        raise typer.Exit(code=1)
+
+
 @app.command("replay")
 def replay_command(
     path: Annotated[Path, typer.Argument(help="A run directory, or its run.jsonl.gz.")],
@@ -321,7 +366,7 @@ def _make_controller(name: ControllerName, script_path: Path) -> Controller:
         if not script_path.is_file():
             raise typer.BadParameter(f"script not found: {script_path}", param_hint="'--script'")
         return ScriptedController(_load(load_script, script_path, "script"))
-    return DoNothingController()
+    return make_controller(name.value)
 
 
 def _load[T](loader: Callable[[Path], T], path: Path, what: str) -> T:
