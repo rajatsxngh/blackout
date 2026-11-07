@@ -12,6 +12,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "pydantic>=2.14.3",
     "typer>=0.28.0",
 ]
 
@@ -59,11 +60,22 @@ addopts = ["-ra", "--strict-markers", "--strict-config"]
 xfail_strict = true
 filterwarnings = ["error"]
 
+[tool.coverage.run]
+source = ["blackout"]
+branch = true
+omit = ["*/blackout/__main__.py"]  # exercised in a subprocess by tests/test_cli.py
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 85
+
 [dependency-groups]
 dev = [
     "hypothesis>=6.170.15",
     "pre-commit>=4.7.0",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
     "ruff>=0.17.4",
 ]

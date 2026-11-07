@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "hello_blackout",
+  "description": "St. Mary's Hospital is on its backup generator with 40 minutes of fuel. One truck at the Northside depot can reach it in 16 minutes along 1st Ave and Maple St, but Maple St between 3rd and 4th is blocked, and nobody knows yet.",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 3,
+    "travel_minutes": {
+      "A1-B1": 2,
+      "B1-C1": 2,
+      "C1-E1": 2,
+      "E1-M1": 2,
+      "M1-O1": 2,
+      "M1-M2": 2,
+      "M2-M3": 2,
+      "M3-M4": 2,
+      "M4-M5": 2,
+      "M5-M6": 2
+    },
+    "landmarks": {
+      "City Hall": "C3",
+      "Riverside Park": "B6"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "St. Mary's Hospital",
+      "node": "M5",
+      "tank_l": 600,
+      "fuel_l": 80,
+      "burn_lpm": 2,
+      "grid_powered": false
+    },
+    {
+      "id": "H2",
+      "name": "Riverside Clinic",
+      "node": "B6",
+      "tank_l": 600,
+      "fuel_l": 300,
+      "burn_lpm": 2,
+      "grid_powered": true
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Northside Fuel Depot",
+      "node": "A1",
+      "stock_l": 3000
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "A1",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "events": [
+    {
+      "kind": "road_block",
+      "tick": 0,
+      "edge": "M3-M4"
+    }
+  ]
+}

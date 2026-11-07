@@ -4,7 +4,7 @@ YAML configuration, validated by Pydantic when it's loaded. Each file arrives wi
 
 | File | Milestone | Contents |
 |---|---|---|
-| `city/default.yaml` | M1–M2 | Grid size, entity counts and parameter ranges |
+| `city/default.yaml` | M5 | The scenario generator's grid size, entity counts and parameter ranges (hand-made scenarios carry their own values) |
 | `matrices/*.yaml` | M6 | Experiment matrices for `blackout batch` |
 | `models.yaml` | M10 | Model IDs, effort levels, and a dated price table |
 | `budget.yaml` | M10 | Spend caps per experiment and overall |

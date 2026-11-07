@@ -38,7 +38,7 @@ jobs:
         run: uv run ruff format --check .
       - name: Type check
         run: uv run pyright
-      - name: Tests
-        run: uv run pytest
+      - name: Tests (with coverage floor, see pyproject.toml)
+        run: uv run pytest --cov
       - name: CLI smoke test
-        run: uv run blackout --version
+        run: uv run blackout run --scenario hello_blackout --controller scripted --quiet

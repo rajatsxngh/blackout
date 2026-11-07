@@ -1,0 +1,33 @@
+{
+  "description": "Load up, head for St. Mary's, find the blocked road, and take the detour.",
+  "steps": [
+    {
+      "at_tick": 0,
+      "action": {
+        "kind": "dispatch_truck",
+        "truck_id": "T1",
+        "task": "load",
+        "target_id": "D1",
+        "reason": "Fill up at the depot first"
+      }
+    },
+    {
+      "at_tick": 5,
+      "action": {
+        "kind": "dispatch_truck",
+        "truck_id": "T1",
+        "task": "deliver",
+        "target_id": "H1",
+        "reason": "St. Mary's is on generator with about 35 minutes left"
+      }
+    },
+    {
+      "at_tick": 17,
+      "action": {
+        "kind": "reroute",
+        "vehicle_id": "T1",
+        "reason": "Maple St is blocked between 3rd and 4th; go around"
+      }
+    }
+  ]
+}
