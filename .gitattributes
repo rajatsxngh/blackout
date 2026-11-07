@@ -1,0 +1,11 @@
+# LF line endings in the repository and in every checkout, Windows included, so file hashes
+# (scenario manifests, golden files) are identical on every platform. See docs/DECISIONS.md D010.
+* text=auto eol=lf
+
+# Binary files: never touch line endings
+*.png binary
+*.jpg binary
+*.gif binary
+*.webm binary
+*.gz binary
+*.sqlite binary

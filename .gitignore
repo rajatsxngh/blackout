@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+# Secrets: never commit API keys
+.env
+.env.*
+!.env.example
+
+# Experiment outputs (published tables and charts go in results/)
+runs/
+
+# Viewer build output
+viewer/node_modules/
+viewer/dist/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
