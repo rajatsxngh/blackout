@@ -49,7 +49,7 @@ A scenario ID is `<suite>_<template>_s<seed index>_l<level>`, e.g. `dev_t04_s1_l
 ## Automated checks
 
 - `tests/test_generator.py`: regeneration is deterministic; levels share one world; the reference loses 0 and do-nothing at least 30 on every frozen dev scenario; the tier mix; every false report is false at its tick regardless of actions and has a working cue (`blackout.scenarios.conflict.cue_problems`); every true report holds when it's sent (checked with `confirm_report`'s own truth check); L3 has injections with windows.
-- CI runs `blackout gen --suite dev --check` on Windows and Ubuntu, so drift in the generator, config, bank, numpy or OR-Tools shows up at once.
+- CI runs `blackout verify --suite dev` on Windows and Ubuntu: every frozen scenario is re-run there and must still be valid, with do-nothing's recorded result and the recorded tier. On Windows, where dev was generated, `blackout gen --suite dev --check` also regenerates it byte for byte, so drift in the generator, config, bank, numpy or OR-Tools shows up at once. Byte identity isn't checked on Linux, because CP-SAT can pick a different but equally good plan there (D084). The frozen files are canonical.
 
 ## Baseline results on dev
 

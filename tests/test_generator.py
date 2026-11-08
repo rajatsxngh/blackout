@@ -44,6 +44,7 @@ from blackout.scenarios.suites import (
 )
 from blackout.scenarios.templates import TEMPLATES
 from blackout.scenarios.text.banks import PhrasingBank, load_bank
+from blackout.scenarios.verify import verify_scenario
 from blackout.scenarios.world import Infeasible, build_world
 from blackout.sim.engine import Engine
 from blackout.sim.events import RoadBlock, SubstationFail, TruckBreakdown
@@ -434,3 +435,26 @@ def test_write_suite_replaces_only_its_own_files(
     assert differences(tmp_path, suite, manifest(spec, suite, config, bank))
     committed = manifest(spec, suite, config, bank)
     assert differences(SCENARIOS / "dev", suite, committed) == []
+
+
+def test_a_frozen_scenario_verifies_and_a_tampered_one_does_not(
+    config: CityConfig, tmp_path: Path
+) -> None:
+    path = SCENARIOS / "dev" / "dev_t04_s0_l0.json"
+    scenario = load_scenario(path)
+    assert scenario.content_hash is not None
+    assert verify_scenario(path, config.calibration, scenario.content_hash) == []
+    assert verify_scenario(path, config.calibration, "0" * 32) == [
+        "dev_t04_s0_l0: doesn't match its manifest entry"
+    ]
+    data = scenario.model_dump(mode="json", exclude={"content_hash"})
+    data["validity"]["do_nothing_critical_downtime"] += 1
+    data["tier"] = "easy"
+    tampered = Scenario.model_validate(data)
+    tampered = tampered.model_copy(update={"content_hash": content_digest(tampered)})
+    bad = tmp_path / "bad.json"
+    bad.write_text(tampered.model_dump_json(), encoding="utf-8")
+    assert tampered.content_hash is not None
+    problems = " ".join(verify_scenario(bad, config.calibration, tampered.content_hash))
+    assert "do-nothing loses" in problems
+    assert "measures as hard here, recorded easy" in problems

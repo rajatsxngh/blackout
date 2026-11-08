@@ -34,6 +34,7 @@ from blackout.scenarios.schema import Scenario, load_scenario
 from blackout.scenarios.suites import FROZEN, SUITES, TEST_BANK, differences, manifest, write_suite
 from blackout.scenarios.text.bank_check import check_bank, lock_problems, write_lock
 from blackout.scenarios.text.banks import load_bank
+from blackout.scenarios.verify import verify_suite
 from blackout.scoring.scorer import ScoreCard, score
 from blackout.sim.actions import ActionResult
 from blackout.sim.render_ascii import render_ascii
@@ -246,6 +247,27 @@ def gen_command(
     typer.echo("Tier mix (worlds): " + ", ".join(f"{t} {n}" for t, n in mix.items()))
     if sample:
         _print_sample(scenarios, sample)
+
+
+@app.command("verify")
+def verify_command(
+    suite: Annotated[str, typer.Option(help="A frozen suite in scenarios/ (e.g. dev).")],
+    config: Annotated[Path, typer.Option(help="The city config.")] = DEFAULT_CITY_CONFIG,
+    scenarios: Annotated[Path, typer.Option(help="The scenario folder.")] = SCENARIO_DIR,
+    workers: Annotated[
+        int | None,
+        typer.Option(min=1, help="Parallel processes [default: CPU count, at most 8]."),
+    ] = None,
+) -> None:
+    """Re-run a frozen suite on this machine and check it's still valid (D084)."""
+    city = _load(load_city_config, config, "city config")
+    count = workers or min(8, os.cpu_count() or 1)
+    checked, problems = verify_suite(scenarios / suite, city.calibration, workers=count)
+    for problem in problems:
+        typer.echo(problem, err=True)
+    if problems:
+        raise typer.Exit(code=1)
+    typer.echo(f"{suite}: all {checked} scenarios are valid on this machine")
 
 
 bank_app = typer.Typer(no_args_is_help=True, help="Check and lock phrasing banks.")

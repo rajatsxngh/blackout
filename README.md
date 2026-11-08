@@ -47,7 +47,8 @@ uv run blackout run --scenario cascade --controller scripted
 uv run blackout run --scenario cascade --quiet          # do nothing: two substations trip
 uv run blackout replay runs/adhoc/cascade/scripted__none__r0   # re-simulate and verify a logged run
 uv run blackout score runs/adhoc                        # score every logged run, with cross-checks
-uv run blackout gen --suite dev --check                 # check the frozen dev suite matches a fresh run (~1.5 min)
+uv run blackout verify --suite dev                      # re-run the frozen dev suite: still valid here? (~1 min)
+uv run blackout gen --suite dev --check                 # regenerate it byte for byte (Windows; ~1.5 min)
 uv run blackout gen --suite dev --out /tmp/dev --sample 20   # generate it elsewhere, print 20 reports
 uv run blackout bank check data/phrasing/train          # validate a phrasing bank (IDs and counts only)
 uv run blackout run --scenario dev0_t01_s0_l1 --quiet   # run a generated scenario

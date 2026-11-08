@@ -42,6 +42,11 @@ jobs:
         run: uv run pytest --cov
       - name: CLI smoke test
         run: uv run blackout run --scenario hello_blackout --controller scripted --quiet
-      # The frozen dev suite must match a fresh generation on both OSes (D055, D082).
+      # The frozen dev suite is valid on both OSes, and on Windows, where it was made, it also
+      # matches a fresh generation byte for byte (CP-SAT may pick another equally good plan
+      # elsewhere, D084).
+      - name: Dev suite is valid here
+        run: uv run blackout verify --suite dev
       - name: Dev suite matches a fresh generation
+        if: runner.os == 'Windows'
         run: uv run blackout gen --suite dev --check
