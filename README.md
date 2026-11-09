@@ -9,7 +9,7 @@ A small simulated city loses power. Different contestants try to keep three hosp
 
 ## Status
 
-Milestones **M0–M7** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, the scenario generator, the naive Rules baseline with a batch runner, and the OR-Tools Solver with its perfect-information Reference. **M8** (full scenario suites) is done except one step: the held-out test suite waits for its human-written phrasing bank (see below). A deterministic city now runs end to end:
+Milestones **M0–M7** and **M9** of 17 are done: foundation, the engine with its logistics, the power grid, run logs, the information layer, the scenario generator, the naive Rules baseline with a batch runner, and the OR-Tools Solver with its perfect-information Reference. **M8** (full scenario suites) is done except one step: the held-out test suite waits for its human-written phrasing bank (see below). A deterministic city now runs end to end:
 - Trucks haul fuel from depots to hospitals, and generators burn down.
 - Hidden road blocks stop vehicles until somebody reroutes them.
 - Substations fail, overload and trip in cascades unless load is shed.
@@ -36,6 +36,8 @@ On dev-v0, Solver and Reference also lose 0 minutes everywhere, so Solver vs Rul
 
 The held-out **test** suite (T03, T06, T10 × 4 levels × 3 seeds) is rendered from a phrasing bank that people, not an LLM, write: [docs/TEST_BANK_GUIDE.md](docs/TEST_BANK_GUIDE.md) explains how. `blackout gen --suite test` runs once that bank is committed with its lock, and `blackout batch` refuses the test suite until a pre-registration is committed (M12).
 
+**M9: replay viewer.** `viewer/` is a small web app (Vite, React, TypeScript, Canvas 2D) that plays back any exported run: zones darken when they lose power and are hatched when shed, hospitals show countdown bars of backup fuel that flash under 15 minutes, trucks and crews move along their routes, and blocked roads are dashed, either as they really were or as the contestant believed them. A timeline plays at 1×, 5×, 20× or 60×, steps a minute, and jumps to the next decision or event. Side panels list each decision with the contestant's reasons, the radio reports it received (with a spoiler toggle for which were false), and live metrics. Two runs of one scenario play side by side on one clock, with a marker at the first action where they differ, and every view has a link (`?s=<scenario>&a=<run>&b=<run>&t=<minute>`). The frames come from `blackout export-viewer`, which re-simulates each selected run with the verified replay, so the viewer shows only runs that reproduce exactly. A GitHub Pages workflow publishes a preview with Rules vs Solver on the two traps and four dev worlds.
+
 Every run leaves a small, deterministic log that can be replayed and checked tick by tick, and scored independently of the contestant. Since M4 the log also records what the contestant believed at each decision. AI contestants arrive in M10. The plan is in [docs/PRD.md](docs/PRD.md), and section 12 of it tracks milestone status.
 
 ## Try it
@@ -61,6 +63,17 @@ uv run blackout batch --matrix configs/matrices/dev_baselines.yaml   # all four 
 uv run blackout batch --matrix configs/matrices/dev_baselines.yaml --resume   # skips finished runs
 ```
 
+**Watch runs in the replay viewer** (needs [Node.js](https://nodejs.org/) 22.12 or later):
+
+```bash
+uv run blackout batch --matrix configs/matrices/viewer_preview.yaml --results runs/viewer_preview/_results
+uv run blackout run -s trap_assignment -c rules -q --out runs/viewer_preview    # and -c solver; the same for trap_depot
+uv run blackout export-viewer viewer_preview --select configs/viewer/preview.yaml   # writes viewer/public/data
+cd viewer && npm ci && npm run dev                                             # open http://localhost:5173
+```
+
+`export-viewer` takes any experiment folder in `runs/` and a YAML list of scenarios and runs (see `configs/viewer/preview.yaml`); it never exports the test suite. In the viewer, space plays and pauses, the arrow keys step a minute, and clicking a decision jumps to it and rings the trucks, crews and places it names. More in [viewer/README.md](viewer/README.md).
+
 **hello_blackout.** A storm has taken out the East substation, so St. Mary's Hospital is on its backup generator with 40 minutes of fuel. A crew heads out on the two-hour repair. Meanwhile the fuel truck takes the fast route, runs into a block on Maple St that nobody knew about, takes the detour, and delivers with 6 minutes to spare.
 
 **cascade.** When the North substation fails, its zones fall back to East, which can't carry them. Shedding one residential zone at once keeps East up. Doing nothing trips East, then West, and the whole city goes dark.
@@ -76,6 +89,7 @@ uv run pytest                 # tests
 uv run ruff check .           # lint
 uv run ruff format --check .  # formatting
 uv run pyright                # type checks
+cd viewer && npm ci && npm run lint && npm test && npm run build   # the viewer (Node.js 22.12+)
 uv run pre-commit install     # optional: run ruff and hygiene checks on every commit
 ```
 
@@ -90,7 +104,8 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 | `src/blackout/controllers/` | Contestants (do-nothing, scripted, Rules) and the keyword parser |
 | `src/blackout/controllers/solver/` | C2 Solver and C3 Reference: power planning, the CP-SAT fuel model, the source filter, and the `solve_plan` contract |
 | `src/blackout/experiments/` | Experiment matrices, the batch runner, and result tables |
-| `src/blackout/logs/` | Run logs: writer, reader and verified replay |
+| `src/blackout/logs/` | Run logs: writer, reader, verified replay, and the viewer export |
+| `viewer/` | The replay viewer (Vite + React + TypeScript + Canvas 2D) |
 | `src/blackout/scoring/` | The scorer (metrics from a log alone, cross-checked) and parse F1 |
 | `src/blackout/scenarios/` | Scenario schema and the generator: seeding, worlds, templates, report text |
 | `data/phrasing/train/` | The train phrasing bank (one YAML file per fact type, the noise lexicon, the L3 injection texts) |
@@ -100,7 +115,7 @@ uv run pre-commit install     # optional: run ruff and hygiene checks on every c
 | `runs/` | Run logs and summaries (git-ignored) |
 | `results/` | Generated result tables, committed at milestones |
 | `tests/` | Tests: physics, every rejection reason, property tests, golden run hashes |
-| `configs/` | YAML configuration: `city/default.yaml` holds the generator's ranges, `matrices/` the experiment matrices |
+| `configs/` | YAML configuration: `city/default.yaml` holds the generator's ranges, `matrices/` the experiment matrices, `viewer/` what the viewer preview exports |
 | `docs/PRD.md` | Product requirements and the milestone plan |
 | `docs/DECISIONS.md` | Log of design decisions |
 | `docs/SCENARIO_CARD.md` | How the scenario suites were made, their limitations and license |

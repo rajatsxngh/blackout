@@ -50,3 +50,27 @@ jobs:
       - name: Dev suite matches a fresh generation
         if: runner.os == 'Windows'
         run: uv run blackout gen --suite dev --check
+
+  viewer:
+    # The replay viewer (viewer/, docs/PRD.md 8.13): type check, unit tests and a build. It
+    # needs no exported data to build; the Pages workflow adds that.
+    name: viewer
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: viewer
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: viewer/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Type check
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build

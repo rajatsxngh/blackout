@@ -8,6 +8,7 @@ A matrix is a YAML file in ``configs/matrices/``:
     runs: 1                        # run indices per scenario and contestant
     levels: [0, 1]                 # optional filters
     templates: [T01, T02]
+    scenarios: [dev_t04_s0_l0]     # optional: only these scenario IDs
 """
 
 import json
@@ -33,6 +34,7 @@ class Matrix(BaseModel):
     runs: PositiveInt = 1
     levels: tuple[int, ...] | None = None
     templates: tuple[str, ...] | None = None
+    scenarios_only: tuple[str, ...] | None = Field(default=None, alias="scenarios")
 
     @model_validator(mode="after")
     def _check(self) -> Self:
@@ -43,6 +45,8 @@ class Matrix(BaseModel):
             )
         if len(set(self.contestants)) != len(self.contestants):
             raise ValueError("contestants are listed more than once")
+        if self.scenarios_only is not None and not self.scenarios_only:
+            raise ValueError("scenarios, if given, must list at least one ID")
         return self
 
     def scenarios(self, root: Path = SCENARIO_ROOT) -> list[tuple[Path, Scenario]]:
@@ -57,6 +61,8 @@ class Matrix(BaseModel):
             if self.levels is not None and entry["level"] not in self.levels:
                 continue
             if self.templates is not None and entry["template"] not in self.templates:
+                continue
+            if self.scenarios_only is not None and entry["id"] not in self.scenarios_only:
                 continue
             path = folder / f"{entry['id']}.json"
             scenario = load_scenario(path)

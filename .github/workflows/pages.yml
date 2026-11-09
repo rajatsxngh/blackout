@@ -1,0 +1,66 @@
+name: Viewer preview (GitHub Pages)
+
+# Builds the replay viewer with a preview of dev-suite baseline replays (Rules vs Solver,
+# configs/viewer/preview.yaml) and publishes it to GitHub Pages. Run it from the Actions tab;
+# Pages must be set to "GitHub Actions" in the repository settings first.
+# Only dev and hand-made scenarios are exported: export-viewer refuses the test suite.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # setup-uv publishes no floating major tag (docs/DECISIONS.md D012).
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Run Rules and Solver on the preview scenarios
+        # Solver runs may differ from Windows-made results here (D084); every run is still a
+        # real, verified run. Batch tables go to a scratch folder.
+        run: |
+          uv run blackout batch --matrix configs/matrices/viewer_preview.yaml --results runs/viewer_preview/_results
+          for scenario in trap_assignment trap_depot; do
+            for contestant in rules solver; do
+              uv run blackout run -s "$scenario" -c "$contestant" --quiet --out runs/viewer_preview
+            done
+          done
+      - name: Export the replays (re-simulated and hash-checked)
+        run: uv run blackout export-viewer viewer_preview --select configs/viewer/preview.yaml --out viewer/public/data
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: viewer/package-lock.json
+      - name: Build the viewer
+        working-directory: viewer
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/configure-pages@v6.0.0
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: viewer/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5.0.1

@@ -1,0 +1,4 @@
+node_modules/
+dist/
+# Written by `blackout export-viewer` (never committed; the Pages workflow rebuilds it).
+public/data/

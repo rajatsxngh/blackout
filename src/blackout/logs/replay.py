@@ -5,7 +5,7 @@ points. It stops at the first difference: a state hash, a decision tick, an obse
 action outcome that doesn't match what was recorded.
 """
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from pydantic import TypeAdapter
@@ -75,11 +75,19 @@ class Replay:
     report: dict[str, object]
 
 
-def replay(log: RunLog, scenario: Scenario | None = None) -> Replay:
+def replay(
+    log: RunLog,
+    scenario: Scenario | None = None,
+    *,
+    on_tick: Callable[[Engine], None] | None = None,
+    on_decision: Callable[[DecisionRequest, Engine], None] | None = None,
+) -> Replay:
     """Re-simulate ``log`` and check every state hash, decision point and action outcome.
 
     ``scenario`` defaults to the one embedded in the log. Raises ReplayMismatchError at the
-    first difference.
+    first difference. ``on_tick`` sees the engine at every tick once its hash has been checked,
+    and ``on_decision`` sees it after a decision point's actions were applied and checked; the
+    viewer export (blackout.logs.export_viewer) uses them to take its frames.
     """
     scenario = log.scenario() if scenario is None else scenario
     if scenario_digest(scenario) != log.header.scenario.hash:
@@ -110,8 +118,12 @@ def replay(log: RunLog, scenario: Scenario | None = None) -> Replay:
             raise ReplayMismatchError(
                 f"decision point {record.i} at tick {record.t}: action outcomes differ from the log"
             )
+        if on_decision is not None:
+            on_decision(request, env.engine)
 
     env.add_tick_listener(check_tick)
+    if on_tick is not None:
+        env.add_tick_listener(on_tick)
     controller = ReplayController(log.decisions)
     episode = run_episode(env, controller, on_decision=check_outcomes)
     if controller.remaining:

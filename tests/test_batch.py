@@ -58,6 +58,8 @@ def test_baseline_matrices_cover_dev_and_dev_v0() -> None:
     assert len(matrix.scenarios(ROOT / "scenarios")) == 56
     legacy = load_matrix(ROOT / "configs" / "matrices" / "dev_v0_baselines.yaml")
     assert (legacy.suite, len(legacy.scenarios(ROOT / "scenarios"))) == ("dev-v0", 18)
+    preview = load_matrix(ROOT / "configs" / "matrices" / "viewer_preview.yaml")
+    assert len(preview.scenarios(ROOT / "scenarios")) == 4
 
 
 @pytest.mark.parametrize(
@@ -68,6 +70,7 @@ def test_baseline_matrices_cover_dev_and_dev_v0() -> None:
         ({"contestants": []}, "at least 1"),
         ({"runs": 0}, "greater than 0"),
         ({"surprise": 1}, "Extra inputs"),
+        ({"scenarios": []}, "at least one ID"),
     ],
 )
 def test_matrix_rejects_bad_specs(changes: dict[str, object], problem: str) -> None:
@@ -79,6 +82,8 @@ def test_matrix_filters_and_checks_the_manifest(scenario_root: Path) -> None:
     assert [s.id for _, s in mini().scenarios(scenario_root)] == list(PICKED)
     assert [s.id for _, s in mini(levels=[1]).scenarios(scenario_root)] == ["dev0_t02_s0_l1"]
     assert [s.id for _, s in mini(templates=["T01"]).scenarios(scenario_root)] == [PICKED[0]]
+    only = mini(scenarios=["dev0_t02_s0_l1"])
+    assert [s.id for _, s in only.scenarios(scenario_root)] == ["dev0_t02_s0_l1"]
     with pytest.raises(FileNotFoundError, match="generate the suite first"):
         mini(suite="nowhere").scenarios(scenario_root)
     manifest = scenario_root / "mini" / MANIFEST

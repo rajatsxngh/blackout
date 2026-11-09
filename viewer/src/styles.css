@@ -1,0 +1,516 @@
+/* Viewer styles. Colors are CSS variables, redefined for the dark theme; the map's own colors
+   are in src/palette.ts. */
+
+:root {
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --text: #1d2127;
+  --muted: #5f6670;
+  --border: #dcdfe3;
+  --accent: #0072b2;
+  --run-a: #0072b2; /* Okabe-Ito blue */
+  --run-b: #e69f00; /* Okabe-Ito orange */
+  --good: #009e73;
+  --bad: #d55e00;
+  --diverge: #cc79a7;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1216;
+  --panel: #181c22;
+  --text: #e6e8eb;
+  --muted: #9aa3ae;
+  --border: #2c323b;
+  --accent: #56b4e9;
+  --run-a: #56b4e9;
+  --run-b: #e69f00;
+  --good: #2bbf8f;
+  --bad: #ff7a3d;
+  --diverge: #e59ac4;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 10px 16px 24px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 12px;
+}
+
+.mono {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+}
+
+.loading,
+.error {
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.error {
+  color: var(--bad);
+}
+
+/* ---- header ---- */
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+
+.top h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  flex: 1;
+}
+
+.picker select {
+  max-width: 260px;
+}
+
+.note {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 10px 0 6px;
+}
+
+.segmented button {
+  border-radius: 0;
+}
+.segmented button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.segmented button:last-child {
+  border-radius: 0 6px 6px 0;
+  margin-left: -1px;
+}
+
+.run-tag {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  margin-right: 5px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
+.run-a {
+  background: var(--run-a);
+}
+.run-b {
+  background: var(--run-b);
+  color: #1d2127;
+}
+
+/* ---- legend ---- */
+
+.legend {
+  position: relative;
+}
+.legend summary {
+  cursor: pointer;
+  color: var(--accent);
+}
+.legend ul {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  width: min(440px, 90vw);
+  margin: 4px 0 0;
+  padding: 10px 14px;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+.legend li {
+  margin: 4px 0;
+  font-size: 12px;
+}
+.swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  vertical-align: -1px;
+  border: 1px solid var(--text);
+}
+.swatch.dot {
+  border-radius: 50%;
+}
+.swatch.diamond {
+  transform: rotate(45deg) scale(0.85);
+}
+.swatch.tri {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  border: none;
+}
+.dash {
+  display: inline-block;
+  width: 22px;
+  border-top: 3px dashed;
+  vertical-align: middle;
+}
+
+/* ---- maps ---- */
+
+.maps {
+  display: grid;
+  gap: 12px;
+}
+.maps.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+.map {
+  margin: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px 8px;
+  min-width: 0;
+}
+.map figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.map-stat {
+  margin-left: auto;
+  font-size: 12px;
+}
+.view-note {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--diverge);
+}
+
+/* The canvas fills this box; MapView watches its size. */
+.canvas-box {
+  position: relative;
+  height: clamp(300px, 52vh, 620px);
+  margin-top: 4px;
+}
+.canvas-box canvas {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+
+/* ---- timeline ---- */
+
+.timeline {
+  margin: 10px 0;
+  padding: 8px 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.controls .play {
+  min-width: 84px;
+  font-weight: 600;
+}
+.speeds {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 8px;
+}
+.clock {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.diverge-btn {
+  border-color: var(--diverge);
+  color: var(--diverge);
+}
+
+.scrubber {
+  position: relative;
+  margin-top: 8px;
+}
+.scrubber input {
+  width: 100%;
+  margin: 0;
+}
+.marks {
+  position: relative;
+  height: 12px;
+  margin: 0 8px;
+}
+.mark {
+  position: absolute;
+  top: 2px;
+  width: 1px;
+  height: 8px;
+  background: var(--muted);
+  opacity: 0.6;
+}
+.diverge {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  color: var(--diverge);
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ---- panels ---- */
+
+.panels {
+  display: grid;
+  grid-template-columns: 1.3fr 1.1fr 1fr;
+  gap: 12px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 0;
+}
+.panel header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-bottom: 6px;
+}
+.panel h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.panel h3 {
+  font-size: 13px;
+  margin: 12px 0 4px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.list li {
+  padding: 6px 4px;
+  border-top: 1px solid var(--border);
+}
+.decision {
+  cursor: pointer;
+}
+.decision:hover {
+  background: rgba(127, 127, 127, 0.08);
+}
+.future {
+  opacity: 0.45;
+}
+.current {
+  background: rgba(0, 114, 178, 0.1);
+}
+.diverges {
+  box-shadow: inset 3px 0 0 var(--diverge);
+}
+.row-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.tick {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.action {
+  margin: 3px 0 0 6px;
+}
+.action.rejected .action-what {
+  text-decoration: line-through;
+}
+.why {
+  color: var(--muted);
+  font-size: 12px;
+  margin-left: 10px;
+}
+.quote {
+  margin-top: 3px;
+  font-style: italic;
+}
+.facts {
+  margin-top: 3px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+}
+.truth {
+  margin-top: 4px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+}
+.badge.good {
+  border-color: var(--good);
+  color: var(--good);
+}
+.badge.bad {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.diverge-badge {
+  border-color: var(--diverge);
+  color: var(--diverge);
+}
+.src-verified {
+  border-color: var(--good);
+}
+.src-unverified {
+  border-style: dashed;
+}
+
+table.metrics {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.metrics th,
+.metrics td {
+  text-align: right;
+  padding: 3px 4px;
+  border-top: 1px solid var(--border);
+}
+.metrics th:first-child,
+.metrics td:first-child {
+  text-align: left;
+}
+.metrics .total td {
+  font-weight: 700;
+}
+.bad-text {
+  color: var(--bad);
+}
+
+.final-row {
+  margin: 6px 0;
+}
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+.bar-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(127, 127, 127, 0.15);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.bar {
+  display: block;
+  height: 100%;
+}
+.bar-a {
+  background: var(--run-a);
+}
+.bar-b {
+  background: var(--run-b);
+}
+.bar-value {
+  min-width: 80px;
+  text-align: right;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+footer {
+  margin-top: 16px;
+}
+
+/* ---- narrow screens: stack everything ---- */
+
+@media (max-width: 1000px) {
+  .maps.two,
+  .panels {
+    grid-template-columns: 1fr;
+  }
+  .canvas-box {
+    height: clamp(260px, 60vw, 480px);
+  }
+  .clock {
+    margin-left: 0;
+  }
+}

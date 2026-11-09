@@ -31,3 +31,4 @@ viewer/dist/
 Thumbs.db
 .idea/
 .vscode/
+.playwright-mcp/

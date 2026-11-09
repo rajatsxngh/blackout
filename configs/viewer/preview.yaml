@@ -1,0 +1,27 @@
+# What the replay viewer's public preview shows (blackout export-viewer, docs/PRD.md 8.13).
+# Build it locally with:
+#   uv run blackout batch --matrix configs/matrices/viewer_preview.yaml --results runs/viewer_preview/_results
+#   uv run blackout run -s trap_assignment -c rules -q --out runs/viewer_preview   (and -c solver,
+#   and the same two for -s trap_depot)
+#   uv run blackout export-viewer viewer_preview --select configs/viewer/preview.yaml
+# Dev and hand-made scenarios only: the exporter refuses the test suite.
+title: Blackout - Rules vs Solver (dev baselines)
+scenarios:
+  - id: trap_assignment
+    runs: [rules__none__r0, solver__none__r0]
+    note: Nearest truck to the first deadline strands the second hospital (hand-made trap)
+  - id: trap_depot
+    runs: [rules__none__r0, solver__none__r0]
+    note: Loading at the depot nearest the hospital, not the one the truck is at (hand-made trap)
+  - id: dev_t04_s0_l0
+    runs: [rules__none__r0, solver__none__r0]
+    note: T04 breakdown, clean facts (L0), hard tier
+  - id: dev_t07_s0_l1
+    runs: [rules__none__r0, solver__none__r0]
+    note: T07 one crew, two slow repairs, radio text (L1), hard tier
+  - id: dev_t01_s0_l2
+    runs: [rules__none__r0, solver__none__r0]
+    note: T01 blocked route with a false report (L2)
+  - id: dev_t09_s0_l3
+    runs: [rules__none__r0, solver__none__r0]
+    note: T09 with prompt-injection reports (L3), hard tier

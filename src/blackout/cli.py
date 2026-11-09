@@ -24,6 +24,7 @@ from blackout.experiments.guard import frozen_hashes, hashes_block
 from blackout.experiments.matrix import load_matrix
 from blackout.experiments.results import RESULTS_ROOT, write_results
 from blackout.experiments.runner import RUNS_ROOT, Outcome, plan, run_batch
+from blackout.logs.export_viewer import ExportError, export_viewer, load_selection
 from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.schema import LOG_FILE, LogError
@@ -393,6 +394,35 @@ def replay_command(
         f" and {len(episode.decisions)} decision points"
     )
     typer.echo(f"  run hash  {episode.run_hash}")
+
+
+@app.command("export-viewer")
+def export_viewer_command(
+    experiment: Annotated[
+        str, typer.Argument(help="An experiment in runs/ (or a folder of <scenario>/<run>/ logs).")
+    ],
+    select: Annotated[Path, typer.Option(help="Which runs to export (configs/viewer/*.yaml).")],
+    out: Annotated[Path, typer.Option(help="Where the viewer's data files go.")] = Path("viewer")
+    / "public"
+    / "data",
+    runs_root: Annotated[Path, typer.Option(help="Where experiments live.")] = RUNS_ROOT,
+) -> None:
+    """Re-simulate selected runs (verifying each) and write the replay viewer's frames."""
+    selection = _load(load_selection, select, "selection")
+    folder = Path(experiment) if Path(experiment).is_dir() else runs_root / experiment
+    if not folder.is_dir():
+        raise typer.BadParameter(f"no experiment at {folder}", param_hint="'EXPERIMENT'")
+    try:
+        exported = export_viewer(
+            folder, selection, out, on_run=lambda run_id: typer.echo(f"  exported {run_id}")
+        )
+    except ExportError as error:
+        typer.echo(f"export failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"Wrote {exported.runs} runs of {exported.scenarios} scenarios to {exported.out}"
+        f" ({exported.bytes_written / 1024:.0f} KB)"
+    )
 
 
 @app.command("score")
