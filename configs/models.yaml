@@ -1,0 +1,46 @@
+# Models, effort and the dated price table for the LLM contestants (docs/PRD.md 8.8, 8.11).
+#
+# Prices are USD per million tokens, from the Anthropic model table cached on prices_as_of.
+# Check them against https://platform.claude.com/docs/en/about-claude/pricing before the M12
+# pre-registration, and add a new dated table rather than editing this one in place once a
+# run has been charged against it (the ledger records which table priced each call).
+#
+# Rows marked "assumed" are not in the cached table: cache writes are priced at 1.25x input
+# (5-minute TTL) and Haiku 5.5 cache reads at 0.1x input, the usual ratios. The M10 Console
+# spot check confirms or corrects them.
+
+prices_as_of: "2026-10-06"
+price_source: "claude-api skill model table, cached 2026-10-06"
+
+dev_model: claude-haiku-5-5
+final_models: [claude-opus-5-5, claude-haiku-5-5]
+optional_models: [claude-sonnet-5-5]
+
+# Effort is always sent explicitly (Opus 5.5 and Haiku 5.5 both default to medium) and is
+# pre-registered. Thinking stays adaptive: it can't be disabled on Opus 5.5.
+effort:
+  parser: low   # C4: extraction from one report at a time
+  agent: medium # C5-C8 (M11)
+
+batch_discount_pct: 50
+
+models:
+  claude-haiku-5-5:
+    # No server-side fallback on Haiku 5.5 (a fallbacks parameter is a 400).
+    fallbacks: false
+    max_tokens: {parser: 8000, agent: 16000}
+    prices: {input: 0.10, output: 0.50, cache_write_5m: 0.125, cache_read: 0.01} # writes, reads assumed
+    # Prompts over 100K input tokens bill at the long-context rate (cache rates scaled, assumed).
+    long_context: {above_input_tokens: 100000, input: 0.50, output: 2.50, cache_write_5m: 0.625, cache_read: 0.05}
+
+  claude-opus-5-5:
+    # Server-side fallback (fallbacks: "default") per Anthropic's guidance; any call it serves
+    # is flagged and the run is excluded from the primary analysis (PRD 8.8).
+    fallbacks: true
+    max_tokens: {parser: 8000, agent: 16000}
+    prices: {input: 4.00, output: 20.00, cache_write_5m: 5.00, cache_read: 0.20} # writes assumed
+
+  claude-sonnet-5-5:
+    fallbacks: true
+    max_tokens: {parser: 8000, agent: 16000}
+    prices: {input: 2.00, output: 10.00, cache_write_5m: 2.50, cache_read: 0.20} # writes assumed

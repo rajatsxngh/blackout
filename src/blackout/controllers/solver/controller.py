@@ -24,7 +24,7 @@ from blackout.controllers.solver.contract import SolverResult, solve_plan
 from blackout.controllers.solver.policy import SourceFilter
 from blackout.info.belief import CERTAIN, BeliefState, Estimate
 from blackout.info.observation import Observation, build_observation
-from blackout.info.reports import Fact
+from blackout.info.reports import Fact, ReportView
 from blackout.info.roles import ROLE_ALL
 from blackout.info.telemetry import Telemetry, readings_now, telemetry
 from blackout.sim.actions import AnyAction, ConfirmReport
@@ -83,21 +83,21 @@ class SolverController:
         belief.apply_telemetry(observation)
         for report in observation.reports:
             belief.reports[report.id] = report
-            self._filter.take(belief, self._facts(observation, report.facts, report.text), report)
+            self._filter.take(belief, self._facts(observation, report), report)
         for reply in observation.confirmations:
             belief.apply_confirm(reply)
         replied = [r.report_id for r in observation.confirmations]
         self._filter.recheck(belief, replied)
 
-    def _facts(
-        self, observation: Observation, facts: tuple[Fact, ...] | None, text: str | None
-    ) -> Sequence[Fact]:
-        if facts is not None:
-            return [*facts]
-        if not text:
+    def _facts(self, observation: Observation, report: ReportView) -> Sequence[Fact]:
+        """What ``report`` claims: its facts at L0, else what the keyword parser reads (C4
+        overrides this with the LLM parser)."""
+        if report.facts is not None:
+            return [*report.facts]
+        if not report.text:
             return []
         self._parser = self._parser or KeywordParser.for_observation(observation)
-        return self._parser.parse(text)
+        return self._parser.parse(report.text)
 
     # --- planning --------------------------------------------------------------------------
 

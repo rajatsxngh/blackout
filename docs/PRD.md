@@ -639,7 +639,7 @@ M0 → M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 ─┬─→ M9 ─�
 | M7 | C Baselines | Solver and reference | M4, M6 | 12–16 h | Done (CI green) |
 | M8 | D Benchmark and viewer | Full scenario suites and freeze | M5, M6, M7 | 12–16 h | Done except the test-suite freeze (waits for the human-written test bank) |
 | M9 | D Benchmark and viewer | Replay viewer v1 | M3, M8 | 14–20 h | Done (local checks green; CI and the Pages preview wait for the push) |
-| M10 | E AI contestants | LLM infrastructure and Parser contender | M7, M8 | 8–10 h | Not started |
+| M10 | E AI contestants | LLM infrastructure and Parser contender | M7, M8 | 8–10 h | Done except live checks (local checks green; C4 runs and replays from synthetic fixtures). Waiting for the locked test bank and an API key: the Haiku dev run (`configs/matrices/dev_c4_haiku.yaml`) with C4's real parse F1 and cost per run, `cache_read_input_tokens > 0` on a repeated prefix (and the 4,096-token prefix confirmed with `count_tokens`), and the ledger vs Console spot check (which also confirms the assumed cache prices, D096) |
 | M11 | E AI contestants | Single coordinator agent | M4, M7, M10 (M9 recommended) | 12–16 h | Not started |
 | M12 | F Public v1 | v1 experiment and analysis | M8, M11 | 10–12 h + run time | Not started |
 | M13 | F Public v1 | v1 public release | M9, M12 | 8–10 h | Not started |

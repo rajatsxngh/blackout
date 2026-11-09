@@ -16,19 +16,24 @@ import typer
 from pydantic import ValidationError
 
 from blackout import __version__
-from blackout.controllers.base import Controller
-from blackout.controllers.registry import make_controller
+from blackout.controllers.base import Controller, run_stats
+from blackout.controllers.registry import LLM_CONTESTANTS, make_controller, make_llm_controller
 from blackout.controllers.scripted import ScriptedController, load_script
 from blackout.env import DecisionRequest, env_for, run_episode
 from blackout.experiments.guard import frozen_hashes, hashes_block
 from blackout.experiments.matrix import load_matrix
 from blackout.experiments.results import RESULTS_ROOT, write_results
 from blackout.experiments.runner import RUNS_ROOT, Outcome, plan, run_batch
+from blackout.llm.budget import DEFAULT_LEDGER, BudgetError, Ledger, load_budget_config
+from blackout.llm.config import Effort, load_models_config
+from blackout.llm.fixtures import DEFAULT_FIXTURES, FixtureMissing
+from blackout.llm.live import LiveRefused
+from blackout.llm.setup import LLMSettings, make_client
 from blackout.logs.export_viewer import ExportError, export_viewer, load_selection
 from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.schema import LOG_FILE, LogError
-from blackout.logs.writer import record_episode, run_dir_for
+from blackout.logs.writer import record_episode, run_dir_for, run_id_for
 from blackout.scenarios.config import DEFAULT_CITY_CONFIG, load_city_config
 from blackout.scenarios.generator import GenerationError, generate_all
 from blackout.scenarios.schema import Scenario, load_scenario
@@ -51,7 +56,21 @@ class ControllerName(StrEnum):
     RULES = "rules"
     SOLVER = "solver"
     REFERENCE = "reference"
+    LLM_PARSER = "llm-parser"
     SCRIPTED = "scripted"
+
+
+class LlmMode(StrEnum):
+    FIXTURE = "fixture"
+    LIVE = "live"
+
+
+class EffortName(StrEnum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    XHIGH = "xhigh"
+    MAX = "max"
 
 
 class RenderMode(StrEnum):
@@ -111,11 +130,55 @@ def run(
         Path, typer.Option(help="Where run logs go: <out>/<scenario>/<contestant>__<model>__r0/.")
     ] = DEFAULT_OUT,
     log: Annotated[bool, typer.Option("--log/--no-log", help="Write a run log.")] = True,
+    model: Annotated[
+        str | None, typer.Option(help="LLM contestants: the model [default: the dev model].")
+    ] = None,
+    effort: Annotated[
+        EffortName | None,
+        typer.Option(help="LLM contestants: effort [default: configs/models.yaml]."),
+    ] = None,
+    run_index: Annotated[
+        int, typer.Option("--run-index", min=0, help="LLM contestants: which sample (r<k>).")
+    ] = 0,
+    llm: Annotated[
+        LlmMode,
+        typer.Option(
+            help="LLM replies: recorded fixtures, or the live API (needs the locked test bank)."
+        ),
+    ] = LlmMode.FIXTURE,
+    fixtures: Annotated[
+        Path, typer.Option(help="Where recorded LLM replies are (fixture mode), or go (--record).")
+    ] = DEFAULT_FIXTURES,
+    record: Annotated[
+        bool, typer.Option("--record", help="Live mode: also save every reply as a fixture.")
+    ] = False,
+    experiment: Annotated[
+        str, typer.Option(help="Live mode: the experiment the spend is charged to.")
+    ] = "adhoc",
 ) -> None:
     """Run one contestant on one scenario, print what happened, and log it."""
     scenario_path = _find_scenario(scenario)
     loaded = _load(load_scenario, scenario_path, "scenario")
-    contestant = _make_controller(controller, script or scenario_path.with_suffix(".script.json"))
+    client = None
+    if controller.value in LLM_CONTESTANTS:
+        models = load_models_config()
+        model = model or models.dev_model
+        chosen: Effort = effort.value if effort else models.effort["parser"]  # type: ignore[assignment]
+        settings = LLMSettings(mode=llm.value, fixtures=fixtures, record=record)
+        try:
+            client = make_client(settings, models)
+            models.spec(model)
+        except (LiveRefused, KeyError) as error:
+            typer.echo(f"can't run {controller.value}: {error}", err=True)
+            raise typer.Exit(code=1) from error
+        contestant = make_llm_controller(
+            controller.value, client, model=model, effort=chosen, run_index=run_index
+        )
+    else:
+        model, run_index = None, 0
+        contestant = _make_controller(
+            controller, script or scenario_path.with_suffix(".script.json")
+        )
     env = env_for(loaded, contestant)
 
     def show(request: DecisionRequest, results: tuple[ActionResult, ...]) -> None:
@@ -128,12 +191,24 @@ def run(
     typer.echo(f"{loaded.id}: {contestant.name}, horizon {loaded.horizon} min")
     shown = None if quiet else show
     log_path: Path | None = None
-    if log:
-        run_dir = run_dir_for(out, loaded.id, contestant.name)
-        recorded = record_episode(env, contestant, run_dir, on_decision=shown)
-        result, log_path = recorded.episode, recorded.log_path
-    else:
-        result = run_episode(env, contestant, on_decision=shown)
+    if client is not None and client.guard is not None:
+        run_id = run_id_for(loaded.id, contestant.name, model, run_index)
+        client.guard.start_run(experiment, run_id, f"{contestant.name}/{model}")
+        client.context = (experiment, run_id)
+    try:
+        if log:
+            run_dir = run_dir_for(out, loaded.id, contestant.name, model=model, run_index=run_index)
+            recorded = record_episode(
+                env, contestant, run_dir, run_index=run_index, on_decision=shown
+            )
+            result, log_path = recorded.episode, recorded.log_path
+        else:
+            result = run_episode(env, contestant, on_decision=shown)
+    except (FixtureMissing, BudgetError) as error:
+        typer.echo(f"run stopped: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    if client is not None and client.guard is not None and client.context is not None:
+        client.guard.finish_run(*client.context)
     m = env.engine.metrics
     rejected = sum(m.actions_rejected.values())
     typer.echo("")
@@ -162,6 +237,15 @@ def run(
     )
     typer.echo(f"  actions            {m.actions_accepted} accepted, {rejected} rejected")
     typer.echo(f"  run hash           {result.run_hash}")
+    stats = run_stats(contestant) or {}
+    calls = stats.get("llm")
+    if isinstance(calls, dict):
+        typer.echo(
+            f"  llm                {calls['calls']} calls ({llm.value}),"
+            f" cost ${calls['cost_usd']:.4f}, spend ${calls['spend_usd']:.4f},"
+            f" cache reads {calls['cache_read_input_tokens']} tokens,"
+            f" faults {calls['agent_faults']} agent / {calls['infra_faults']} infra"
+        )
     if log_path is not None:
         size = log_path.stat().st_size
         typer.echo(f"  log                {log_path} ({size / 1024:.1f} KB)")
@@ -368,13 +452,44 @@ def batch_command(
         flag = "" if card.ok else f"  {len(card.discrepancies)} DISCREPANCIES"
         typer.echo(f"  {verb} {card.run_id}: downtime {card.critical_downtime_min} min{flag}")
 
-    result = run_batch(jobs, resume=resume, workers=count, on_done=done)
+    try:
+        result = run_batch(jobs, resume=resume, workers=count, on_done=done)
+    except (FixtureMissing, LiveRefused, BudgetError) as error:
+        typer.echo(f"batch failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
     paths = write_results(spec.experiment, result.outcomes, results)
     typer.echo(f"Ran {result.ran}, skipped {result.skipped} already done.")
+    for job, why in result.aborted:
+        typer.echo(f"  ABORTED {job.run_id}: {why} (re-run it with --resume)", err=True)
+    if result.stopped is not None:
+        typer.echo(f"Stopped scheduling runs: {result.stopped}", err=True)
     for path in paths:
         typer.echo(f"  wrote {path}")
-    if any(not o.card.ok for o in result.outcomes):
+    if any(not o.card.ok for o in result.outcomes) or result.aborted:
         raise typer.Exit(code=1)
+
+
+@app.command("budget")
+def budget_command(
+    ledger: Annotated[Path, typer.Option(help="The spend ledger.")] = DEFAULT_LEDGER,
+) -> None:
+    """Show the spend ledger against the caps in configs/budget.yaml."""
+    config = load_budget_config()
+    book = Ledger.load(ledger)
+    typer.echo(
+        f"Spent ${book.spend_usd:.4f} of the ${config.global_cap_usd:.2f} global cap"
+        f" ({ledger.as_posix()})"
+    )
+    for bucket in config.buckets:
+        spent = book.bucket_spend(bucket.name)
+        typer.echo(f"  {bucket.name:<12} ${spent:>9.4f} of ${bucket.cap_usd:.2f}")
+    for name, entry in sorted(book.data["experiments"].items()):
+        runs = entry["runs"].values()
+        aborted = sum(1 for r in runs if r["status"] == "aborted")
+        typer.echo(
+            f"  experiment {name}: ${entry['spend_usd']:.4f} over {len(entry['runs'])} runs"
+            + (f", {aborted} aborted" if aborted else "")
+        )
 
 
 @app.command("replay")

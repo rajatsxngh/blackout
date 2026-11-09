@@ -12,6 +12,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "anthropic>=2.7.0",
     "networkx>=3.7",
     "numpy>=2.5.4",
     "ortools==9.15.6755",

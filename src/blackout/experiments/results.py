@@ -6,20 +6,25 @@ validity record (written by the generator, which runs do-nothing). "Beats do-not
 strictly less critical downtime.
 
 Files (in ``results/<experiment>/``): ``runs.csv``, ``summary.csv`` and ``results.md``, which
-also reports the keyword parser's F1 per level over the batch's scenarios.
+also reports the keyword parser's F1 per level over the batch's scenarios and, for LLM
+contestants (C4), their parse F1 from the run logs and their measured cost per run.
 """
 
 import csv
 import io
+import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import fmean
 
 from blackout.controllers.do_nothing import DoNothingController
+from blackout.controllers.registry import LLM_CONTESTANTS
 from blackout.experiments.runner import Outcome
+from blackout.logs.reader import read_log
+from blackout.logs.schema import LOG_FILE, SUMMARY_FILE
 from blackout.scenarios.schema import Scenario, load_scenario
-from blackout.scoring.parse_f1 import ParseCounts, parse_f1
+from blackout.scoring.parse_f1 import ParseCounts, logged_parse_counts, parse_f1
 
 RESULTS_ROOT = Path("results")
 
@@ -157,7 +162,7 @@ def write_results(
     files = {
         "runs.csv": _csv(rows),
         "summary.csv": _csv(groups),
-        "results.md": markdown(experiment, groups, parse, rows),
+        "results.md": markdown(experiment, groups, parse, rows, llm_rows(outcomes)),
     }
     paths = []
     for name, text in files.items():
@@ -172,6 +177,7 @@ def markdown(
     groups: Sequence[GroupRow],
     parse: Mapping[int, ParseCounts],
     rows: Sequence[RunRow],
+    llm: Sequence["LlmRow"] = (),
 ) -> str:
     lines = [
         f"# Results: {experiment}",
@@ -207,10 +213,99 @@ def markdown(
             f"| L{level} | {c.tp + c.fn} | {c.tp + c.fp} | {c.tp} | {_num(c.precision)}"
             f" | {_num(c.recall)} | {_num(c.f1)} |"
         )
+    lines += llm_section(llm)
     lines += head_to_head(rows)
     problems = sum(r.discrepancies for r in rows)
     lines += ["", f"Runs: {len(rows)}. Scorer discrepancies: {problems}.", ""]
     return "\n".join(lines)
+
+
+@dataclass(frozen=True, slots=True)
+class LlmRow:
+    contestant: str
+    model: str
+    level: int
+    runs: int
+    replies: str  # where the replies came from: live, cache, fixture
+    counts: ParseCounts
+    calls: int
+    mean_cost_usd: float
+    spend_usd: float
+    cache_read_input_tokens: int
+    agent_faults: int
+    infra_faults: int
+    fallback_runs: int
+
+
+def llm_rows(outcomes: Sequence[Outcome]) -> list[LlmRow]:
+    """Parse F1 and cost of the LLM contestants' runs, by (contestant, model, level)."""
+    groups: dict[tuple[str, str, int], list[tuple[ParseCounts, dict[str, object]]]] = {}
+    for o in outcomes:
+        if o.job.contestant not in LLM_CONTESTANTS:
+            continue
+        counts = logged_parse_counts(read_log(o.job.run_dir / LOG_FILE))
+        summary = json.loads((o.job.run_dir / SUMMARY_FILE).read_text(encoding="utf-8"))
+        stats = summary.get("contestant_stats", {}).get("llm", {})
+        key = (o.job.contestant, o.job.model or "-", o.job.level)
+        groups.setdefault(key, []).append((counts, stats))
+    rows = []
+    for (contestant, model, level), runs in sorted(groups.items()):
+        total = ParseCounts()
+        for counts, _ in runs:
+            total += counts
+        stats = [s for _, s in runs]
+
+        def tally(name: str, stats: list[dict[str, object]] = stats) -> float:
+            return sum(float(s.get(name, 0) or 0) for s in stats)  # type: ignore[arg-type]
+
+        sources = sorted({k for s in stats for k in s.get("sources", {})})  # type: ignore[union-attr]
+        rows.append(
+            LlmRow(
+                contestant=contestant,
+                model=model,
+                level=level,
+                runs=len(runs),
+                replies="+".join(sources) or "-",
+                counts=total,
+                calls=int(tally("calls")),
+                mean_cost_usd=round(tally("cost_usd") / len(runs), 6),
+                spend_usd=round(tally("spend_usd"), 6),
+                cache_read_input_tokens=int(tally("cache_read_input_tokens")),
+                agent_faults=int(tally("agent_faults")),
+                infra_faults=int(tally("infra_faults")),
+                fallback_runs=sum(1 for s in stats if s.get("fallback_run")),
+            )
+        )
+    return rows
+
+
+def llm_section(rows: Sequence[LlmRow]) -> list[str]:
+    if not rows:
+        return []
+    lines = [
+        "",
+        "## LLM parser F1 and cost by level",
+        "",
+        "Scored from the run logs (`dp.info.parses`) the same way as the keyword parser."
+        " *Replies* says where the model's answers came from: `fixture` replies are recorded"
+        " or synthetic (synthetic ones are a perfect reader, so their F1 is 1 by"
+        " construction), `live` and `cache` are real model calls. Cost per run is what the"
+        " calls cost when made; spend is new money.",
+        "",
+        "| Contestant | Model | Level | Runs | Replies | Facts | Parsed | Correct | F1"
+        " | Calls | Cost/run (USD) | Spend (USD) | Cache-read tokens | Faults (agent/infra)"
+        " | Fallback runs |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for r in rows:
+        c = r.counts
+        lines.append(
+            f"| {r.contestant} | {r.model} | L{r.level} | {r.runs} | {r.replies}"
+            f" | {c.tp + c.fn} | {c.tp + c.fp} | {c.tp} | {_num(c.f1)} | {r.calls}"
+            f" | {r.mean_cost_usd:.4f} | {r.spend_usd:.4f} | {r.cache_read_input_tokens}"
+            f" | {r.agent_faults}/{r.infra_faults} | {r.fallback_runs} |"
+        )
+    return lines
 
 
 TIE_MINUTES = 1

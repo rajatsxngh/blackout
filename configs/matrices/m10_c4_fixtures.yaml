@@ -1,0 +1,10 @@
+# C4 Parser + Solver end to end with no API calls: the two dev scenarios that have synthetic
+# replies in tests/fixtures/llm_recordings/c4_synthetic (a perfect reader; see
+# tests/llm_fixtures.py). It checks the pipeline (fixtures, guard, logs, tables), not Claude.
+#   uv run blackout batch --matrix configs/matrices/m10_c4_fixtures.yaml
+experiment: m10_c4_fixtures
+suite: dev
+contestants: [solver, llm-parser]
+scenarios: [dev_t01_s0_l1, dev_t01_s0_l3]
+llm_mode: fixture
+fixtures: tests/fixtures/llm_recordings

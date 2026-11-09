@@ -1,7 +1,7 @@
 """The interface every contestant implements."""
 
 from collections.abc import Sequence
-from typing import Protocol
+from typing import Any, Protocol
 
 from blackout.info.belief import BeliefState
 from blackout.info.observation import Observation
@@ -49,3 +49,32 @@ def belief_of(controller: object) -> BeliefState | None:
     """The contestant's current belief, if it keeps one."""
     belief = getattr(controller, "belief", None)
     return belief if isinstance(belief, BeliefState) else None
+
+
+def decision_log(controller: object) -> dict[str, Any] | None:
+    """What an LLM contestant adds to a decision record (``llm``, ``info``, ``notes``), read
+    right after it decided. Its values must be deterministic given the responses (D089)."""
+    log = getattr(controller, "decision_log", None)
+    if not callable(log):
+        return None
+    result = log()
+    return result if isinstance(result, dict) else None
+
+
+def transcripts_of(controller: object) -> list[dict[str, Any]] | None:
+    """An LLM contestant's call transcripts, for ``transcripts.jsonl.gz``."""
+    fn = getattr(controller, "transcripts", None)
+    if not callable(fn):
+        return None
+    result = fn()
+    return result if isinstance(result, list) else None
+
+
+def describe(controller: object) -> dict[str, Any]:
+    """The model, effort, run index and prompt hash an LLM contestant runs with (None for
+    the others), for the run header and the run's config hash."""
+    return {
+        "model": getattr(controller, "model", None),
+        "effort": getattr(controller, "effort", None),
+        "prompt_hash": getattr(controller, "prompt_hash", None),
+    }

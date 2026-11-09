@@ -1,0 +1,13 @@
+# C4 Parser + Solver on the frozen dev suite with the dev model (docs/PRD.md section 12, M10),
+# next to C2 Solver (the same planner fed by the keyword parser), so parse F1 and outcomes
+# compare directly. Live calls: refused until the human test bank is locked and committed
+# (PRD 8.4), then charged to the "dev" budget bucket in runs/ledger.json.
+#   uv run blackout batch --matrix configs/matrices/dev_c4_haiku.yaml [--resume]
+# Logs go to runs/m10_c4_haiku/, tables (with C4's parse F1 and cost per run) to
+# results/m10_c4_haiku/.
+experiment: m10_c4_haiku
+suite: dev
+contestants: [solver, llm-parser]
+models: [claude-haiku-5-5]
+llm_mode: live
+runs: 1  # one sample per scenario for the dev check; the experiment (M12) runs 3

@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 from blackout.controllers.keyword_parser import KeywordParser
 from blackout.info.reports import Fact, close_enough
+from blackout.logs.reader import RunLog
 from blackout.scenarios.schema import Scenario
 from blackout.scenarios.text.slots import Gazette, Place
 from blackout.sim.city import build_grid_city
@@ -100,3 +101,24 @@ def scenario_gazette(scenario: Scenario) -> Gazette:
         depots={d.id: Place(d.name, d.node) for d in scenario.depots},
         substations={s.id: Place(s.name, s.node) for s in scenario.substations},
     )
+
+
+def logged_parse_counts(log: RunLog) -> ParseCounts:
+    """An LLM parser's counts over one run, from its log alone (C4, M10).
+
+    Every report the parser was asked about is in some ``dp.info.parses`` entry, with the facts
+    it read (none if its call faulted). They're scored like the keyword parser's, against the
+    claims the embedded scenario says each report makes.
+    """
+    scenario = log.scenario()
+    claims = {e.id: list(e.facts) for e in scenario.events if e.kind == "report"}
+    total = ParseCounts()
+    for dp in log.decisions:
+        parses = (dp.info or {}).get("parses", [])
+        for entry in parses:
+            parsed = [
+                Fact(type=f["type"], subject=f["subject"], value=f["value"])
+                for f in entry.get("facts", [])
+            ]
+            total += score_parse(parsed, claims.get(entry["report"], []))
+    return total

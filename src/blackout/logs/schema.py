@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, TypeAdapter
 LOG_VERSION = 1
 LOG_FILE = "run.jsonl.gz"
 SUMMARY_FILE = "summary.json"
+TRANSCRIPTS_FILE = "transcripts.jsonl.gz"
 
 
 class LogError(Exception):
@@ -55,7 +56,7 @@ class ContestantRef(_Part):
     model: str | None = None
     effort: str | None = None
     run_index: NonNegativeInt = 0
-    prompt_hash: str | None = None  # reserved for M10
+    prompt_hash: str | None = None  # LLM contestants (M10): digest of their prompts
 
 
 class EngineRef(_Part):
@@ -97,7 +98,9 @@ class ActionRecord(_Part):
 
 
 class LlmRecord(_Part):
-    """Reserved for M10: what a decision point cost in model calls."""
+    """What a decision point cost in model calls (M10). Cost and latency are as first
+    recorded (a cache hit or fixture replays the original values), so a re-run from the cache
+    writes the same log (D089)."""
 
     calls: NonNegativeInt = 0
     input_tokens: NonNegativeInt = 0
@@ -124,8 +127,8 @@ class DecisionPointRecord(_Record):
     actions: list[ActionRecord] = Field(default_factory=list)
     belief: dict[str, Any] | None = None  # the contestant's belief digest, if it keeps one
     notes: str | None = None  # reserved for M10: notes an agent carries to its next turn
-    llm: LlmRecord | None = None  # reserved for M10
-    info: dict[str, Any] | None = None  # reserved for M8 and M10: parse and injection data
+    llm: LlmRecord | None = None  # LLM contestants: the decision point's model calls
+    info: dict[str, Any] | None = None  # LLM parses (C4: dp.info.parses); injection data later
 
 
 class EndRecord(_Record):

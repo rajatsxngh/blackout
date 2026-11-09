@@ -1,0 +1,21 @@
+# The budget guard's caps (docs/PRD.md 8.8 and 8.11). Spend is tracked in runs/ledger.json.
+#
+# Every experiment must fall in exactly one bucket (first matching pattern wins); an
+# experiment that matches none is refused. A bucket's cap covers all its experiments together.
+
+global_cap_usd: 400
+run_cap_usd: 6.00 # one run (a Team x Opus run is planned at $1.50-5.00)
+
+buckets:
+  - {name: dev, cap_usd: 60, experiments: ["dev*", "adhoc*", "pilot*", "m10*", "m11*", "m14*"]}
+  - {name: v1_test, cap_usd: 150, experiments: ["v1*"]}
+  - {name: team_stress, cap_usd: 160, experiments: ["v2*", "team*", "stress*"]}
+  - {name: reserve, cap_usd: 30, experiments: ["rerun*"]}
+
+# A run that costs more than this many times the median of the completed runs of the same
+# experiment, contestant and model is aborted (a loop bug), once that many runs are done.
+median_abort_factor: 5
+median_min_runs: 3
+
+# A run with more than this share of infra-fault decision points is re-run (the cache resumes it).
+infra_fault_rerun_pct: 10

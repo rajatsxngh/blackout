@@ -1,0 +1,9 @@
+template,level,contestant,runs,scenarios,mean_downtime_min,mean_da,beats_do_nothing,compared,mean_invalid_action_rate,stuck_events
+T01,1,llm-parser,1,1,0.0000,1.0000,1,1,0.0000,0
+T01,1,solver,1,1,0.0000,1.0000,1,1,0.0000,0
+T01,3,llm-parser,1,1,0.0000,1.0000,1,1,0.0000,0
+T01,3,solver,1,1,0.0000,1.0000,1,1,0.0000,0
+all,1,llm-parser,1,1,0.0000,1.0000,1,1,0.0000,0
+all,1,solver,1,1,0.0000,1.0000,1,1,0.0000,0
+all,3,llm-parser,1,1,0.0000,1.0000,1,1,0.0000,0
+all,3,solver,1,1,0.0000,1.0000,1,1,0.0000,0

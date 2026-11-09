@@ -10,23 +10,32 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 from pydantic import BaseModel
 
 from blackout import __version__
-from blackout.controllers.base import Controller, belief_of, run_stats
+from blackout.controllers.base import (
+    Controller,
+    belief_of,
+    decision_log,
+    describe,
+    run_stats,
+    transcripts_of,
+)
 from blackout.env import BlackoutEnv, DecisionRequest, EpisodeResult, run_episode
 from blackout.info.belief import BeliefState
 from blackout.logs.schema import (
     LOG_FILE,
     SUMMARY_FILE,
+    TRANSCRIPTS_FILE,
     ActionRecord,
     ContestantRef,
     DecisionPointRecord,
     EndRecord,
     EngineRef,
     HeaderRecord,
+    LlmRecord,
     ScenarioRef,
     TickRecord,
     TriggerRecord,
@@ -60,6 +69,12 @@ class RunLogWriter:
         self._text.write(log_line(record))
         self.records += 1
 
+    def write_data(self, data: Mapping[str, Any]) -> None:
+        """One plain JSON object as a canonical line (transcripts)."""
+        line = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+        self._text.write(line + "\n")
+        self.records += 1
+
     def close(self) -> None:
         self._text.close()  # flushes and closes the gzip stream, which writes its trailer
         self._file.close()
@@ -89,6 +104,7 @@ def header_record(
     model: str | None = None,
     effort: str | None = None,
     run_index: int = 0,
+    prompt_hash: str | None = None,
 ) -> HeaderRecord:
     scenario = env.scenario
     config = env.config.to_dict()
@@ -98,7 +114,13 @@ def header_record(
         scenario=ScenarioRef(
             id=scenario.id, hash=scenario_digest(scenario), spec=scenario.model_dump(mode="json")
         ),
-        contestant=ContestantRef(name=contestant, model=model, effort=effort, run_index=run_index),
+        contestant=ContestantRef(
+            name=contestant,
+            model=model,
+            effort=effort,
+            run_index=run_index,
+            prompt_hash=prompt_hash,
+        ),
         engine=EngineRef(
             version=__version__,
             config=config,
@@ -112,7 +134,10 @@ def decision_record(
     request: DecisionRequest,
     results: tuple[ActionResult, ...],
     belief: BeliefState | None = None,
+    extras: Mapping[str, Any] | None = None,
 ) -> DecisionPointRecord:
+    extras = extras or {}
+    llm = extras.get("llm")
     (role,) = request.roles
     observation = request.observations[role]
     return DecisionPointRecord(
@@ -136,6 +161,9 @@ def decision_record(
             for result in results
         ],
         belief=None if belief is None else belief.digest(),
+        llm=None if llm is None else LlmRecord.model_validate(llm),
+        info=extras.get("info"),
+        notes=extras.get("notes"),
     )
 
 
@@ -164,7 +192,17 @@ def record_episode(
     runner's config hash.
     """
     log_path = run_dir / LOG_FILE
-    header = header_record(env, controller.name, model=model, effort=effort, run_index=run_index)
+    llm = describe(controller)
+    model = model or llm["model"]
+    effort = effort or llm["effort"]
+    header = header_record(
+        env,
+        controller.name,
+        model=model,
+        effort=effort,
+        run_index=run_index,
+        prompt_hash=llm["prompt_hash"],
+    )
     with RunLogWriter(log_path) as writer:
         writer.write(header)
 
@@ -173,7 +211,8 @@ def record_episode(
             writer.write(TickRecord(t=engine.tick, h=env.tick_hashes[-1], ev=events))
 
         def decided(request: DecisionRequest, results: tuple[ActionResult, ...]) -> None:
-            writer.write(decision_record(request, results, belief_of(controller)))
+            extras = decision_log(controller)
+            writer.write(decision_record(request, results, belief_of(controller), extras))
             if on_decision is not None:
                 on_decision(request, results)
 
@@ -192,6 +231,11 @@ def record_episode(
             )
         )
         records = writer.records
+    transcripts = transcripts_of(controller)
+    if transcripts is not None:
+        with RunLogWriter(run_dir / TRANSCRIPTS_FILE) as transcript_writer:
+            for entry in transcripts:
+                transcript_writer.write_data(entry)
     summary = {**_summary(header, episode, log_path, records), **(summary_extra or {})}
     stats = run_stats(controller)
     if stats is not None:

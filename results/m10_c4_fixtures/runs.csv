@@ -1,0 +1,5 @@
+scenario,template,level,tier,contestant,run_index,critical_downtime_min,do_nothing_downtime_min,da,beats_do_nothing,hospitals_lost_power,unmet_weighted_kw_min,trips,stuck_events,decision_points,actions,invalid_action_rate,run_hash,discrepancies
+dev_t01_s0_l1,T01,1,medium,solver,0,0,226,1.0000,True,0,102000000,0,0,22,4,0.0000,f17c6f4ddaf5188c10c3a7b06c9cd8e3,0
+dev_t01_s0_l1,T01,1,medium,llm-parser,0,0,226,1.0000,True,0,102000000,0,0,22,4,0.0000,f17c6f4ddaf5188c10c3a7b06c9cd8e3,0
+dev_t01_s0_l3,T01,3,medium,solver,0,0,226,1.0000,True,0,102000000,0,0,27,6,0.0000,015b9349a7e3f1739b5560fa3c657879,0
+dev_t01_s0_l3,T01,3,medium,llm-parser,0,0,226,1.0000,True,0,102000000,0,0,27,6,0.0000,015b9349a7e3f1739b5560fa3c657879,0
