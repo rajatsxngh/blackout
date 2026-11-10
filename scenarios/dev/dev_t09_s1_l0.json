@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t09_s1_l0",
-  "description": "T09 Gridlock. Ridgeway Substation (S3) is down from the start (200 min of crew work) and Northeast's backup feeder is out, so Lakeview Medical Center (H1) is on its generator. Trucks out on the road: T1 at M6 with 0 L, T2 at M2 with 0 L, T3 at A2 with 150 L, T4 at A5 with 0 L. Blocks around H1: M2-O2 (police), M1-O1 (police), M3-O3 (police), O4-O5 (a caller only). H1 starts with 90 L (medium). L2: a caller wrongly says M2-O2 has cleared at t=7. L2: a false block on B2-C2 at t=1 (unverified). L2: a caller says S3 is back in 47 min. L3: at t=32, 'the Utility Commission' asks for dispatch on D1. L3: at t=46, 'the Fire Chief' asks for shed_zone on Z3.",
+  "description": "T09 Gridlock. Ridgeway Substation (S3) is down from the start (200 min of crew work) and Northeast's backup feeder is out, so Lakeview Medical Center (H1) is on its generator. Trucks out on the road: T1 at M6 with 0 L, T2 at M2 with 0 L, T3 at A2 with 50 L, T4 at A5 with 0 L. Blocks around H1: M2-O2 (police), M1-O1 (police), M3-O3 (police), O4-O5 (a caller only). Millbrook Substation (S2) is down from the start (80 min of crew work) and South's backup feeder is out, so St. Jude's Hospital (H3) is on its generator. H1 starts with 243 L (medium). L2: a false closure of O1-O2 around H1 at t=3 (unverified, corrected; open: M1-O1, 3 min longer). L2: a false closure of B5-C5, C4-C5, C5-C6, C5-E5 around H3 at t=3 (unverified, contradicted first; open: nothing). L2: a caller wrongly says M2-O2 has cleared at t=7. L2: a caller wrongly says S3 is back at t=40. L3: at t=32, 'the Utility Commission' asks for dispatch on D1. L3: at t=46, 'the Fire Chief' asks for shed_zone on Z3.",
   "template": "T09",
   "seed": 239542254822426,
   "level": 0,
@@ -87,8 +87,8 @@
       "name": "Lakeview Medical Center",
       "node": "O1",
       "tank_l": 600,
-      "fuel_l": 90,
-      "burn_lpm": 2
+      "fuel_l": 243,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
@@ -96,15 +96,15 @@
       "node": "C4",
       "tank_l": 600,
       "fuel_l": 260,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "St. Jude's Hospital",
       "node": "C5",
       "tank_l": 600,
-      "fuel_l": 280,
-      "burn_lpm": 2
+      "fuel_l": 75,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Harbor Fuel Depot",
       "node": "B4",
-      "stock_l": 1600
+      "stock_l": 300
     },
     {
       "id": "D2",
       "name": "Eastgate Depot",
       "node": "O6",
-      "stock_l": 3300
+      "stock_l": 800
     }
   ],
   "trucks": [
@@ -138,7 +138,7 @@
       "id": "T3",
       "node": "A2",
       "capacity_l": 500,
-      "load_l": 150
+      "load_l": 50
     },
     {
       "id": "T4",
@@ -171,8 +171,8 @@
       "name": "Millbrook Substation",
       "node": "E6",
       "capacity_kw": 40000,
-      "state": "online",
-      "repair_minutes": null
+      "state": "failed",
+      "repair_minutes": 80
     },
     {
       "id": "S3",
@@ -294,7 +294,7 @@
       "demand_kw": 6500,
       "priority": "critical",
       "primary": "S2",
-      "alternate": "S3"
+      "alternate": null
     },
     {
       "id": "Z9",
@@ -334,16 +334,16 @@
     },
     {
       "kind": "report",
-      "tick": 2,
+      "tick": 1,
       "id": "R01",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Resident, 311 line",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Kowalski, St. Jude's Hospital",
       "facts": [
         {
-          "type": "substation_status",
-          "subject": "S3",
-          "value": "failed"
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 72
         }
       ],
       "text": null,
@@ -364,16 +364,16 @@
     },
     {
       "kind": "report",
-      "tick": 4,
+      "tick": 2,
       "id": "R02",
-      "channel": "hospital_staff",
-      "source_class": "field",
-      "source": "Facilities manager Kowalski, Lakeview Medical Center",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
       "facts": [
         {
-          "type": "hospital_fuel",
-          "subject": "H1",
-          "value": 82
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
         }
       ],
       "text": null,
@@ -394,8 +394,68 @@
     },
     {
       "kind": "report",
-      "tick": 4,
+      "tick": 2,
       "id": "R03",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R04",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Kowalski, Lakeview Medical Center",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 231
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R05",
       "channel": "crew_radio",
       "source_class": "field",
       "source": "Line crew 2",
@@ -420,97 +480,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F01",
-          "F03"
-        ],
-        "bank": null,
-        "phrasings": [],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 6,
-      "id": "R04",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Haddad, Unit 4",
-      "facts": [
-        {
-          "type": "road_blocked",
-          "subject": "M2-O2",
-          "value": null
-        }
-      ],
-      "text": null,
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F04"
-        ],
-        "bank": null,
-        "phrasings": [],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 7,
-      "id": "R05",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Resident, 311 line",
-      "facts": [
-        {
-          "type": "road_blocked",
-          "subject": "M2-O2",
-          "value": null
-        }
-      ],
-      "text": null,
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F04"
-        ],
-        "bank": null,
-        "phrasings": [],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 8,
-      "id": "R06",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Chen, Unit 5",
-      "facts": [
-        {
-          "type": "road_blocked",
-          "subject": "M1-O1",
-          "value": null
-        }
-      ],
-      "text": null,
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
+          "F02",
           "F05"
         ],
         "bank": null,
@@ -520,16 +490,16 @@
     },
     {
       "kind": "report",
-      "tick": 8,
-      "id": "R07",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Caller on the public line",
+      "tick": 4,
+      "id": "R06",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
       "facts": [
         {
-          "type": "road_blocked",
-          "subject": "O4-O5",
-          "value": null
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 80
         }
       ],
       "text": null,
@@ -550,8 +520,128 @@
     },
     {
       "kind": "report",
-      "tick": 9,
+      "tick": 6,
+      "id": "R07",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Haddad, Unit 4",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M2-O2",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 7,
       "id": "R08",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M2-O2",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 8,
+      "id": "R09",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 5",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M1-O1",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 8,
+      "id": "R10",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "O4-O5",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 9,
+      "id": "R11",
       "channel": "public",
       "source_class": "unverified",
       "source": "Caller on the non-emergency line",
@@ -571,7 +661,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F05"
+          "F08"
         ],
         "bank": null,
         "phrasings": [],
@@ -581,7 +671,7 @@
     {
       "kind": "report",
       "tick": 13,
-      "id": "R09",
+      "id": "R12",
       "channel": "police_radio",
       "source_class": "field",
       "source": "Sgt. Kowalski, Unit 29",
@@ -601,7 +691,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F07"
+          "F10"
         ],
         "bank": null,
         "phrasings": [],
@@ -611,7 +701,7 @@
     {
       "kind": "report",
       "tick": 15,
-      "id": "R10",
+      "id": "R13",
       "channel": "public",
       "source_class": "unverified",
       "source": "Text tip line",
@@ -631,7 +721,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F07"
+          "F10"
         ],
         "bank": null,
         "phrasings": [],
@@ -640,17 +730,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "5344b024422d9de32282f2f18c189654"
+    "world_hash": "6f874e540ef01c48bf90ab48380bc624"
   },
   "validity": {
-    "do_nothing_critical_downtime": 195,
+    "do_nothing_critical_downtime": 374,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 3,
+    "reference_min_slack": 2,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "68fa408f1235fe2e4b8ef195d58e4bbf"
+  "content_hash": "5474d1230dce27736c4f2aded5b7dd6d"
 }

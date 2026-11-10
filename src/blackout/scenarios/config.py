@@ -163,6 +163,16 @@ class TemplateCfg(_Cfg):
     T10: T10Cfg
 
 
+class FrontsCfg(_Cfg):
+    """Competing needs (blackout.scenarios.templates.common.second_front): a world with fewer
+    hospitals on their generators from the start than ``at_risk`` gets more, each cut off
+    for ``repair_minutes`` with ``fuel_minutes`` of burn in its tank."""
+
+    at_risk: int = Field(ge=1)
+    fuel_minutes: Range
+    repair_minutes: Range
+
+
 class ReportCfg(_Cfg):
     bundle_pct: int = Field(ge=0, le=100)
     public_echo_pct: int = Field(ge=0, le=100)
@@ -179,6 +189,7 @@ class CalibrationCfg(_Cfg):
     medium_margin_minutes: Range  # medium: this much above what Rules needs
     easy_margin_minutes: Range  # easy: this much above what both need
     probes: PositiveInt  # at most this many runs per search
+    robust_seeds: tuple[int, ...]  # the reference must also lose nothing under these CP-SAT seeds
 
 
 class ConflictCfg(_Cfg):
@@ -188,6 +199,15 @@ class ConflictCfg(_Cfg):
     stale_pct: int = Field(ge=0, le=100)
     correction_pct: int = Field(ge=0, le=100)
     field_false_pct: int = Field(ge=0, le=100)
+    closure_tick: Range  # when the false closure of the tight hospital's roads comes
+    closure_correction_pct: int = Field(ge=0, le=100)  # corrected after, else contradicted first
+    closures: int = Field(ge=0)  # at most this many hospitals get one (tight one first)
+
+    @model_validator(mode="after")
+    def _closure(self) -> Self:
+        if self.closure_tick[0] < 1:
+            raise ValueError("closure_tick starts at 1: a more reliable report may come first")
+        return self
 
 
 class InjectionCfg(_Cfg):
@@ -216,6 +236,7 @@ class CityConfig(_Cfg):
     repair_step_minutes: PositiveInt
     fleet: FleetCfg
     templates: TemplateCfg
+    fronts: FrontsCfg
     reports: ReportCfg
     calibration: CalibrationCfg
     conflict: ConflictCfg

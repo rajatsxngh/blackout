@@ -51,7 +51,6 @@ from blackout.scenarios.world import (
     depot_source,
     fact,
     fastest,
-    path_edges,
     police_source,
     public_source,
 )
@@ -142,10 +141,11 @@ def plan_conflicts(draft: Draft, rng: Rng) -> None:
     wanted = rng.between(*cfg.false_reports)
     shared = [r for r in draft.reports if r.level == 0]
     made = 0
-    harmful: list[Callable[[Draft, Rng, list[PlannedReport]], bool]] = [false_clear, false_block]
-    for maker in harmful:  # both, if the world has room: they're what changes where trucks go
-        if made < wanted and maker(draft, rng, shared):
+    for hospital_id in closure_targets(draft)[: cfg.closures]:
+        if made < wanted and false_block(draft, rng, shared, hospital_id):
             made += 1
+    if made < wanted and false_clear(draft, rng, shared):  # these change where trucks go
+        made += 1
     if rng.chance(cfg.stale_pct):
         stale_block(draft, rng, shared)
     others: list[Callable[[Draft, Rng, list[PlannedReport]], bool]] = [
@@ -240,12 +240,22 @@ def false_clear(draft: Draft, rng: Rng, shared: list[PlannedReport]) -> bool:
     return True
 
 
-def first_responder(draft: Draft) -> str:
-    """Where the first fuel for the tight hospital most likely comes from: the loaded truck
-    with the fastest drive to it, or else its nearest depot (PRD 8.7's greedy rule)."""
-    assert draft.target is not None
+def closure_targets(draft: Draft) -> list[str]:
+    """Hospitals a false closure goes around: the tight one first, then the others on their
+    generators from the start."""
+    if draft.target is None:
+        return []
+    return [draft.target, *(h for h in draft.hospitals_at_risk() if h != draft.target)]
+
+
+def first_responder(draft: Draft, hospital_id: str | None = None) -> str:
+    """Where the first fuel for a hospital (by default the tight one) most likely comes
+    from: the loaded truck with the fastest drive to it, or else its nearest depot (PRD
+    8.7's greedy rule)."""
+    hospital_id = hospital_id or draft.target
+    assert hospital_id is not None
     city = draft.built_city()
-    node = draft.hospital(draft.target).node
+    node = draft.hospital(hospital_id).node
     loaded = []
     for truck in draft.trucks:
         found = fastest(city, truck.node, node) if truck.load_l > 0 else None
@@ -253,36 +263,53 @@ def first_responder(draft: Draft) -> str:
             loaded.append((found[1], truck.id, truck.node))
     if loaded:
         return min(loaded)[2]
-    return nearest_depot(draft, draft.target)[1][0]
+    return nearest_depot(draft, hospital_id)[1][0]
 
 
-def false_block(draft: Draft, rng: Rng, shared: list[PlannedReport]) -> bool:
-    """A false block at the start, on the segment of the first responder's fast route to the
-    tight hospital whose detour costs most. Cue: a more reliable
-    report that the road is open, either just before (so "believe the latest word" is
-    fooled) or as a correction a few minutes after (by then the first trucks have left)."""
-    if draft.target is None:
+def false_block(
+    draft: Draft, rng: Rng, shared: list[PlannedReport], hospital_id: str | None = None
+) -> bool:
+    """A false closure of the roads into a hospital on its generator (by default the tight
+    one), early on. The roads it names
+    are open throughout. Cue: one report from a more reliable source that they're open,
+    either
+
+    - just before the lie (``closure.correction_pct`` of the time it isn't): then "believe
+      the latest word" is fooled for good, and the lie names *every* free road in, so the
+      hospital looks unreachable and a believer stops sending fuel; or
+    - as a correction a few minutes after: then the lie leaves the slowest approach open,
+      so the trucks already on their way are sent the long way round.
+    """
+    hospital_id = hospital_id or draft.target
+    if hospital_id is None:
         return False
-    city = draft.built_city()
-    target = draft.hospital(draft.target)
-    origins = [first_responder(draft)]
-    taken = {t.fact.subject for r in draft.reports for t in r.facts}
-    tick = rng.between(0, 1)  # in time to change the first dispatch
-    window = (tick - CUE_WINDOW_TICKS, tick + CUE_WINDOW_TICKS)
-    cost: dict[str, int] = {}  # segment -> the most a believed block on it adds to a trip
-    for origin in origins:
-        found = fastest(city, origin, target.node)
-        if found is None:
-            continue
-        for segment in path_edges(found[0]):
-            detour = fastest(city, origin, target.node, frozenset({segment}))
-            if detour is not None and segment not in taken:
-                cost[segment] = max(cost.get(segment, 0), detour[1] - found[1])
-    options = [s for s in sorted(cost) if open_throughout(draft.events, s, *window)]
-    if not options:
-        return False
-    segment = max(options, key=lambda s: (cost[s], s))
     cfg = draft.config.conflict
+    city = draft.built_city()
+    target = draft.hospital(hospital_id)
+    origin = first_responder(draft, hospital_id)
+    taken = {t.fact.subject for r in draft.reports for t in r.facts}
+    correct = rng.chance(cfg.closure_correction_pct)
+    tick = rng.between(*cfg.closure_tick)
+    window = (tick - CUE_WINDOW_TICKS, tick + CUE_WINDOW_TICKS)
+    found = fastest(city, origin, target.node)
+    if found is None:
+        return False
+    into = sorted(e for e in city.edges if target.node in e.split("-"))
+    free = [e for e in into if e not in taken and open_throughout(draft.events, e, *window)]
+    if not free:
+        return False
+    claimed, left = tuple(free), "nothing"
+    if correct:
+        options = []  # (extra minutes, the approach left open, the roads claimed blocked)
+        for kept in into:
+            rest = tuple(e for e in free if e != kept)
+            detour = fastest(city, origin, target.node, frozenset(rest)) if rest else None
+            if detour is not None and detour[1] > found[1]:
+                options.append((detour[1] - found[1], kept, rest))
+        if not options:
+            return False
+        extra, kept, claimed = max(options, key=lambda o: (o[0], len(o[2]), o[1]))
+        left = f"{kept}, {extra} min longer"
     if rng.chance(cfg.field_false_pct):
         liar = (Channel.POLICE_RADIO, SourceClass.FIELD, police_source(rng))
         honest = (Channel.POLICE_RADIO, SourceClass.VERIFIED, TRAFFIC_CENTER)
@@ -293,21 +320,31 @@ def false_block(draft: Draft, rng: Rng, shared: list[PlannedReport]) -> bool:
             if rng.chance(50)
             else (Channel.POLICE_RADIO, SourceClass.FIELD, police_source(rng))
         )
-    opened = fact(FactType.ROAD_CLEARED, segment)
-    correct = tick == 0 or rng.chance(cfg.correction_pct)
     when = tick + rng.between(2, 8) if correct else tick - rng.between(1, tick)
-    truth = _true(draft, when, *honest, opened)
-    note = "correction from a more reliable source" if correct else "a more reliable source"
-    lie = _false(
+    truth = _add(
         draft,
-        tick,
-        *liar,
-        fact(FactType.ROAD_BLOCKED, segment),
-        PlannedCue(CueKind.REPORT, truth, note + " says it's open"),
+        PlannedReport(
+            when, *honest, [TimedFact(fact(FactType.ROAD_CLEARED, e), when) for e in claimed]
+        ),
     )
+    note = "correction from a more reliable source" if correct else "a more reliable source"
+    lie = _add(
+        draft,
+        PlannedReport(
+            tick,
+            *liar,
+            [TimedFact(fact(FactType.ROAD_BLOCKED, e), tick) for e in claimed],
+            is_true=False,
+        ),
+    )
+    lie.cues.append(PlannedCue(CueKind.REPORT, truth, note + " says they're open"))
     if correct:
         truth.corrects = lie
-    draft.story.append(f"L2: a false block on {segment} at t={tick} ({liar[1].value}).")
+    draft.story.append(
+        f"L2: a false closure of {', '.join(claimed)} around {target.id} at t={tick}"
+        f" ({liar[1].value}, {'corrected' if correct else 'contradicted first'}; open:"
+        f" {left})."
+    )
     return True
 
 

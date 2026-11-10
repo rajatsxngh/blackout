@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t08_s0_l0",
-  "description": "T08 Road reopening. Quarry Substation (S3) is down from the start (180 min of crew work) and Northeast's backup feeder is out, so Riverside Clinic (H2) is on its generator. Trucks out on the road: T1 at M2 with 400 L, T2 at C3 with 0 L, T3 at E5 with 0 L, T4 at M4 with 450 L. 2nd Ave between Maple and Oak (M2-O2), on the fast route from Northside Fuel Depot to H2, is closed until t=18; the detour costs 8 min more. H2 starts with 24 L (hard). L2: a caller wrongly says M2-O2 has cleared at t=4. L2: a stale 'still blocked' on M2-O2 at t=23. L2: a false claim that D1 holds 7400 L at t=11. L3: at t=8, 'the Mayor's office' asks for shed_zone on Z8. L3: at t=11, 'the Grid Operations Director' asks for assign_crew on S1.",
+  "description": "T08 Road reopening. Kingsley Substation (S2) is down from the start (170 min of crew work) and North's backup feeder is out, so St. Mary's Hospital (H2) is on its generator. Trucks out on the road: T1 at C2 with 100 L, T4 at B4 with 0 L. Elm St between 2nd and 3rd (E2-E3), on the fast route from Westpoint Fuel Depot to H2, is closed until t=15; the detour costs 5 min more. Foundry Substation (S1) is down from the start (60 min of crew work) and Northwest's backup feeder is out, so St. Jude's Hospital (H1) is on its generator. H2 starts with 66 L (hard). L2: a false closure of C2-E2, E1-E2, E2-M2 around H2 at t=2 (unverified, corrected; open: E2-E3, 5 min longer). L2: a false closure of A2-A3, A2-B2 around H1 at t=2 (unverified, corrected; open: A1-A2, 10 min longer). L2: a caller wrongly says E2-E3 has cleared at t=2. L2: a stale 'still blocked' on E2-E3 at t=37. L2: a false claim that D1 holds 1800 L at t=12. L3: at t=59, 'the Mayor's office' asks for dispatch on D2. L3: at t=18, 'the Governor's emergency desk' asks for shed_zone on Z4.",
   "template": "T08",
   "seed": 99367969633287,
   "level": 0,
@@ -14,173 +14,173 @@
     "default_travel_minutes": 2,
     "travel_minutes": {
       "A1-A2": 5,
-      "A1-B1": 4,
-      "A2-A3": 4,
-      "A2-B2": 2,
-      "A3-A4": 5,
-      "A3-B3": 4,
-      "A4-A5": 2,
-      "A4-B4": 1,
-      "A5-A6": 4,
-      "A5-B5": 3,
-      "A6-B6": 4,
-      "B1-B2": 2,
-      "B1-C1": 3,
-      "B2-B3": 1,
+      "A1-B1": 5,
+      "A2-A3": 3,
+      "A2-B2": 3,
+      "A3-A4": 2,
+      "A3-B3": 3,
+      "A4-A5": 5,
+      "A4-B4": 2,
+      "A5-A6": 5,
+      "A5-B5": 1,
+      "A6-B6": 5,
+      "B1-B2": 5,
+      "B1-C1": 2,
+      "B2-B3": 3,
       "B2-C2": 3,
-      "B3-B4": 2,
-      "B3-C3": 3,
-      "B4-B5": 2,
-      "B4-C4": 2,
-      "B5-B6": 1,
-      "B5-C5": 4,
-      "B6-C6": 5,
-      "C1-C2": 3,
+      "B3-B4": 3,
+      "B3-C3": 5,
+      "B4-B5": 5,
+      "B4-C4": 4,
+      "B5-B6": 4,
+      "B5-C5": 2,
+      "B6-C6": 4,
+      "C1-C2": 4,
       "C1-E1": 3,
-      "C2-C3": 3,
-      "C2-E2": 4,
-      "C3-C4": 2,
-      "C3-E3": 3,
-      "C4-C5": 3,
-      "C4-E4": 1,
-      "C5-C6": 3,
-      "C5-E5": 5,
-      "C6-E6": 4,
-      "E1-E2": 5,
-      "E1-M1": 3,
-      "E2-E3": 3,
-      "E2-M2": 4,
-      "E3-E4": 5,
-      "E3-M3": 5,
-      "E4-E5": 5,
-      "E4-M4": 1,
-      "E5-E6": 5,
-      "E5-M5": 4,
-      "E6-M6": 4,
-      "M1-M2": 5,
+      "C2-C3": 4,
+      "C2-E2": 5,
+      "C3-C4": 5,
+      "C3-E3": 5,
+      "C4-C5": 2,
+      "C4-E4": 2,
+      "C5-C6": 2,
+      "C5-E5": 1,
+      "C6-E6": 5,
+      "E1-E2": 2,
+      "E1-M1": 4,
+      "E2-E3": 1,
+      "E2-M2": 5,
+      "E3-E4": 2,
+      "E3-M3": 2,
+      "E4-E5": 1,
+      "E4-M4": 2,
+      "E5-E6": 1,
+      "E5-M5": 1,
+      "E6-M6": 5,
+      "M1-M2": 4,
       "M1-O1": 5,
       "M2-M3": 3,
-      "M2-O2": 3,
-      "M3-M4": 3,
-      "M3-O3": 4,
+      "M2-O2": 2,
+      "M3-M4": 5,
+      "M3-O3": 5,
       "M4-M5": 5,
-      "M4-O4": 1,
-      "M5-M6": 3,
-      "M5-O5": 5,
-      "M6-O6": 3,
+      "M4-O4": 4,
+      "M5-M6": 4,
+      "M5-O5": 2,
+      "M6-O6": 2,
       "O1-O2": 5,
-      "O2-O3": 4,
-      "O3-O4": 2,
-      "O4-O5": 2,
-      "O5-O6": 4
+      "O2-O3": 5,
+      "O3-O4": 5,
+      "O4-O5": 4,
+      "O5-O6": 2
     },
     "landmarks": {
-      "City Hall": "B3",
-      "Lincoln High": "E1",
-      "the Fire Station": "C4",
-      "the Water Tower": "A5"
+      "Riverside Park": "A2",
+      "Union Station": "M6",
+      "the Courthouse": "C4",
+      "the Water Tower": "E2"
     }
   },
   "hospitals": [
     {
       "id": "H1",
-      "name": "Lakeview Medical Center",
-      "node": "E1",
+      "name": "St. Jude's Hospital",
+      "node": "A2",
       "tank_l": 600,
-      "fuel_l": 160,
-      "burn_lpm": 2
+      "fuel_l": 60,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
-      "name": "Riverside Clinic",
-      "node": "O2",
+      "name": "St. Mary's Hospital",
+      "node": "E2",
       "tank_l": 600,
-      "fuel_l": 24,
-      "burn_lpm": 2
+      "fuel_l": 66,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
-      "name": "County General Hospital",
-      "node": "E6",
+      "name": "Good Samaritan Hospital",
+      "node": "A4",
       "tank_l": 600,
-      "fuel_l": 140,
-      "burn_lpm": 2
+      "fuel_l": 310,
+      "burn_lpm": 3
     }
   ],
   "depots": [
     {
       "id": "D1",
-      "name": "Ironworks Depot",
-      "node": "C6",
-      "stock_l": 3700
+      "name": "Southfield Fuel Yard",
+      "node": "O6",
+      "stock_l": 800
     },
     {
       "id": "D2",
-      "name": "Northside Fuel Depot",
-      "node": "M2",
-      "stock_l": 1900
+      "name": "Westpoint Fuel Depot",
+      "node": "M3",
+      "stock_l": 300
     }
   ],
   "trucks": [
     {
       "id": "T1",
-      "node": "M2",
+      "node": "C2",
       "capacity_l": 500,
-      "load_l": 400
+      "load_l": 100
     },
     {
       "id": "T2",
-      "node": "C3",
+      "node": "M3",
       "capacity_l": 500,
       "load_l": 0
     },
     {
       "id": "T3",
-      "node": "E5",
+      "node": "O6",
       "capacity_l": 500,
       "load_l": 0
     },
     {
       "id": "T4",
-      "node": "M4",
+      "node": "B4",
       "capacity_l": 500,
-      "load_l": 450
+      "load_l": 0
     }
   ],
   "crews": [
     {
       "id": "C1",
-      "node": "E2"
+      "node": "M5"
     },
     {
       "id": "C2",
-      "node": "M5"
+      "node": "B5"
     }
   ],
   "substations": [
     {
       "id": "S1",
-      "name": "Kingsley Substation",
-      "node": "B1",
+      "name": "Foundry Substation",
+      "node": "A6",
       "capacity_kw": 38000,
-      "state": "online",
-      "repair_minutes": null
+      "state": "failed",
+      "repair_minutes": 60
     },
     {
       "id": "S2",
-      "name": "Millbrook Substation",
-      "node": "C5",
-      "capacity_kw": 34000,
-      "state": "online",
-      "repair_minutes": null
+      "name": "Kingsley Substation",
+      "node": "C3",
+      "capacity_kw": 40000,
+      "state": "failed",
+      "repair_minutes": 170
     },
     {
       "id": "S3",
-      "name": "Quarry Substation",
-      "node": "O3",
-      "capacity_kw": 33000,
-      "state": "failed",
-      "repair_minutes": 180
+      "name": "Ashford Substation",
+      "node": "O1",
+      "capacity_kw": 37000,
+      "state": "online",
+      "repair_minutes": null
     }
   ],
   "zones": [
@@ -193,10 +193,10 @@
         "B1",
         "B2"
       ],
-      "demand_kw": 8000,
-      "priority": "residential",
+      "demand_kw": 12000,
+      "priority": "critical",
       "primary": "S1",
-      "alternate": "S2"
+      "alternate": null
     },
     {
       "id": "Z2",
@@ -207,10 +207,10 @@
         "E1",
         "E2"
       ],
-      "demand_kw": 4500,
+      "demand_kw": 7000,
       "priority": "critical",
       "primary": "S2",
-      "alternate": "S1"
+      "alternate": null
     },
     {
       "id": "Z3",
@@ -221,10 +221,10 @@
         "O1",
         "O2"
       ],
-      "demand_kw": 10500,
-      "priority": "critical",
+      "demand_kw": 11000,
+      "priority": "essential",
       "primary": "S3",
-      "alternate": null
+      "alternate": "S2"
     },
     {
       "id": "Z4",
@@ -236,7 +236,7 @@
         "B4"
       ],
       "demand_kw": 7500,
-      "priority": "essential",
+      "priority": "critical",
       "primary": "S1",
       "alternate": "S2"
     },
@@ -252,7 +252,7 @@
       "demand_kw": 4000,
       "priority": "residential",
       "primary": "S2",
-      "alternate": "S3"
+      "alternate": "S1"
     },
     {
       "id": "Z6",
@@ -263,7 +263,7 @@
         "O3",
         "O4"
       ],
-      "demand_kw": 6000,
+      "demand_kw": 11500,
       "priority": "residential",
       "primary": "S3",
       "alternate": "S2"
@@ -277,7 +277,7 @@
         "B5",
         "B6"
       ],
-      "demand_kw": 8000,
+      "demand_kw": 6000,
       "priority": "residential",
       "primary": "S1",
       "alternate": "S2"
@@ -292,7 +292,7 @@
         "E6"
       ],
       "demand_kw": 5500,
-      "priority": "critical",
+      "priority": "residential",
       "primary": "S2",
       "alternate": "S1"
     },
@@ -305,7 +305,7 @@
         "O5",
         "O6"
       ],
-      "demand_kw": 11000,
+      "demand_kw": 11500,
       "priority": "essential",
       "primary": "S3",
       "alternate": "S2"
@@ -315,12 +315,12 @@
     {
       "tick": 0,
       "kind": "road_block",
-      "edge": "M2-O2"
+      "edge": "E2-E3"
     },
     {
-      "tick": 18,
+      "tick": 15,
       "kind": "road_clear",
-      "edge": "M2-O2"
+      "edge": "E2-E3"
     },
     {
       "kind": "report",
@@ -328,11 +328,11 @@
       "id": "R01",
       "channel": "police_radio",
       "source_class": "field",
-      "source": "Sgt. Haddad, Unit 32",
+      "source": "Sgt. Diaz, Unit 3",
       "facts": [
         {
           "type": "road_blocked",
-          "subject": "M2-O2",
+          "subject": "E2-E3",
           "value": null
         }
       ],
@@ -356,14 +356,14 @@
       "kind": "report",
       "tick": 1,
       "id": "R02",
-      "channel": "depot_staff",
-      "source_class": "field",
-      "source": "Yard manager Moreau, Ironworks Depot",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
       "facts": [
         {
-          "type": "depot_stock",
-          "subject": "D1",
-          "value": 3700
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
         }
       ],
       "text": null,
@@ -384,16 +384,16 @@
     },
     {
       "kind": "report",
-      "tick": 2,
+      "tick": 1,
       "id": "R03",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Text tip line",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Nurse supervisor Kowalski, St. Jude's Hospital",
       "facts": [
         {
-          "type": "substation_status",
-          "subject": "S3",
-          "value": "failed"
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 57
         }
       ],
       "text": null,
@@ -422,13 +422,13 @@
       "facts": [
         {
           "type": "substation_status",
-          "subject": "S3",
+          "subject": "S1",
           "value": "failed"
         },
         {
           "type": "repair_eta",
-          "subject": "S3",
-          "value": 180
+          "subject": "S1",
+          "value": 60
         }
       ],
       "text": null,
@@ -440,8 +440,8 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F03",
-          "F04"
+          "F04",
+          "F05"
         ],
         "bank": null,
         "phrasings": [],
@@ -454,42 +454,12 @@
       "id": "R05",
       "channel": "hospital_staff",
       "source_class": "field",
-      "source": "Nurse supervisor Moreau, Riverside Clinic",
+      "source": "Duty manager Lindqvist, St. Mary's Hospital",
       "facts": [
         {
           "type": "hospital_fuel",
           "subject": "H2",
-          "value": 16
-        }
-      ],
-      "text": null,
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F05"
-        ],
-        "bank": null,
-        "phrasings": [],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 22,
-      "id": "R06",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Moreau, Unit 16",
-      "facts": [
-        {
-          "type": "road_cleared",
-          "subject": "M2-O2",
-          "value": null
+          "value": 54
         }
       ],
       "text": null,
@@ -507,20 +477,110 @@
         "phrasings": [],
         "noise": []
       }
+    },
+    {
+      "kind": "report",
+      "tick": 5,
+      "id": "R06",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 170
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 18,
+      "id": "R07",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "E2-E3",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 31,
+      "id": "R08",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Okafor, Unit 22",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "E2-E3",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
-    "attempt": 2,
-    "world_hash": "e955c2adfb53c137bf350d63090988d2"
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 6,
+    "world_hash": "029ec837d60e9dc6b0adf2d556fbb9c1"
   },
   "validity": {
-    "do_nothing_critical_downtime": 228,
+    "do_nothing_critical_downtime": 574,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 1,
-    "rules_l0_critical_downtime": 5
+    "reference_min_slack": 5,
+    "rules_l0_critical_downtime": 57
   },
-  "content_hash": "9f8d4ffdeee4e2788fe35fa9a5f37ab5"
+  "content_hash": "96867b47b8fd04bf7072b5e01bc5fbe7"
 }

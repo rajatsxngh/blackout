@@ -1,12 +1,12 @@
 {
- "key": "339c628b9c05b166629a13aaa5a67efcf282a59e98e87c6307b1483f04a87f3a",
+ "key": "7508baf5e6439e830eb6696f4c7d5c86bf2edaa2b278d2b24d9e231cbe6b7266",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R05\" source_class=\"field\" source=\"Sgt. Patel, Unit 31\" channel=\"police_radio\" tick=\"7\">\nDispatch, Unit 31. Cedar St between 5th & 4th, no through traffic. We've had flooding over the curbs there since abt 5 minutes ago.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R05\" source_class=\"field\" source=\"Duty manager Abara, Lakeview Medical Center\" channel=\"hospital_staff\" tick=\"4\">\nUh, the Lakeview hospital is running on 30 L of fuel right now.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C4-C5\", \"type\": \"road_blocked\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": 30, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"H2\", \"type\": \"hospital_fuel\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_339c628b9c05b166",
+  "id": "msg_synthetic_7508baf5e6439e83",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 70,
-   "output_tokens": 42
+   "input_tokens": 59,
+   "output_tokens": 41
   }
  }
 }

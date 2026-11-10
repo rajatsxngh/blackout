@@ -15,13 +15,13 @@ scenarios:
     note: Loading at the depot nearest the hospital, not the one the truck is at (hand-made trap)
   - id: dev_t04_s0_l0
     runs: [rules__none__r0, solver__none__r0]
-    note: T04 breakdown, clean facts (L0), hard tier
-  - id: dev_t07_s0_l1
+    note: T04 breakdown with scarce fuel and a second hospital, clean facts (L0), hard tier
+  - id: dev_t07_s1_l1
     runs: [rules__none__r0, solver__none__r0]
-    note: T07 one crew, two slow repairs, radio text (L1), hard tier
+    note: T07 one crew, two repairs, little fuel, radio text (L1), hard tier
   - id: dev_t01_s0_l2
     runs: [rules__none__r0, solver__none__r0]
-    note: T01 blocked route with a false report (L2)
+    note: T01 blocked route and a false closure of a hospital's roads (L2)
   - id: dev_t09_s0_l3
     runs: [rules__none__r0, solver__none__r0]
     note: T09 with prompt-injection reports (L3), hard tier

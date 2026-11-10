@@ -19,8 +19,8 @@ Scored on (kind, subject, value within 10%) against what each report claims, tru
 
 | Level | Facts | Parsed | Correct | Precision | Recall | F1 |
 |---|---|---|---|---|---|---|
-| L1 | 6 | 6 | 6 | 1.000 | 1.000 | 1.000 |
-| L3 | 10 | 10 | 10 | 1.000 | 1.000 | 1.000 |
+| L1 | 8 | 8 | 8 | 1.000 | 1.000 | 1.000 |
+| L3 | 26 | 25 | 25 | 1.000 | 0.962 | 0.980 |
 
 ## LLM parser F1 and cost by level
 
@@ -28,7 +28,7 @@ Scored from the run logs (`dp.info.parses`) the same way as the keyword parser. 
 
 | Contestant | Model | Level | Runs | Replies | Facts | Parsed | Correct | F1 | Calls | Cost/run (USD) | Spend (USD) | Cache-read tokens | Faults (agent/infra) | Fallback runs |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| llm-parser | claude-haiku-5-5 | L1 | 1 | fixture | 6 | 6 | 6 | 1.000 | 6 | 0.0013 | 0.0000 | 32355 | 0/0 | 0 |
-| llm-parser | claude-haiku-5-5 | L3 | 1 | fixture | 10 | 10 | 10 | 1.000 | 12 | 0.0018 | 0.0000 | 71181 | 0/0 | 0 |
+| llm-parser | claude-haiku-5-5 | L1 | 1 | fixture | 8 | 8 | 8 | 1.000 | 8 | 0.0015 | 0.0000 | 45297 | 0/0 | 0 |
+| llm-parser | claude-haiku-5-5 | L3 | 1 | fixture | 26 | 26 | 26 | 1.000 | 18 | 0.0026 | 0.0000 | 110007 | 0/0 | 0 |
 
 Runs: 4. Scorer discrepancies: 0.

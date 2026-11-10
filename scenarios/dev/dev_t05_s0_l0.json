@@ -1,12 +1,12 @@
 {
   "schema_version": 5,
   "id": "dev_t05_s0_l0",
-  "description": "T05 Burn spike. Foundry Substation (S1) is down from the start (190 min of crew work) and Southwest's backup feeder is out, so Riverside Clinic (H3) is on its generator. Linden Substation (S3) is down from the start (190 min of crew work) and Northeast's backup feeder is out, so Mercy General Hospital (H1) is on its generator. Trucks out on the road: T1 at E4 with 350 L, T2 at O6 with 0 L, T3 at C2 with 0 L, T4 at A3 with 0 L. H3's generator jumps to 5 L/min at t=11. H3 starts with 200 L (easy). L2: a false block on C4-E4 at t=1 (field). L2: a caller says S3 is back in 46 min. L3: at t=48, 'the Utility Commission' asks for shed_zone on Z7. L3: at t=53, 'City Emergency Management' asks for assign_crew on S2.",
+  "description": "T05 Burn spike. Foundry Substation (S1) is down from the start (190 min of crew work) and Southwest's backup feeder is out, so Riverside Clinic (H3) is on its generator. Linden Substation (S3) is down from the start (190 min of crew work) and Northeast's backup feeder is out, so Mercy General Hospital (H1) is on its generator. Trucks out on the road: T1 at E4 with 300 L, T2 at O6 with 0 L, T3 at C2 with 0 L, T4 at A3 with 0 L. H3's generator jumps to 5 L/min at t=11. H3 starts with 325 L (medium). L2: a false closure of A5-B5, B4-B5, B5-B6, B5-C5 around H3 at t=1 (unverified, contradicted first; open: nothing). L2: a false closure of E1-M1, M1-M2, M1-O1 around H1 at t=3 (field, contradicted first; open: nothing). L2: a caller says H2 burns 5 L/min at t=21. L3: at t=48, 'the Utility Commission' asks for shed_zone on Z7. L3: at t=53, 'City Emergency Management' asks for assign_crew on S2.",
   "template": "T05",
   "seed": 58837696334030,
   "level": 0,
   "split": "dev",
-  "tier": "easy",
+  "tier": "medium",
   "horizon": 240,
   "city": {
     "width": 6,
@@ -87,8 +87,8 @@
       "name": "Mercy General Hospital",
       "node": "M1",
       "tank_l": 600,
-      "fuel_l": 78,
-      "burn_lpm": 2
+      "fuel_l": 117,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
@@ -96,15 +96,15 @@
       "node": "A3",
       "tank_l": 600,
       "fuel_l": 250,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "Riverside Clinic",
       "node": "B5",
       "tank_l": 600,
-      "fuel_l": 200,
-      "burn_lpm": 2
+      "fuel_l": 325,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Harbor Fuel Depot",
       "node": "O5",
-      "stock_l": 1500
+      "stock_l": 300
     },
     {
       "id": "D2",
       "name": "Eastgate Depot",
       "node": "B4",
-      "stock_l": 3200
+      "stock_l": 700
     }
   ],
   "trucks": [
@@ -126,7 +126,7 @@
       "id": "T1",
       "node": "E4",
       "capacity_l": 500,
-      "load_l": 350
+      "load_l": 300
     },
     {
       "id": "T2",
@@ -329,7 +329,7 @@
         {
           "type": "hospital_fuel",
           "subject": "H3",
-          "value": 198
+          "value": 322
         }
       ],
       "text": null,
@@ -425,7 +425,7 @@
         {
           "type": "hospital_fuel",
           "subject": "H1",
-          "value": 72
+          "value": 108
         }
       ],
       "text": null,
@@ -536,17 +536,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "c95741ad6ef3b96eb8b0b2f10bec9696"
+    "world_hash": "b136021fd88313892487e57e5175b40a"
   },
   "validity": {
-    "do_nothing_critical_downtime": 394,
+    "do_nothing_critical_downtime": 371,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 24,
+    "reference_min_slack": 11,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "b595a171a1a9a273c6be1f2fd80ba019"
+  "content_hash": "d47781e05b244f535521478ada8c0731"
 }

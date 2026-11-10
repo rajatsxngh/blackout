@@ -1,12 +1,12 @@
 {
- "key": "121093728be912b9af626831967efb9b9b977ddcbc8c97496f816527e070cdf1",
+ "key": "075923c8d0ee51fb14a5b5364e20795395550280a7c961db7c9effa50a3c857b",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R05\" source_class=\"unverified\" source=\"Caller on the non-emergency line\" channel=\"public\" tick=\"2\">\nUm, hi. There was a huge bang from Linden & then everything went out. Maybe a blown main breaker?\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R15\" source_class=\"field\" source=\"Officer Brennan, Unit 8\" channel=\"police_radio\" tick=\"29\">\nThis is Unit 8. Be advised, the stretch of Cedar between 4th & 5th is closed as of right now. We've got a tree down across both lanes. How copy?\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": \"failed\", \"subject\": \"S2\", \"type\": \"substation_status\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C4-C5\", \"type\": \"road_blocked\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_121093728be912b9",
+  "id": "msg_synthetic_075923c8d0ee51fb",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 64,
-   "output_tokens": 44
+   "input_tokens": 74,
+   "output_tokens": 42
   }
  }
 }

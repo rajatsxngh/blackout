@@ -22,7 +22,7 @@ from blackout.info.reports import Report
 from blackout.logs.reader import read_log
 from blackout.logs.replay import replay
 from blackout.logs.writer import record_episode
-from blackout.scenarios.calibrate import RunOutcome, tier_of
+from blackout.scenarios.calibrate import RunOutcome, fragile, tier_of
 from blackout.scenarios.config import CityConfig, load_city_config
 from blackout.scenarios.conflict import contradicts, cue_problems
 from blackout.scenarios.generator import (
@@ -43,6 +43,7 @@ from blackout.scenarios.suites import (
     write_suite,
 )
 from blackout.scenarios.templates import TEMPLATES
+from blackout.scenarios.templates.common import second_front
 from blackout.scenarios.text.banks import PhrasingBank, load_bank
 from blackout.scenarios.verify import verify_scenario
 from blackout.scenarios.world import Infeasible, build_world
@@ -138,6 +139,9 @@ def test_config_rejects_bad_ranges_and_layouts(config: CityConfig) -> None:
     zones = {**data["zones"], "critical": 8, "essential": 2}
     with pytest.raises(ValidationError, match="more critical"):
         CityConfig.model_validate({**data, "zones": zones})
+    conflict = {**data["conflict"], "closure_tick": [0, 2]}  # nothing could come before it
+    with pytest.raises(ValidationError, match="closure_tick starts at 1"):
+        CityConfig.model_validate({**data, "conflict": conflict})
     assert config.digest() == CityConfig.model_validate(data).digest()
 
 
@@ -171,6 +175,35 @@ def test_every_template_builds_its_situation(config: CityConfig, template: str) 
             draft.set_fuel(reading.hospital_id, 300)
             assert isinstance(reading.report.facts[0].fact.value, int)
     assert built >= 3, f"{template} built only {built} of 12 worlds"
+
+
+@pytest.mark.parametrize("template", ["T01", "T04", "T08", "T09"])
+def test_a_second_front_gives_the_fleet_competing_needs(config: CityConfig, template: str) -> None:
+    """D098: a lone hospital at risk gets company, with a short tank and a reported outage."""
+    cfg = config.fronts
+    for attempt in range(12):
+        draft = build_world(config, Rng.derive("front-test", template, attempt))
+        try:
+            TEMPLATES[template].apply(draft, Rng.derive("front-test", template, "t", attempt))
+        except Infeasible:
+            continue
+        before = draft.hospitals_at_risk()
+        reports = len(draft.reports)
+        second_front(draft, Rng.derive("front-test", template, "f", attempt))
+        after = draft.hospitals_at_risk()
+        assert len(after) >= cfg.at_risk
+        assert set(before) < set(after)
+        # The one it cut off has a short tank (others sharing its substation keep theirs).
+        new = [draft.hospital(h) for h in sorted(set(after) - set(before))]
+        fronts = [(h.fuel_l, [m * h.burn_lpm for m in cfg.fuel_minutes]) for h in new]
+        assert any(low <= fuel <= high for fuel, (low, high) in fronts)
+        assert len(draft.reports) > reports  # its fuel reading, at least
+        again = len(draft.reports)
+        second_front(draft, Rng(0))  # enough at risk now: nothing changes
+        assert len(draft.reports) == again
+        assert draft.hospitals_at_risk() == after
+        return
+    pytest.fail(f"{template} built no world")
 
 
 def test_infeasible_worlds_are_rerolled_then_reported(
@@ -239,10 +272,10 @@ def test_levels_share_one_world_and_build_on_each_other(levels: list[Scenario]) 
         reports = reports_of(scenario)
         assert [r.id for r in reports] == [f"R{n:02d}" for n in range(1, len(reports) + 1)]
         assert [r.tick for r in reports] == sorted(r.tick for r in reports)
-    texts = {(r.tick, r.source): r.text for r in reports_of(l1)}
+    texts = {(r.tick, r.source, repr(r.facts)): r.text for r in reports_of(l1)}
     for r in reports_of(l3):  # a shared report reads the same at every level that has text
         if r.truth.from_level == 0:
-            assert texts[(r.tick, r.source)] == r.text
+            assert texts[(r.tick, r.source, repr(r.facts))] == r.text
 
 
 def test_validity_is_recorded_per_level(levels: list[Scenario]) -> None:
@@ -319,6 +352,47 @@ def test_every_false_report_has_a_working_cue(dev: list[Scenario]) -> None:
                 assert scenario.level >= 2
                 false_reports += 1
     assert false_reports >= 2 * 14  # at least two per world at L2 and L3
+
+
+def test_l2_closes_the_roads_into_a_hospital_at_risk(dev: list[Scenario]) -> None:
+    """D098: every dev world's L2 carries a false closure: blocks on the roads into one
+    hospital in one report, cued by a more reliable report that says they're open."""
+    for scenario in (s for s in dev if s.level == 2):
+        nodes = {h.node: h.id for h in scenario.hospitals}
+        closures = []
+        for report in reports_of(scenario):
+            claims = [f for f in report.facts if f.type == "road_blocked"]
+            if report.truth.is_true or not claims or len(claims) < len(report.facts):
+                continue
+            around = {n for f in claims for n in f.subject.split("-") if n in nodes}
+            if len(around) == 1 and all(next(iter(around)) in f.subject for f in claims):
+                closures.append(report)
+        assert closures, scenario.id
+        for report in closures:
+            (cue,) = (c for c in report.truth.cues if c.kind == "report")
+            honest = next(r for r in reports_of(scenario) if r.id == cue.report)
+            assert {f.subject for f in honest.facts} == {f.subject for f in report.facts}
+            assert all(f.type == "road_cleared" for f in honest.facts)
+
+
+def test_the_reference_must_not_hang_on_one_search_path(
+    dev: list[Scenario], config: CityConfig, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D099: ``fragile`` re-runs the reference under other CP-SAT seeds."""
+    import blackout.scenarios.calibrate as calibrate
+
+    scenario = next(s for s in dev if s.id == "dev_t09_s1_l0")
+    seen: list[int] = []
+
+    def loses_on_seed_two(s: Scenario, random_seed: int = 0) -> RunOutcome:
+        seen.append(random_seed)
+        return RunOutcome(7 if random_seed == 2 else 0, 0, 3)
+
+    monkeypatch.setattr(calibrate, "reference", loses_on_seed_two)
+    assert fragile(scenario, config.calibration) == "the reference loses 7 min with CP-SAT seed 2"
+    assert seen == [1, 2]
+    monkeypatch.undo()
+    assert fragile(scenario, config.calibration.model_copy(update={"robust_seeds": (1,)})) is None
 
 
 def test_cue_check_catches_broken_cues(dev: list[Scenario]) -> None:

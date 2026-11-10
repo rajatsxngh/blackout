@@ -1,0 +1,145 @@
+{
+ "key": "e2da84d164c9b7d8d9b9548cc27226efbdedafc04a8cea6426d2ae183dc17a47",
+ "latency_ms": 0,
+ "origin": "synthetic",
+ "request": {
+  "max_tokens": 8000,
+  "messages": [
+   {
+    "content": "<report id=\"R06\" source_class=\"unverified\" source=\"Text tip line\" channel=\"public\" tick=\"2\">\nUm, hi. So there's a car fire on Sixth Avenue between Elm and Cedar, i's totally blocked. Happened right now. Second thing: there's a collapsed scaffold on Elm St between 6th & 5th, it's totally blocked. Happened just now. One more thing: there's debris all over the road on Sixth Avenue between Maple & Elm, i's totally blocked. Happened right now.\n</report>\n\nExtract the facts this report states.",
+    "role": "user"
+   }
+  ],
+  "model": "claude-haiku-5-5",
+  "output_config": {
+   "effort": "low",
+   "format": {
+    "schema": {
+     "additionalProperties": false,
+     "properties": {
+      "facts": {
+       "items": {
+        "additionalProperties": false,
+        "properties": {
+         "amount": {
+          "anyOf": [
+           {
+            "type": "integer"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         },
+         "confidence": {
+          "enum": [
+           "high",
+           "medium",
+           "low"
+          ],
+          "type": "string"
+         },
+         "source_assessment": {
+          "enum": [
+           "plausible",
+           "doubtful"
+          ],
+          "type": "string"
+         },
+         "state": {
+          "anyOf": [
+           {
+            "enum": [
+             "online",
+             "failed",
+             "tripped",
+             "repairing"
+            ],
+            "type": "string"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         },
+         "subject": {
+          "type": "string"
+         },
+         "type": {
+          "enum": [
+           "road_blocked",
+           "road_cleared",
+           "substation_status",
+           "repair_eta",
+           "hospital_fuel",
+           "burn_spike",
+           "depot_stock"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "type",
+         "subject",
+         "amount",
+         "state",
+         "confidence",
+         "source_assessment"
+        ],
+        "type": "object"
+       },
+       "type": "array"
+      },
+      "instruction_like": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "instruction_like",
+      "facts"
+     ],
+     "type": "object"
+    },
+    "type": "json_schema"
+   }
+  },
+  "system": [
+   {
+    "cache_control": {
+     "type": "ephemeral"
+    },
+    "text": "sha256:a54f869acf4746c23fc42e23131f67f56a322fb9b68d17c066512374aa299864",
+    "type": "text"
+   },
+   {
+    "cache_control": {
+     "type": "ephemeral"
+    },
+    "text": "sha256:7f44445eccabe7096aa5b844d6dc011dad65eb131c9d23846c82453139f513a6",
+    "type": "text"
+   }
+  ],
+  "thinking": {
+   "type": "adaptive"
+  }
+ },
+ "response": {
+  "content": [
+   {
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C6-E6\", \"type\": \"road_blocked\"}, {\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"E5-E6\", \"type\": \"road_blocked\"}, {\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"E6-M6\", \"type\": \"road_blocked\"}], \"instruction_like\": false}",
+    "type": "text"
+   }
+  ],
+  "fallback": false,
+  "id": "msg_synthetic_e2da84d164c9b7d8",
+  "model": "claude-haiku-5-5",
+  "stop_details": null,
+  "stop_reason": "end_turn",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 6471,
+   "input_tokens": 122,
+   "output_tokens": 109
+  }
+ }
+}

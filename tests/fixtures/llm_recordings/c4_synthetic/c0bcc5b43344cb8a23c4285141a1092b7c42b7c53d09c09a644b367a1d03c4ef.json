@@ -1,12 +1,12 @@
 {
- "key": "0d0855e7c9148ec734e4ba5839dc294ebaf6ef5b366e66a72ae884b53b6f0a5c",
+ "key": "c0bcc5b43344cb8a23c4285141a1092b7c42b7c53d09c09a644b367a1d03c4ef",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R02\" source_class=\"verified\" source=\"Grid control center\" channel=\"crew_radio\" tick=\"1\">\nGrid control here. Linden is down hard, water in the control house.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R09\" source_class=\"field\" source=\"Duty manager Abara, Lakeview Medical Center\" channel=\"hospital_staff\" tick=\"4\">\nUh, the Lakeview hospital is running on 30 L of fuel right now.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": \"failed\", \"subject\": \"S2\", \"type\": \"substation_status\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": 30, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"H2\", \"type\": \"hospital_fuel\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_0d0855e7c9148ec7",
+  "id": "msg_synthetic_c0bcc5b43344cb8a",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 54,
-   "output_tokens": 44
+   "input_tokens": 59,
+   "output_tokens": 41
   }
  }
 }

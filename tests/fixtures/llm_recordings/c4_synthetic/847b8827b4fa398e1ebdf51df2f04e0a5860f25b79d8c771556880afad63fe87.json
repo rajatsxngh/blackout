@@ -1,12 +1,12 @@
 {
- "key": "4cb8b40d21d323a1d2a054cc078985575bb1f8a492320afdc1d6802ea8b5f8e4",
+ "key": "847b8827b4fa398e1ebdf51df2f04e0a5860f25b79d8c771556880afad63fe87",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R03\" source_class=\"verified\" source=\"Grid control center\" channel=\"crew_radio\" tick=\"1\">\nGrid control here. Linden is down hard, water in the control house.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R08\" source_class=\"field\" source=\"Nurse supervisor Moreau, Good Samaritan Hospital\" channel=\"hospital_staff\" tick=\"3\">\nJust dipped the tank at Good Samaritan, seventy-two ltiers remaining.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": \"failed\", \"subject\": \"S2\", \"type\": \"substation_status\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": 72, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"H3\", \"type\": \"hospital_fuel\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_4cb8b40d21d323a1",
+  "id": "msg_synthetic_847b8827b4fa398e",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 54,
-   "output_tokens": 44
+   "input_tokens": 62,
+   "output_tokens": 41
   }
  }
 }

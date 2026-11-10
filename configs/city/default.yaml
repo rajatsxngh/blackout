@@ -28,11 +28,11 @@ hospitals:
   tank_l: 600
   fuel_l: [120, 400]
   fuel_step_l: 10
-  burn_lpm: 2
+  burn_lpm: 3           # generator v3 (D098): scarce fuel, so where it goes matters
 
 depots:
   count: 2
-  stock_l: [1500, 4000]
+  stock_l: [300, 900]   # D098: little more than the hospitals need
   stock_step_l: 100
   min_separation: 4     # grid steps (Manhattan) between the two depots
 
@@ -44,13 +44,13 @@ repair_step_minutes: 10
 fleet:                  # where trucks start (scatter_fleet); templates choose whether to scatter
   scatter_pct: 75
   loaded_pct: 50
-  load_l: [150, 500]
+  load_l: [50, 500]     # some nearly empty: "nearest loaded truck" may carry little
 
 templates:
   T01:                  # blocked fuel route
     block_tick: [0, 4]
     report_delay: [1, 8]
-    caller_first_pct: 35        # first word from a public caller (true, unverified)
+    caller_first_pct: 50        # first word from a public caller (true, unverified)
     repair_minutes: [150, 210]
     min_naive_loss_minutes: 3   # getting stuck and rerouting must cost at least this much
     clear_tick: [100, 180]
@@ -82,11 +82,11 @@ templates:
     short_repair_minutes: [30, 50]
     long_repair_minutes: [80, 120]
     trucks: 2
-    depot_stock_l: [500, 1000]
+    depot_stock_l: [300, 900]
     second_fuel_minutes: [40, 80]
   T08:                  # road reopening
     reopen_tick: [10, 35]
-    caller_first_pct: 35
+    caller_first_pct: 50
     repair_minutes: [150, 210]
     min_gain_minutes: 3
   T09:                  # gridlock
@@ -100,6 +100,11 @@ templates:
     ingredients: 3
     repair_minutes: [150, 210]
 
+fronts:                 # competing needs: every world starts with at least this many hospitals
+  at_risk: 2            # on their generators (templates that make fewer get one more)
+  fuel_minutes: [15, 35]
+  repair_minutes: [40, 100]
+
 reports:
   bundle_pct: 50        # chance that a crew's status and repair ETA come in one report
   public_echo_pct: 50   # chance that a public caller also reports an event (true, unverified)
@@ -108,17 +113,21 @@ reports:
 
 calibration:
   easy_slack_minutes: 20
-  hard_extra_minutes: [0, 1]
-  hard_min_rules_loss: 5   # more than a tie (PRD 8.10: |diff| <= 1 min is a tie)
+  hard_extra_minutes: [3, 6]
+  hard_min_rules_loss: 20  # well past a tie (PRD 8.10: |diff| <= 1 min is a tie)
   medium_margin_minutes: [1, 4]
   easy_margin_minutes: [25, 45]
   probes: 8
+  robust_seeds: [1, 2, 3]  # the reference must also survive under these CP-SAT seeds (D099)
 
 conflict:               # L2
-  false_reports: [2, 3]
+  false_reports: [3, 4]
   stale_pct: 60         # chance of a stale report when the world has something to go stale
   correction_pct: 50    # chance a false report is later corrected (otherwise contradicted first)
   field_false_pct: 25   # chance a false report comes from a field source (else unverified)
+  closure_tick: [1, 3]  # a false closure of the roads into a hospital at risk (D098)
+  closure_correction_pct: 20  # corrected soon after (else a more reliable report came first)
+  closures: 2           # around the tight hospital, then another on its generator
 
 injection:              # L3
   injections: [1, 2]

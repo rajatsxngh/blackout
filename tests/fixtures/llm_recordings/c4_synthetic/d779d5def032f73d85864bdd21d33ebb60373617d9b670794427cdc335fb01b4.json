@@ -1,12 +1,12 @@
 {
- "key": "7372cace5e60fa1ab5c3cb6f616201603189d43242bc709a7970372e3eb4bfeb",
+ "key": "d779d5def032f73d85864bdd21d33ebb60373617d9b670794427cdc335fb01b4",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R04\" source_class=\"unverified\" source=\"Resident, 311 line\" channel=\"public\" tick=\"1\">\nUm, hi. Can't get past Cedar between 2nd and 3rd, there's a jackknifed box truck. Somebody should tell the drivers. Thanks.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R04\" source_class=\"field\" source=\"Nurse supervisor Moreau, Good Samaritan Hospital\" channel=\"hospital_staff\" tick=\"3\">\nJust dipped the tank at Good Samaritan, seventy-two ltiers remaining.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C2-C3\", \"type\": \"road_blocked\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": 72, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"H3\", \"type\": \"hospital_fuel\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_7372cace5e60fa1a",
+  "id": "msg_synthetic_d779d5def032f73d",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 67,
-   "output_tokens": 42
+   "input_tokens": 62,
+   "output_tokens": 41
   }
  }
 }

@@ -1,12 +1,12 @@
 {
- "key": "a563b0db4f02b7edf1095365e044b89a6e896d1ec80017aba039d22e31a53f90",
+ "key": "cb2935e4ed560e786e6ded0b6c80a4288af8a130d503feeddb5da15105270bb1",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R09\" source_class=\"unverified\" source=\"Caller on the public line\" channel=\"public\" tick=\"10\">\nThe blockage on Cedar Street btwn 5th and 4th is gone, the water's gone down.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R04\" source_class=\"field\" source=\"Line crew 1\" channel=\"crew_radio\" tick=\"2\">\nLine crew 1 on the crew channel. Damage assessment on Linden Substation: figure 200 minutes to fix it, last I checked. Standing by.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C4-C5\", \"type\": \"road_cleared\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": 200, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"S2\", \"type\": \"repair_eta\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_a563b0db4f02b7ed",
+  "id": "msg_synthetic_cb2935e4ed560e78",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 58,
-   "output_tokens": 42
+   "input_tokens": 67,
+   "output_tokens": 41
   }
  }
 }

@@ -199,6 +199,7 @@ def solve_fuel(
     powered: dict[str, tuple[bool, ...]],
     hint: dict[str, tuple[TripKey, ...]] | None = None,
     deterministic_time: float = DETERMINISTIC_TIME_S,
+    random_seed: int = 0,
 ) -> FuelPlan:
     """Choose every truck's plan. ``powered`` is the power plan's bucket timeline."""
     targets = needy(state, powered)
@@ -304,7 +305,7 @@ def solve_fuel(
 
     solver = cp_model.CpSolver()
     solver.parameters.num_workers = 1
-    solver.parameters.random_seed = 0
+    solver.parameters.random_seed = random_seed
     solver.parameters.max_deterministic_time = deterministic_time
     # Measured on the slowest dev-v0 models (D063): presolve costs more than it saves at this
     # size, and the stronger LP relaxation pays for itself. Both are deterministic.

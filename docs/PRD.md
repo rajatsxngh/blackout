@@ -110,8 +110,8 @@ configs/*.yaml ─► Scenario generator ─► scenarios/<suite>/*.json   (froz
 | Road grid | 6×6 intersections (36 nodes, 60 edges) with coordinates; edge travel time 2–5 min (seeded); 2 faster arterials | Edge `open`/`blocked`. North–south streets are named (Alder, Birch, Cedar, Elm, Maple, Oak); east–west avenues are 1st–6th. A **gazetteer** maps human names ("Elm St between 3rd and 4th", "Elm & 4th", landmarks) to IDs |
 | Zones | 9 (3×3 blocks), demand 4,000–12,000 kW | Priority `critical` (has a hospital) / `essential` / `residential`; one primary and one alternate substation each |
 | Substations | 3, capacity 25,000–40,000 kW | `online` / `failed` / `repairing` / `tripped` |
-| Hospitals | 3, one per critical zone; tank 600 L; start fuel 120–400 L; burn 2 L/min (spikes to 3–5) | `on_grid` / `on_generator` / `dark`. Generators burn fuel only while the zone is unpowered |
-| Depots | 2, stock 1,500–4,000 L | Finite stock |
+| Hospitals | 3, one per critical zone; tank 600 L; start fuel 120–400 L; burn 3 L/min (spikes to 4–5) (2 L/min until generator v3, D098) | `on_grid` / `on_generator` / `dark`. Generators burn fuel only while the zone is unpowered |
+| Depots | 2, stock 300–900 L (1,500–4,000 until generator v3, D098) | Finite stock |
 | Trucks | 4, capacity 500 L; loading and unloading take a fixed 5 min each | `idle` / `moving` / `loading` / `unloading` / `stuck` / `broken`. Position is `(from, to, elapsed)` |
 | Crews | 2 | `idle` / `moving` / `repairing`. Repair 30–90 min (failed); reset 10 min (tripped) |
 | Horizon | 240 ticks (1 tick = 1 minute) | Stops early once no future events remain and every zone has power |
@@ -272,7 +272,7 @@ Reports are **routed by source channel**, never by their content (routing by con
 - **Stress modifiers** (M15): telemetry delay; a 30-tick outage of one agent.
 
 **Validity, tiers and freezing:**
-- Each physical world must satisfy: do-nothing loses ≥ 30 hospital-minutes, and the reference loses 0 at L0. Worlds that fail are re-rolled with a sub-seed, up to 20 attempts.
+- Each physical world must satisfy: do-nothing loses ≥ 30 hospital-minutes, and the reference loses 0 at L0. Worlds that fail are re-rolled with a sub-seed, up to 20 attempts. (As built: 50 attempts (D072); the reference must lose 0 at every level, also under three other CP-SAT seeds so the result holds on every OS (D099).)
 - Tier (easy / medium / hard) comes from the reference's minimum slack and whether Rules survives at L0. The target mix is 20 / 50 / 30%.
 - Each suite gets a `manifest.json` of hashes, plus `docs/SCENARIO_CARD.md` describing how scenarios were generated, their limitations, and their license.
 - **Test guard:** the batch runner refuses `--suite test` unless `docs/PREREGISTRATION.md` is committed and the frozen config and prompt hashes match.
@@ -637,7 +637,7 @@ M0 → M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 ─┬─→ M9 ─�
 | M5 | B Information and scenarios | Scenario generator v1 | M4 | 8–10 h | Done (CI green) |
 | M6 | C Baselines | Rules baseline and batch runner | M3, M5 | 5–7 h | Done (CI green) |
 | M7 | C Baselines | Solver and reference | M4, M6 | 12–16 h | Done (CI green) |
-| M8 | D Benchmark and viewer | Full scenario suites and freeze | M5, M6, M7 | 12–16 h | Done except the test-suite freeze (waits for the human-written test bank) |
+| M8 | D Benchmark and viewer | Full scenario suites and freeze | M5, M6, M7 | 12–16 h | Done except the test-suite freeze (waits for the human-written test bank). dev re-frozen with generator v3 before any LLM run, to give the baselines real gaps (scarce fuel, a second hospital at risk, false closures at L2; D098–D100) |
 | M9 | D Benchmark and viewer | Replay viewer v1 | M3, M8 | 14–20 h | Done (local checks green; CI and the Pages preview wait for the push) |
 | M10 | E AI contestants | LLM infrastructure and Parser contender | M7, M8 | 8–10 h | Done except live checks (local checks green; C4 runs and replays from synthetic fixtures). Waiting for the locked test bank and an API key: the Haiku dev run (`configs/matrices/dev_c4_haiku.yaml`) with C4's real parse F1 and cost per run, `cache_read_input_tokens > 0` on a repeated prefix (and the 4,096-token prefix confirmed with `count_tokens`), and the ledger vs Console spot check (which also confirms the assumed cache prices, D096) |
 | M11 | E AI contestants | Single coordinator agent | M4, M7, M10 (M9 recommended) | 12–16 h | Not started |

@@ -1,12 +1,12 @@
 {
- "key": "34b51adeea8d4c55d9fa75cb7075bf1c27ebaf8a911ce7e826fbe6b27b32c158",
+ "key": "9c44d19eeab951b1ef47d7e66407e39434ab64dfa5fb420c24137445c2c39c02",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R01\" source_class=\"field\" source=\"Officer Silva, Unit 18\" channel=\"police_radio\" tick=\"0\">\nDispatch, Unit 18, priority traffic. You can send trucks down Cedar St from 2nd down to 3rd again, it's clear.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R10\" source_class=\"unverified\" source=\"Text tip line\" channel=\"public\" tick=\"7\">\nHi, I'm calling about the outage. Just drove up to the stretch of Cedar between 4th and 5th and had to tun around, far as we can tell. There's downed power lines, the whole road is jammed up.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,19 +126,19 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C2-C3\", \"type\": \"road_cleared\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C4-C5\", \"type\": \"road_blocked\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_34b51adeea8d4c55",
+  "id": "msg_synthetic_9c44d19eeab951b1",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
-   "cache_creation_input_tokens": 6471,
-   "cache_read_input_tokens": 0,
-   "input_tokens": 65,
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 6471,
+   "input_tokens": 83,
    "output_tokens": 42
   }
  }

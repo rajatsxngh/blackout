@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t04_s0_l2",
-  "description": "T04 Breakdown mid-delivery. Quarry Substation (S2) is down from the start (180 min of crew work) and North's backup feeder is out, so Bayside Clinic (H2) is on its generator. T2 starts at C5 with 500 L, 11 min from H2, and breaks down for good at t=8. Trucks out on the road: T1 at O4 with 0 L. H2 starts with 30 L (hard). L2: a false block on E2-E3 at t=1 (field). L2: a caller says H1 is down to 18 L at t=23. L3: at t=49, 'the Utility Commission' asks for assign_crew on S1.",
+  "description": "T04 Breakdown mid-delivery. Linden Substation (S2) is down from the start (180 min of crew work) and South's backup feeder is out, so County General Hospital (H2) is on its generator. T3 starts at B1 with 500 L, 10 min from H2, and breaks down for good at t=7. Trucks out on the road: T1 at M1 with 50 L, T2 at B4 with 0 L, T4 at B6 with 0 L. Foundry Substation (S3) is down from the start (60 min of crew work) and East's backup feeder is out, so St. Mary's Hospital (H1) is on its generator. H2 starts with 102 L (hard). L2: a false closure of B6-C6, C5-C6, C6-E6 around H2 at t=2 (unverified, contradicted first; open: nothing). L2: a false closure of M3-O3, O2-O3, O3-O4 around H1 at t=1 (unverified, contradicted first; open: nothing). L2: a false claim that D2 holds 1500 L at t=9. L3: at t=40, 'the Governor's emergency desk' asks for dispatch on D2. L3: at t=57, 'City Emergency Management' asks for assign_crew on S1.",
   "template": "T04",
   "seed": 171257668891601,
   "level": 2,
@@ -13,136 +13,136 @@
     "height": 6,
     "default_travel_minutes": 2,
     "travel_minutes": {
-      "A1-A2": 3,
-      "A1-B1": 2,
+      "A1-A2": 2,
+      "A1-B1": 3,
       "A2-A3": 3,
       "A2-B2": 2,
-      "A3-A4": 3,
-      "A3-B3": 1,
-      "A4-A5": 3,
+      "A3-A4": 2,
+      "A3-B3": 5,
+      "A4-A5": 4,
       "A4-B4": 3,
-      "A5-A6": 4,
-      "A5-B5": 2,
-      "A6-B6": 5,
-      "B1-B2": 2,
-      "B1-C1": 2,
-      "B2-B3": 1,
-      "B2-C2": 4,
-      "B3-B4": 1,
-      "B3-C3": 1,
-      "B4-B5": 1,
-      "B4-C4": 3,
+      "A5-A6": 5,
+      "A5-B5": 3,
+      "A6-B6": 3,
+      "B1-B2": 1,
+      "B1-C1": 3,
+      "B2-B3": 2,
+      "B2-C2": 2,
+      "B3-B4": 2,
+      "B3-C3": 4,
+      "B4-B5": 2,
+      "B4-C4": 2,
       "B5-B6": 1,
-      "B5-C5": 5,
+      "B5-C5": 4,
       "B6-C6": 2,
-      "C1-C2": 5,
-      "C1-E1": 4,
-      "C2-C3": 4,
-      "C2-E2": 5,
-      "C3-C4": 5,
-      "C3-E3": 1,
-      "C4-C5": 5,
-      "C4-E4": 5,
-      "C5-C6": 2,
+      "C1-C2": 3,
+      "C1-E1": 3,
+      "C2-C3": 3,
+      "C2-E2": 2,
+      "C3-C4": 3,
+      "C3-E3": 2,
+      "C4-C5": 4,
+      "C4-E4": 2,
+      "C5-C6": 5,
       "C5-E5": 3,
-      "C6-E6": 4,
-      "E1-E2": 5,
-      "E1-M1": 5,
-      "E2-E3": 3,
+      "C6-E6": 3,
+      "E1-E2": 3,
+      "E1-M1": 4,
+      "E2-E3": 4,
       "E2-M2": 2,
-      "E3-E4": 2,
-      "E3-M3": 1,
-      "E4-E5": 3,
+      "E3-E4": 3,
+      "E3-M3": 5,
+      "E4-E5": 2,
       "E4-M4": 5,
-      "E5-E6": 3,
-      "E5-M5": 3,
-      "E6-M6": 2,
+      "E5-E6": 5,
+      "E5-M5": 5,
+      "E6-M6": 5,
       "M1-M2": 2,
-      "M1-O1": 3,
-      "M2-M3": 3,
-      "M2-O2": 5,
-      "M3-M4": 5,
-      "M3-O3": 1,
-      "M4-M5": 3,
+      "M1-O1": 4,
+      "M2-M3": 2,
+      "M2-O2": 1,
+      "M3-M4": 2,
+      "M3-O3": 5,
+      "M4-M5": 5,
       "M4-O4": 5,
-      "M5-M6": 3,
-      "M5-O5": 2,
+      "M5-M6": 4,
+      "M5-O5": 5,
       "M6-O6": 4,
-      "O1-O2": 5,
-      "O2-O3": 3,
-      "O3-O4": 5,
+      "O1-O2": 3,
+      "O2-O3": 4,
+      "O3-O4": 3,
       "O4-O5": 2,
-      "O5-O6": 4
+      "O5-O6": 2
     },
     "landmarks": {
-      "Memorial Stadium": "M1",
-      "Riverside Park": "O6",
-      "St. Paul's Church": "B2",
-      "the Fire Station": "C5"
+      "Riverside Park": "A4",
+      "St. Paul's Church": "M3",
+      "Union Station": "B2",
+      "the Courthouse": "E6"
     }
   },
   "hospitals": [
     {
       "id": "H1",
-      "name": "Northgate Hospital",
-      "node": "A2",
+      "name": "St. Mary's Hospital",
+      "node": "O3",
       "tank_l": 600,
-      "fuel_l": 120,
-      "burn_lpm": 2
+      "fuel_l": 45,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
-      "name": "Bayside Clinic",
-      "node": "E2",
+      "name": "County General Hospital",
+      "node": "C6",
       "tank_l": 600,
-      "fuel_l": 30,
-      "burn_lpm": 2
+      "fuel_l": 102,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
-      "name": "Mercy General Hospital",
-      "node": "A3",
+      "name": "Bayside Clinic",
+      "node": "M5",
       "tank_l": 600,
-      "fuel_l": 240,
-      "burn_lpm": 2
+      "fuel_l": 400,
+      "burn_lpm": 3
     }
   ],
   "depots": [
     {
       "id": "D1",
-      "name": "Harbor Fuel Depot",
-      "node": "C3",
-      "stock_l": 2800
+      "name": "Eastgate Depot",
+      "node": "M6",
+      "stock_l": 300
     },
     {
       "id": "D2",
       "name": "Westpoint Fuel Depot",
-      "node": "O4",
-      "stock_l": 3600
+      "node": "A1",
+      "stock_l": 500
     }
   ],
   "trucks": [
     {
       "id": "T1",
-      "node": "O4",
+      "node": "M1",
+      "capacity_l": 500,
+      "load_l": 50
+    },
+    {
+      "id": "T2",
+      "node": "B4",
       "capacity_l": 500,
       "load_l": 0
     },
     {
-      "id": "T2",
-      "node": "C5",
+      "id": "T3",
+      "node": "B1",
       "capacity_l": 500,
       "load_l": 500
     },
     {
-      "id": "T3",
-      "node": "C3",
-      "capacity_l": 500,
-      "load_l": 0
-    },
-    {
       "id": "T4",
-      "node": "O4",
+      "node": "B6",
       "capacity_l": 500,
       "load_l": 0
     }
@@ -150,37 +150,37 @@
   "crews": [
     {
       "id": "C1",
-      "node": "B1"
+      "node": "A2"
     },
     {
       "id": "C2",
-      "node": "E3"
+      "node": "C5"
     }
   ],
   "substations": [
     {
       "id": "S1",
-      "name": "Ridgeway Substation",
-      "node": "B6",
-      "capacity_kw": 35000,
+      "name": "Millbrook Substation",
+      "node": "B3",
+      "capacity_kw": 34000,
       "state": "online",
       "repair_minutes": null
     },
     {
       "id": "S2",
-      "name": "Quarry Substation",
-      "node": "C5",
-      "capacity_kw": 29000,
+      "name": "Linden Substation",
+      "node": "E2",
+      "capacity_kw": 32000,
       "state": "failed",
       "repair_minutes": 180
     },
     {
       "id": "S3",
-      "name": "Kingsley Substation",
-      "node": "M4",
-      "capacity_kw": 32000,
-      "state": "online",
-      "repair_minutes": null
+      "name": "Foundry Substation",
+      "node": "M5",
+      "capacity_kw": 35000,
+      "state": "failed",
+      "repair_minutes": 60
     }
   ],
   "zones": [
@@ -193,8 +193,8 @@
         "B1",
         "B2"
       ],
-      "demand_kw": 8000,
-      "priority": "critical",
+      "demand_kw": 5500,
+      "priority": "residential",
       "primary": "S1",
       "alternate": "S2"
     },
@@ -207,10 +207,10 @@
         "E1",
         "E2"
       ],
-      "demand_kw": 11500,
-      "priority": "critical",
+      "demand_kw": 10500,
+      "priority": "residential",
       "primary": "S2",
-      "alternate": null
+      "alternate": "S1"
     },
     {
       "id": "Z3",
@@ -221,7 +221,7 @@
         "O1",
         "O2"
       ],
-      "demand_kw": 10000,
+      "demand_kw": 7500,
       "priority": "essential",
       "primary": "S3",
       "alternate": "S2"
@@ -235,8 +235,8 @@
         "B3",
         "B4"
       ],
-      "demand_kw": 7500,
-      "priority": "critical",
+      "demand_kw": 6500,
+      "priority": "residential",
       "primary": "S1",
       "alternate": "S2"
     },
@@ -249,10 +249,10 @@
         "E3",
         "E4"
       ],
-      "demand_kw": 8000,
-      "priority": "residential",
+      "demand_kw": 11000,
+      "priority": "essential",
       "primary": "S2",
-      "alternate": "S1"
+      "alternate": "S3"
     },
     {
       "id": "Z6",
@@ -263,10 +263,10 @@
         "O3",
         "O4"
       ],
-      "demand_kw": 4000,
-      "priority": "essential",
+      "demand_kw": 9000,
+      "priority": "critical",
       "primary": "S3",
-      "alternate": "S2"
+      "alternate": null
     },
     {
       "id": "Z7",
@@ -277,7 +277,7 @@
         "B5",
         "B6"
       ],
-      "demand_kw": 8500,
+      "demand_kw": 8000,
       "priority": "residential",
       "primary": "S1",
       "alternate": "S2"
@@ -291,10 +291,10 @@
         "E5",
         "E6"
       ],
-      "demand_kw": 6000,
-      "priority": "residential",
+      "demand_kw": 4000,
+      "priority": "critical",
       "primary": "S2",
-      "alternate": "S3"
+      "alternate": null
     },
     {
       "id": "Z9",
@@ -305,34 +305,34 @@
         "O5",
         "O6"
       ],
-      "demand_kw": 8500,
-      "priority": "residential",
+      "demand_kw": 4000,
+      "priority": "critical",
       "primary": "S3",
       "alternate": "S2"
     }
   ],
   "events": [
     {
-      "tick": 8,
+      "tick": 7,
       "kind": "truck_breakdown",
-      "truck": "T2",
+      "truck": "T3",
       "repair_minutes": null
     },
     {
       "kind": "report",
-      "tick": 1,
+      "tick": 0,
       "id": "R01",
-      "channel": "hospital_staff",
-      "source_class": "field",
-      "source": "Facilities manager Haddad, Bayside Clinic",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
       "facts": [
         {
-          "type": "hospital_fuel",
-          "subject": "H2",
-          "value": 28
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
         }
       ],
-      "text": "Our generator at the hosp at Elm & 2nd has 28 L on hand. We need a delivery.",
+      "text": "There's smoke coming off Foundry sub, and the power's out all around heere. Somebody should look at it.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -345,73 +345,81 @@
         ],
         "bank": "train",
         "phrasings": [
-          "hospital_fuel/hf06"
-        ],
-        "noise": [
-          "abbreviations"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 1,
-      "id": "R02",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Sgt. Kowalski, Unit 11",
-      "facts": [
-        {
-          "type": "road_blocked",
-          "subject": "E2-E3",
-          "value": null
-        }
-      ],
-      "text": "Traffic unit reporting Elm St betwwen 2nd and 3rd shut a minute ago, debris all over the road. Detour your vehicles. Copy?",
-      "truth": {
-        "is_true": false,
-        "from_level": 2,
-        "cues": [
-          {
-            "kind": "report",
-            "report": "R04",
-            "note": "correction from a more reliable source says it's open"
-          }
-        ],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [],
-        "bank": "train",
-        "phrasings": [
-          "road_blocked/rb11"
+          "substation_status/ss08"
         ],
         "noise": [
           "typos",
-          "slang",
           "sign-off"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 4,
-      "id": "R03",
-      "channel": "crew_radio",
-      "source_class": "field",
-      "source": "Line crew 2",
+      "tick": 0,
+      "id": "R02",
+      "channel": "police_radio",
+      "source_class": "verified",
+      "source": "Traffic management center",
       "facts": [
         {
-          "type": "substation_status",
-          "subject": "S2",
-          "value": "failed"
+          "type": "road_cleared",
+          "subject": "M3-O3",
+          "value": null
         },
         {
-          "type": "repair_eta",
-          "subject": "S2",
-          "value": 180
+          "type": "road_cleared",
+          "subject": "O2-O3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "O3-O4",
+          "value": null
         }
       ],
-      "text": "Okay, be aware the substation at Cedar & 5th is out of service with water in the control house, far as we can tell. Expect outages aroumd it. One more thing: tell control Quarry sub is 3 hours of work, not a quick reset. Over.",
+      "text": "Dispatch, Traffic management, priority traffic. 3rd Ave btwn Maple and Oak is passable again, the utility crew made it safe. Cancel the detour. And another thing, the blockage on the stretch of Oak between 2nd and 3rd is gone, the debris is clleaned up. One more thing: Oak St from 3rd down to 4th is passable again, the utility crew made it safe. Cancel the detour. Out.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08",
+          "F09",
+          "F10"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc10",
+          "road_cleared/rc08",
+          "road_cleared/rc10"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "bundle",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R03",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Murphy, St. Mary's Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 42
+        }
+      ],
+      "text": "Duty manager Murphy here. Looks like our genny at the hospital at Oak & 3rd has 42 litres on hand. We need a delivery.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -420,80 +428,138 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F02",
-          "F03"
+          "F02"
         ],
         "bank": "train",
         "phrasings": [
-          "substation_status/ss05",
-          "repair_eta/re10"
+          "hospital_fuel/hf06"
         ],
         "noise": [
-          "typos",
+          "slang",
           "hedge",
-          "bundle",
-          "filler",
-          "sign-off"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 7,
-      "id": "R04",
-      "channel": "police_radio",
-      "source_class": "verified",
-      "source": "Traffic management center",
-      "facts": [
-        {
-          "type": "road_cleared",
-          "subject": "E2-E3",
-          "value": null
-        }
-      ],
-      "text": "This is Traffic management. The stretch of Elm between 2nd and 3rd is passable again, the utility crew made it safe. Cancel the detour.",
-      "truth": {
-        "is_true": true,
-        "from_level": 2,
-        "cues": [],
-        "stale_of": null,
-        "corrects": "R02",
-        "injection": null,
-        "fact_ids": [
-          "F04"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "road_cleared/rc10"
-        ],
-        "noise": [
           "opener"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 23,
-      "id": "R05",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Caller on the non-emergency line",
+      "tick": 1,
+      "id": "R04",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
       "facts": [
         {
-          "type": "hospital_fuel",
-          "subject": "H1",
-          "value": 18
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
         }
       ],
-      "text": "Update from the Northgate hospital: the tank's at 18 litres.",
+      "text": "The Foundry substation is down and needs a crew on site. Damage looks like a line down across the bus. Standing by.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss09"
+        ],
+        "noise": [
+          "slang",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R05",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Lindqvist, Unit 32",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "B6-C6",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "C5-C6",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "C6-E6",
+          "value": null
+        }
+      ],
+      "text": "Unit 32 to dispatch. The stretch of 6th between Birch & Cedar is passable again, the utility crew made it safe. Cancel the detour. One more thing: we've reopened Cedar St from 5th down to 6th. the water's goe down, so it's good to use. Also, you can send trucks down 6th Ave from Cedar over to Elm agani, it's clear.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F11",
+          "F12",
+          "F13"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc10",
+          "road_cleared/rc03",
+          "road_cleared/rc04"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R06",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M3-O3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "O2-O3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "O3-O4",
+          "value": null
+        }
+      ],
+      "text": "There's flooding over the curbs on the stretch of 3rd between Maple and Oak, it's totally jammed up. Happened a minute ago. And another thing, can't get past Oak between 2nd & 3rd, there's a car fire. Somebody should tell the drivers. And another thing, Oak Street between 4th & 3rd is blocked, there's a sinkhole. Nobody can drive through.",
       "truth": {
         "is_true": false,
         "from_level": 2,
         "cues": [
           {
-            "kind": "telemetry",
-            "report": null,
-            "note": "hospital telemetry shows far more fuel"
+            "kind": "report",
+            "report": "R02",
+            "note": "a more reliable source says they're open"
           }
         ],
         "stale_of": null,
@@ -502,24 +568,328 @@
         "fact_ids": [],
         "bank": "train",
         "phrasings": [
-          "hospital_fuel/hf07"
+          "road_blocked/rb08",
+          "road_blocked/rb07",
+          "road_blocked/rb12"
+        ],
+        "noise": [
+          "abbreviations",
+          "slang",
+          "bundle"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R07",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Charge nurse Okafor, County General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 96
+        }
+      ],
+      "text": "Hi, this is Charge nurse Okafor. The generator tank at the hospital at Cedar & 6th reads 96 L.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "hospital_fuel/hf04"
+        ],
+        "noise": [
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R08",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the non-emergency line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": "Hi there. Um, there's smoke coming off Linden sub, and the power's out all around here. Somebody should look at it.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss08"
+        ],
+        "noise": [
+          "filler",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R09",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Yard manager Murphy, Eastgate Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D1",
+          "value": 300
+        }
+      ],
+      "text": "Eastgate Depot here, we've got 300 liters ready to go, I think.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "depot_stock/ds07"
+        ],
+        "noise": [
+          "hedge"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R10",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 60
+        }
+      ],
+      "text": "Rough ETA on Foundry Substaation is 60 min once we start, far as we can tell. Standing by.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "repair_eta/re11"
+        ],
+        "noise": [
+          "typos",
+          "hedge",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R11",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B6-C6",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "C5-C6",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "C6-E6",
+          "value": null
+        }
+      ],
+      "text": "Hi there. Can't get past 6th between Birch and Cedar, there's a tree down across both lanes. Somebody should tell the drivers. Second thing: can't get past Cedar St between 5th and 6th, there's floooding over the curbs. Somebody should tell the drivers. Also, Sixth Avenue between Elm and Cedar is jammed up, there's a tree down across both lanes. Nobosy can drive through.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R05",
+            "note": "a more reliable source says they're open"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb07",
+          "road_blocked/rb07",
+          "road_blocked/rb12"
+        ],
+        "noise": [
+          "typos",
+          "slang",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R12",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": "Grid control on the crew channel. Okay, we've lost the Linden substation completey. Looks like a blown main breaker. Over.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "substation_status/ss02"
+        ],
+        "noise": [
+          "typos",
+          "filler",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 5,
+      "id": "R13",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 180
+        }
+      ],
+      "text": "Fixing Linden sub will take 180 minutes.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "repair_eta/re09"
+        ],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 9,
+      "id": "R14",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 1500
+        }
+      ],
+      "text": "Stock check at Westpoint Fuel Depot: one thousand five hundred liters in the tanks.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "telemetry",
+            "report": null,
+            "note": "depot telemetry shows far less"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "depot_stock/ds02"
         ],
         "noise": []
       }
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
-    "attempt": 2,
-    "world_hash": "981a1d22f595ae6f7331a781bcf77ff8"
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 9,
+    "world_hash": "d6117b5ff8dddf94feae8a98faf684d5"
   },
   "validity": {
-    "do_nothing_critical_downtime": 225,
+    "do_nothing_critical_downtime": 537,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 2,
-    "rules_l0_critical_downtime": 7
+    "reference_min_slack": 1,
+    "rules_l0_critical_downtime": 178
   },
-  "content_hash": "a10448fe54b4f2d43b4d86a3ff0a07f1"
+  "content_hash": "f2ade2fdbb1e3ad15bbb422a20434bfc"
 }

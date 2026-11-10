@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t05_s1_l0",
-  "description": "T05 Burn spike. Quarry Substation (S1) is down from the start (160 min of crew work) and West's backup feeder is out, so Northgate Hospital (H3) is on its generator. Foundry Substation (S2) is down from the start (190 min of crew work) and North's backup feeder is out, so Hillcrest Hospital (H2) is on its generator. Trucks out on the road: T3 at E4 with 500 L, T4 at C3 with 0 L. H3's generator jumps to 4 L/min at t=24. H3 starts with 54 L (medium). L2: a false block on B3-C3 at t=1 (unverified). L2: a false claim that D1 holds 4000 L at t=25. L3: at t=29, 'the Fire Chief' asks for dispatch on D2.",
+  "description": "T05 Burn spike. Quarry Substation (S1) is down from the start (160 min of crew work) and West's backup feeder is out, so Northgate Hospital (H3) is on its generator. Foundry Substation (S2) is down from the start (190 min of crew work) and North's backup feeder is out, so Hillcrest Hospital (H2) is on its generator. Trucks out on the road: T3 at E4 with 500 L, T4 at C3 with 0 L. H3's generator jumps to 4 L/min at t=24. H3 starts with 175 L (medium). L2: a false closure of A3-B3, B2-B3, B3-B4, B3-C3 around H3 at t=3 (field, contradicted first; open: nothing). L2: a false closure of A1-A2, A2-A3, A2-B2 around H1 at t=1 (unverified, contradicted first; open: nothing). L2: a caller says H2 is down to 23 L at t=11. L3: at t=29, 'the Fire Chief' asks for dispatch on D2.",
   "template": "T05",
   "seed": 48370582192395,
   "level": 0,
@@ -88,23 +88,23 @@
       "node": "A2",
       "tank_l": 600,
       "fuel_l": 220,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H2",
       "name": "Hillcrest Hospital",
       "node": "C1",
       "tank_l": 600,
-      "fuel_l": 84,
-      "burn_lpm": 2
+      "fuel_l": 126,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "Northgate Hospital",
       "node": "B3",
       "tank_l": 600,
-      "fuel_l": 54,
-      "burn_lpm": 2
+      "fuel_l": 175,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Westpoint Fuel Depot",
       "node": "C4",
-      "stock_l": 2000
+      "stock_l": 400
     },
     {
       "id": "D2",
       "name": "Harbor Fuel Depot",
       "node": "A1",
-      "stock_l": 2400
+      "stock_l": 500
     }
   ],
   "trucks": [
@@ -329,7 +329,7 @@
         {
           "type": "hospital_fuel",
           "subject": "H2",
-          "value": 82
+          "value": 123
         }
       ],
       "text": null,
@@ -509,7 +509,7 @@
         {
           "type": "hospital_fuel",
           "subject": "H3",
-          "value": 46
+          "value": 163
         }
       ],
       "text": null,
@@ -560,17 +560,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "e10b4bee9e9d2146ea0addff9916b181"
+    "world_hash": "2b273f7e758fdf6a7f58c10433992211"
   },
   "validity": {
-    "do_nothing_critical_downtime": 542,
+    "do_nothing_critical_downtime": 554,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 16,
+    "reference_min_slack": 5,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "94b12a311a3fae741b534f85a2bd3963"
+  "content_hash": "735a8222f1e55ac321ef4c5ad121ebcb"
 }

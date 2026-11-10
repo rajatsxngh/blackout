@@ -1,12 +1,12 @@
 {
- "key": "e13a0d4af57311ffefe9e5aeff0b6bd6cd992ec6c46e37bb1e28bbb2a575d5f3",
+ "key": "78441fe718add2e42ba14b162cd22b6a0cc84a3580ad393737ba362b55b83a40",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R04\" source_class=\"field\" source=\"Line crew 2\" channel=\"crew_radio\" tick=\"3\">\nLine crew 2 here. Best guess for Linden is 3h20 of reoair time, don't quote me.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R01\" source_class=\"field\" source=\"Officer Lindqvist, Unit 24\" channel=\"police_radio\" tick=\"0\">\nDispatch, Unit 24, priority traffic. You can send trucks down 3rd Ave from Birch over to Cedar again, it's clear. One more thing: you can send rigs down Ceedar St btwn 3rd and 2nd again, it's clear. Also, Cedar Street btwn 4th and 3rd reopened juat now, the debris is cleaned up. And another thing, you can send trucks down the stretch of 3rd btwn Cedar and Elm again, it's clear.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": 200, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"S2\", \"type\": \"repair_eta\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"B3-C3\", \"type\": \"road_cleared\"}, {\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C2-C3\", \"type\": \"road_cleared\"}, {\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C3-C4\", \"type\": \"road_cleared\"}, {\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C3-E3\", \"type\": \"road_cleared\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_e13a0d4af57311ff",
+  "id": "msg_synthetic_78441fe718add2e4",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
-   "cache_creation_input_tokens": 0,
-   "cache_read_input_tokens": 6471,
-   "input_tokens": 54,
-   "output_tokens": 41
+   "cache_creation_input_tokens": 6471,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 134,
+   "output_tokens": 142
   }
  }
 }

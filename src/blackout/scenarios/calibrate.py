@@ -20,6 +20,10 @@ suite asks for, and the world is measured again at exactly that fuel:
 - **easy**: well above both (``easy_margin_minutes``), so the reference keeps at least
   ``easy_slack_minutes`` of fuel at its tightest moment.
 
+A world is also rejected if the reference survives only on CP-SAT's default search path:
+it must lose nothing under the seeds in ``robust_seeds`` too (``fragile``), at every level,
+because another OS can search differently (D084, D099).
+
 The tier is then *measured*, never assumed (``tier_of``): hard if Rules loses at L0, easy if
 Rules doesn't and the reference's minimum slack is at least ``easy_slack_minutes``, medium
 otherwise. If the measured tier isn't the one asked for, the world is re-rolled.
@@ -81,8 +85,20 @@ def rules(scenario: Scenario) -> RunOutcome:
     return play(scenario, RulesController())
 
 
-def reference(scenario: Scenario) -> RunOutcome:
-    return play(scenario, ReferenceController())
+def reference(scenario: Scenario, random_seed: int = 0) -> RunOutcome:
+    """The reference contestant; ``random_seed`` is CP-SAT's (contestants always use 0)."""
+    return play(scenario, ReferenceController(random_seed=random_seed))
+
+
+def fragile(scenario: Scenario, cfg: CalibrationCfg) -> str | None:
+    """Why the reference's clean result on ``scenario`` hangs on one CP-SAT search path, or
+    None. The reference must lose nothing under every seed in ``cfg.robust_seeds`` too:
+    otherwise another OS, whose solver searches differently (D084), may see it lose."""
+    for seed in cfg.robust_seeds:
+        lost = reference(scenario, seed).critical_downtime
+        if lost > 0:
+            return f"the reference loses {lost} min with CP-SAT seed {seed}"
+    return None
 
 
 def tier_of(rules_l0: RunOutcome, reference_run: RunOutcome, cfg: CalibrationCfg) -> Tier:

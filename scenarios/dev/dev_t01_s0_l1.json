@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t01_s0_l1",
-  "description": "T01 Blocked fuel route. Linden Substation (S2) is down from the start (200 min of crew work) and Downtown's backup feeder is out, so Lakeview Medical Center (H2) is on its generator. Trucks out on the road: T1 at B6 with 0 L, T2 at B1 with 0 L, T3 at M6 with 0 L, T4 at B1 with 350 L. The fast route from Southfield Fuel Yard to H2 is blocked on Cedar St between 4th and 5th (C4-C5) from t=0 to t=147; police report it at t=7. The detour takes 9 min; driving into the block costs 3 min more. H2 starts with 28 L (medium). L2: a caller wrongly says C4-C5 has cleared at t=10. L2: a false block on C2-C3 at t=1 (unverified). L2: a caller says S2 is back in 48 min. L3: at t=52, 'the Utility Commission' asks for assign_crew on S1. L3: at t=15, 'the Mayor's office' asks for dispatch on H1.",
+  "description": "T01 Blocked fuel route. Linden Substation (S2) is down from the start (200 min of crew work) and Downtown's backup feeder is out, so Lakeview Medical Center (H2) is on its generator. Trucks out on the road: T1 at B6 with 0 L, T2 at B1 with 0 L, T3 at M6 with 0 L, T4 at B1 with 300 L. The fast route from Southfield Fuel Yard to H2 is blocked on Cedar St between 4th and 5th (C4-C5) from t=0 to t=147; a caller report it at t=7. The detour takes 9 min; driving into the block costs 3 min more. Linden Substation (S2) is down from the start (200 min of crew work) and South's backup feeder is out, so Good Samaritan Hospital (H3) is on its generator. H2 starts with 42 L (medium). L2: a false closure of B3-C3, C2-C3, C3-C4, C3-E3 around H2 at t=1 (unverified, contradicted first; open: nothing). L2: a false closure of C6-E6, E5-E6, E6-M6 around H3 at t=2 (unverified, contradicted first; open: nothing). L2: a caller wrongly says C4-C5 has cleared at t=21. L2: a stale 'still blocked' on C4-C5 at t=149. L2: a caller wrongly says S2 is back at t=20. L3: at t=52, 'the Utility Commission' asks for assign_crew on S1. L3: at t=15, 'the Mayor's office' asks for dispatch on H1.",
   "template": "T01",
   "seed": 265916921212424,
   "level": 1,
@@ -88,23 +88,23 @@
       "node": "A3",
       "tank_l": 600,
       "fuel_l": 290,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H2",
       "name": "Lakeview Medical Center",
       "node": "C3",
       "tank_l": 600,
-      "fuel_l": 28,
-      "burn_lpm": 2
+      "fuel_l": 42,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "Good Samaritan Hospital",
       "node": "E6",
       "tank_l": 600,
-      "fuel_l": 390,
-      "burn_lpm": 2
+      "fuel_l": 81,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Southfield Fuel Yard",
       "node": "A5",
-      "stock_l": 3200
+      "stock_l": 700
     },
     {
       "id": "D2",
       "name": "Ironworks Depot",
       "node": "E1",
-      "stock_l": 2400
+      "stock_l": 500
     }
   ],
   "trucks": [
@@ -144,7 +144,7 @@
       "id": "T4",
       "node": "B1",
       "capacity_l": 500,
-      "load_l": 350
+      "load_l": 300
     }
   ],
   "crews": [
@@ -294,7 +294,7 @@
       "demand_kw": 6000,
       "priority": "critical",
       "primary": "S2",
-      "alternate": "S1"
+      "alternate": null
     },
     {
       "id": "Z9",
@@ -324,19 +324,19 @@
     },
     {
       "kind": "report",
-      "tick": 1,
+      "tick": 2,
       "id": "R01",
-      "channel": "hospital_staff",
+      "channel": "crew_radio",
       "source_class": "field",
-      "source": "Nurse supervisor Silva, Lakeview Medical Center",
+      "source": "Line crew 1",
       "facts": [
         {
-          "type": "hospital_fuel",
-          "subject": "H2",
-          "value": 26
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 200
         }
       ],
-      "text": "Fuel check at Lakeview Medical Center: 26 liters left for the gen. Please hurry.",
+      "text": "Line crew 1 on the crew channel. Damage assessment on Linden Substation: figure 200 minutes to fix it, last I checked. Standing by.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -349,18 +349,51 @@
         ],
         "bank": "train",
         "phrasings": [
-          "hospital_fuel/hf02"
+          "repair_eta/re02"
         ],
         "noise": [
-          "abbreviations",
+          "hedge",
+          "opener",
           "sign-off"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 1,
+      "tick": 2,
       "id": "R02",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Fuel dispatcher Abara, Ironworks Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 500
+        }
+      ],
+      "text": "Stock check at Ironworks: about 500 liters in the tanks.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "depot_stock/ds02"
+        ],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
       "channel": "crew_radio",
       "source_class": "verified",
       "source": "Grid control center",
@@ -371,76 +404,7 @@
           "value": "failed"
         }
       ],
-      "text": "Grid control here. Linden is down hard, water in the control house.",
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F02"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "substation_status/ss01"
-        ],
-        "noise": [
-          "opener"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 2,
-      "id": "R03",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Caller on the non-emergency line",
-      "facts": [
-        {
-          "type": "substation_status",
-          "subject": "S2",
-          "value": "failed"
-        }
-      ],
-      "text": "Um, hi. There was a huge bang from Linden & then everything went out. Maybe a blown main breaker?",
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F02"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "substation_status/ss07"
-        ],
-        "noise": [
-          "abbreviations",
-          "opener"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 3,
-      "id": "R04",
-      "channel": "crew_radio",
-      "source_class": "field",
-      "source": "Line crew 2",
-      "facts": [
-        {
-          "type": "repair_eta",
-          "subject": "S2",
-          "value": 200
-        }
-      ],
-      "text": "Line crew 2 here. Best guess for Linden is 3h20 of reoair time, don't quote me.",
+      "text": "Grid control on the crew channel. Linden is down hard, a blown main breaker, far as we can tell.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -453,10 +417,9 @@
         ],
         "bank": "train",
         "phrasings": [
-          "repair_eta/re05"
+          "substation_status/ss01"
         ],
         "noise": [
-          "typos",
           "hedge",
           "opener"
         ]
@@ -464,19 +427,19 @@
     },
     {
       "kind": "report",
-      "tick": 7,
-      "id": "R05",
-      "channel": "police_radio",
+      "tick": 3,
+      "id": "R04",
+      "channel": "hospital_staff",
       "source_class": "field",
-      "source": "Sgt. Patel, Unit 31",
+      "source": "Nurse supervisor Moreau, Good Samaritan Hospital",
       "facts": [
         {
-          "type": "road_blocked",
-          "subject": "C4-C5",
-          "value": null
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 72
         }
       ],
-      "text": "Dispatch, Unit 31. Cedar St between 5th & 4th, no through traffic. We've had flooding over the curbs there since abt 5 minutes ago.",
+      "text": "Just dipped the tank at Good Samaritan, seventy-two ltiers remaining.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -489,29 +452,28 @@
         ],
         "bank": "train",
         "phrasings": [
-          "road_blocked/rb06"
+          "hospital_fuel/hf05"
         ],
         "noise": [
-          "abbreviations",
-          "opener"
+          "typos"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 151,
-      "id": "R06",
-      "channel": "police_radio",
+      "tick": 4,
+      "id": "R05",
+      "channel": "hospital_staff",
       "source_class": "field",
-      "source": "Officer Murphy, Unit 10",
+      "source": "Duty manager Abara, Lakeview Medical Center",
       "facts": [
         {
-          "type": "road_cleared",
-          "subject": "C4-C5",
-          "value": null
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 30
         }
       ],
-      "text": "Lifting the closure on the stretch of Cedar between 4th and 5th, all lanes are open. Copy?",
+      "text": "Uh, the Lakeview hospital is running on 30 L of fuel right now.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -524,26 +486,130 @@
         ],
         "bank": "train",
         "phrasings": [
-          "road_cleared/rc07"
+          "hospital_fuel/hf08"
         ],
         "noise": [
-          "sign-off"
+          "abbreviations",
+          "filler"
         ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 7,
+      "id": "R06",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "C4-C5",
+          "value": null
+        }
+      ],
+      "text": "Hi, I'm calling about the outage. Just drove up to the stretch of Cedar between 4th and 5th and had to tun around, far as we can tell. There's downed power lines, the whole road is jammed up.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb10"
+        ],
+        "noise": [
+          "typos",
+          "slang",
+          "hedge",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 17,
+      "id": "R07",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Moreau, Unit 40",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "C4-C5",
+          "value": null
+        }
+      ],
+      "text": "This is Unit 40. Cedar between 4th and 5th is blocked, flooding over the curbs. Nobody's getting through.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb01"
+        ],
+        "noise": [
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 148,
+      "id": "R08",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Novak, Unit 9",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "C4-C5",
+          "value": null
+        }
+      ],
+      "text": "We've reopened Cedar St between 4th and 5th. the tow truck just hauled it off, so it's good to use.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc03"
+        ],
+        "noise": []
       }
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 1,
-    "world_hash": "d23e8f641bda92b2177a5dbe28f98999"
+    "world_hash": "ac5d4983355d29327e05c478b956cc72"
   },
   "validity": {
-    "do_nothing_critical_downtime": 226,
+    "do_nothing_critical_downtime": 439,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
     "reference_min_slack": 3,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "5b3917324678d8bf85f62f94726e0236"
+  "content_hash": "6ccf9ceabcfbb4243ef39663e7ea12f9"
 }

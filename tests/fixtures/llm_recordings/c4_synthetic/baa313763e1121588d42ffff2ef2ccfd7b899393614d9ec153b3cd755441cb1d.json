@@ -1,12 +1,12 @@
 {
- "key": "ff996e57ac7ecf4763d5858ecb2b268578219ed089ee7dacd9541639861bf0cb",
+ "key": "baa313763e1121588d42ffff2ef2ccfd7b899393614d9ec153b3cd755441cb1d",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R01\" source_class=\"field\" source=\"Nurse supervisor Silva, Lakeview Medical Center\" channel=\"hospital_staff\" tick=\"1\">\nFuel check at Lakeview Medical Center: 26 liters left for the gen. Please hurry.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R07\" source_class=\"verified\" source=\"Grid control center\" channel=\"crew_radio\" tick=\"3\">\nGrid control on the crew channel. Linden is down hard, a blown main breaker, far as we can tell.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": 26, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"H2\", \"type\": \"hospital_fuel\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": \"failed\", \"subject\": \"S2\", \"type\": \"substation_status\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_ff996e57ac7ecf47",
+  "id": "msg_synthetic_baa313763e112158",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
-   "cache_creation_input_tokens": 6471,
-   "cache_read_input_tokens": 0,
-   "input_tokens": 64,
-   "output_tokens": 41
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 6471,
+   "input_tokens": 61,
+   "output_tokens": 44
   }
  }
 }

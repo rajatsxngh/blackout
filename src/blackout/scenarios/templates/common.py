@@ -232,3 +232,36 @@ def report_clear(draft: Draft, rng: Rng, segment: EdgeId, cleared_at: int) -> No
         police_source(rng),
         claim,
     )
+
+
+def second_front(draft: Draft, rng: Rng) -> None:
+    """Competing needs: while fewer hospitals than ``fronts.at_risk`` start on their
+    generators, cut one more off (its substation down for ``fronts.repair_minutes``, its
+    backup feeder out) with ``fronts.fuel_minutes`` of burn in its tank, and report it like
+    any other outage.
+
+    Applied by the generator to every template after it has built its situation, so a lone
+    tight hospital is never the only thing the fleet has to serve: dispatching the nearest
+    truck to the earliest deadline (PRD 8.7's greedy rule) then takes a truck another
+    hospital needed. Templates that already start with enough hospitals at risk (or none,
+    like T02's later cascade) are left as they are.
+    """
+    cfg = draft.config.fronts
+    at_risk = draft.hospitals_at_risk()
+    if not at_risk:
+        return
+    while len(at_risk) < cfg.at_risk:
+        calm = [h for h in draft.hospitals if h.id not in at_risk]
+        if not calm:
+            return
+        hospital = rng.pick(calm)
+        repair = repair_minutes(draft, rng, cfg.repair_minutes)
+        before = {s.id for s in draft.substations if s.state != "online"}
+        substation_id = isolate_hospital(draft, hospital.id, repair)
+        draft.update_hospital(
+            hospital.id, fuel_l=rng.between(*cfg.fuel_minutes) * hospital.burn_lpm
+        )
+        report_fuel(draft, rng, hospital.id, unpowered_from=0)
+        if substation_id not in before:
+            report_failure(draft, rng, substation_id, 0, repair)
+        at_risk = draft.hospitals_at_risk()

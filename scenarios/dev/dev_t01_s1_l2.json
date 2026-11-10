@@ -1,148 +1,148 @@
 {
   "schema_version": 5,
   "id": "dev_t01_s1_l2",
-  "description": "T01 Blocked fuel route. Millbrook Substation (S1) is down from the start (170 min of crew work) and Northwest's backup feeder is out, so Good Samaritan Hospital (H1) is on its generator. Trucks out on the road: T1 at E4 with 400 L, T2 at A5 with 0 L, T3 at O4 with 0 L. The fast route from Ironworks Depot to H1 is blocked on Birch St between 4th and 5th (B4-B5) from t=2 to t=150; a caller report it at t=9. The detour takes 13 min; driving into the block costs 4 min more. H1 starts with 38 L (medium). L2: a caller wrongly says B4-B5 has cleared at t=25. L2: a false block on B2-B3 at t=1 (unverified). L3: at t=34, 'the Fire Chief' asks for assign_crew on S3. L3: at t=27, 'the Grid Operations Director' asks for shed_zone on Z8.",
+  "description": "T01 Blocked fuel route. Kingsley Substation (S3) is down from the start (190 min of crew work) and Northeast's backup feeder is out, so County General Hospital (H1) is on its generator. Trucks out on the road: T1 at O5 with 150 L, T3 at E1 with 0 L. The fast route from Northside Fuel Depot to H1 is blocked on 1st Ave between Elm and Maple (E1-M1) from t=1 to t=113; police report it at t=9. The detour takes 10 min; driving into the block costs 4 min more. Linden Substation (S2) is down from the start (90 min of crew work) and Downtown's backup feeder is out, so Hillcrest Hospital (H2) is on its generator. H1 starts with 69 L (hard). L2: a false closure of M1-M2, M1-O1 around H1 at t=1 (unverified, contradicted first; open: nothing). L2: a false closure of B3-C3, C2-C3, C3-C4, C3-E3 around H2 at t=1 (field, contradicted first; open: nothing). L2: a caller wrongly says E1-M1 has cleared at t=12. L3: at t=59, 'City Emergency Management' asks for assign_crew on S1. L3: at t=24, 'the Governor's emergency desk' asks for dispatch on D2.",
   "template": "T01",
   "seed": 141953933228327,
   "level": 2,
   "split": "dev",
-  "tier": "medium",
+  "tier": "hard",
   "horizon": 240,
   "city": {
     "width": 6,
     "height": 6,
     "default_travel_minutes": 2,
     "travel_minutes": {
-      "A1-A2": 2,
-      "A1-B1": 2,
-      "A2-A3": 5,
-      "A2-B2": 2,
-      "A3-A4": 2,
-      "A3-B3": 2,
-      "A4-A5": 5,
-      "A4-B4": 2,
-      "A5-A6": 2,
-      "A5-B5": 4,
-      "A6-B6": 2,
-      "B1-B2": 5,
-      "B1-C1": 3,
-      "B2-B3": 2,
-      "B2-C2": 5,
-      "B3-B4": 2,
-      "B3-C3": 2,
+      "A1-A2": 3,
+      "A1-B1": 3,
+      "A2-A3": 4,
+      "A2-B2": 1,
+      "A3-A4": 4,
+      "A3-B3": 5,
+      "A4-A5": 4,
+      "A4-B4": 4,
+      "A5-A6": 5,
+      "A5-B5": 2,
+      "A6-B6": 5,
+      "B1-B2": 3,
+      "B1-C1": 4,
+      "B2-B3": 4,
+      "B2-C2": 1,
+      "B3-B4": 5,
+      "B3-C3": 4,
       "B4-B5": 2,
-      "B4-C4": 2,
-      "B5-B6": 3,
+      "B4-C4": 3,
+      "B5-B6": 4,
       "B5-C5": 2,
-      "B6-C6": 4,
+      "B6-C6": 3,
       "C1-C2": 5,
-      "C1-E1": 3,
-      "C2-C3": 3,
-      "C2-E2": 3,
+      "C1-E1": 4,
+      "C2-C3": 4,
+      "C2-E2": 1,
       "C3-C4": 4,
-      "C3-E3": 2,
+      "C3-E3": 3,
       "C4-C5": 5,
-      "C4-E4": 4,
+      "C4-E4": 5,
       "C5-C6": 2,
-      "C5-E5": 2,
-      "C6-E6": 3,
-      "E1-E2": 3,
+      "C5-E5": 3,
+      "C6-E6": 5,
+      "E1-E2": 2,
       "E1-M1": 2,
       "E2-E3": 2,
-      "E2-M2": 3,
-      "E3-E4": 4,
-      "E3-M3": 1,
-      "E4-E5": 4,
-      "E4-M4": 5,
+      "E2-M2": 2,
+      "E3-E4": 2,
+      "E3-M3": 5,
+      "E4-E5": 1,
+      "E4-M4": 3,
       "E5-E6": 2,
-      "E5-M5": 3,
+      "E5-M5": 5,
       "E6-M6": 3,
-      "M1-M2": 1,
-      "M1-O1": 5,
-      "M2-M3": 1,
-      "M2-O2": 4,
-      "M3-M4": 1,
-      "M3-O3": 2,
-      "M4-M5": 2,
+      "M1-M2": 3,
+      "M1-O1": 4,
+      "M2-M3": 2,
+      "M2-O2": 1,
+      "M3-M4": 2,
+      "M3-O3": 4,
+      "M4-M5": 5,
       "M4-O4": 2,
-      "M5-M6": 1,
+      "M5-M6": 3,
       "M5-O5": 3,
-      "M6-O6": 3,
-      "O1-O2": 4,
-      "O2-O3": 4,
-      "O3-O4": 2,
-      "O4-O5": 3,
-      "O5-O6": 5
+      "M6-O6": 2,
+      "O1-O2": 2,
+      "O2-O3": 2,
+      "O3-O4": 3,
+      "O4-O5": 5,
+      "O5-O6": 2
     },
     "landmarks": {
-      "City Hall": "C3",
-      "Riverside Park": "C6",
-      "the Courthouse": "M1",
-      "the Farmers Market": "E5"
+      "City Hall": "B1",
+      "Memorial Stadium": "E1",
+      "Riverside Park": "M6",
+      "Union Station": "A6"
     }
   },
   "hospitals": [
     {
       "id": "H1",
-      "name": "Good Samaritan Hospital",
-      "node": "A2",
+      "name": "County General Hospital",
+      "node": "M1",
       "tank_l": 600,
-      "fuel_l": 38,
-      "burn_lpm": 2
+      "fuel_l": 69,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
-      "name": "Bayside Clinic",
-      "node": "O3",
+      "name": "Hillcrest Hospital",
+      "node": "C3",
       "tank_l": 600,
-      "fuel_l": 130,
-      "burn_lpm": 2
+      "fuel_l": 78,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "Riverside Clinic",
-      "node": "E6",
+      "node": "C5",
       "tank_l": 600,
-      "fuel_l": 210,
-      "burn_lpm": 2
+      "fuel_l": 120,
+      "burn_lpm": 3
     }
   ],
   "depots": [
     {
       "id": "D1",
-      "name": "Ironworks Depot",
-      "node": "C5",
-      "stock_l": 1900
+      "name": "Northside Fuel Depot",
+      "node": "E5",
+      "stock_l": 300
     },
     {
       "id": "D2",
-      "name": "Westpoint Fuel Depot",
-      "node": "O1",
-      "stock_l": 3900
+      "name": "Eastgate Depot",
+      "node": "B3",
+      "stock_l": 800
     }
   ],
   "trucks": [
     {
       "id": "T1",
-      "node": "E4",
+      "node": "O5",
       "capacity_l": 500,
-      "load_l": 400
+      "load_l": 150
     },
     {
       "id": "T2",
-      "node": "A5",
+      "node": "B3",
       "capacity_l": 500,
       "load_l": 0
     },
     {
       "id": "T3",
-      "node": "O4",
+      "node": "E1",
       "capacity_l": 500,
       "load_l": 0
     },
     {
       "id": "T4",
-      "node": "O1",
+      "node": "B3",
       "capacity_l": 500,
       "load_l": 0
     }
@@ -150,37 +150,37 @@
   "crews": [
     {
       "id": "C1",
-      "node": "C3"
+      "node": "B6"
     },
     {
       "id": "C2",
-      "node": "M2"
+      "node": "O6"
     }
   ],
   "substations": [
     {
       "id": "S1",
-      "name": "Millbrook Substation",
-      "node": "B2",
-      "capacity_kw": 28000,
-      "state": "failed",
-      "repair_minutes": 170
+      "name": "Ashford Substation",
+      "node": "A1",
+      "capacity_kw": 34000,
+      "state": "online",
+      "repair_minutes": null
     },
     {
       "id": "S2",
-      "name": "Ridgeway Substation",
-      "node": "C1",
-      "capacity_kw": 42000,
-      "state": "online",
-      "repair_minutes": null
+      "name": "Linden Substation",
+      "node": "E6",
+      "capacity_kw": 43000,
+      "state": "failed",
+      "repair_minutes": 90
     },
     {
       "id": "S3",
       "name": "Kingsley Substation",
-      "node": "O2",
-      "capacity_kw": 35000,
-      "state": "online",
-      "repair_minutes": null
+      "node": "M2",
+      "capacity_kw": 37000,
+      "state": "failed",
+      "repair_minutes": 190
     }
   ],
   "zones": [
@@ -193,10 +193,10 @@
         "B1",
         "B2"
       ],
-      "demand_kw": 10000,
-      "priority": "critical",
+      "demand_kw": 12000,
+      "priority": "residential",
       "primary": "S1",
-      "alternate": null
+      "alternate": "S2"
     },
     {
       "id": "Z2",
@@ -207,8 +207,8 @@
         "E1",
         "E2"
       ],
-      "demand_kw": 6500,
-      "priority": "residential",
+      "demand_kw": 11000,
+      "priority": "essential",
       "primary": "S2",
       "alternate": "S3"
     },
@@ -221,10 +221,10 @@
         "O1",
         "O2"
       ],
-      "demand_kw": 7500,
-      "priority": "residential",
+      "demand_kw": 5000,
+      "priority": "critical",
       "primary": "S3",
-      "alternate": "S2"
+      "alternate": null
     },
     {
       "id": "Z4",
@@ -235,7 +235,7 @@
         "B3",
         "B4"
       ],
-      "demand_kw": 5000,
+      "demand_kw": 7000,
       "priority": "essential",
       "primary": "S1",
       "alternate": "S2"
@@ -249,10 +249,10 @@
         "E3",
         "E4"
       ],
-      "demand_kw": 10500,
-      "priority": "residential",
+      "demand_kw": 8000,
+      "priority": "critical",
       "primary": "S2",
-      "alternate": "S3"
+      "alternate": null
     },
     {
       "id": "Z6",
@@ -263,8 +263,8 @@
         "O3",
         "O4"
       ],
-      "demand_kw": 12000,
-      "priority": "critical",
+      "demand_kw": 8000,
+      "priority": "residential",
       "primary": "S3",
       "alternate": "S2"
     },
@@ -277,7 +277,7 @@
         "B5",
         "B6"
       ],
-      "demand_kw": 6500,
+      "demand_kw": 7500,
       "priority": "residential",
       "primary": "S1",
       "alternate": "S2"
@@ -291,7 +291,7 @@
         "E5",
         "E6"
       ],
-      "demand_kw": 10000,
+      "demand_kw": 4000,
       "priority": "critical",
       "primary": "S2",
       "alternate": "S3"
@@ -305,72 +305,38 @@
         "O5",
         "O6"
       ],
-      "demand_kw": 10500,
-      "priority": "essential",
+      "demand_kw": 8500,
+      "priority": "residential",
       "primary": "S3",
       "alternate": "S2"
     }
   ],
   "events": [
     {
-      "tick": 2,
+      "tick": 1,
       "kind": "road_block",
-      "edge": "B4-B5"
+      "edge": "E1-M1"
     },
     {
-      "tick": 150,
+      "tick": 113,
       "kind": "road_clear",
-      "edge": "B4-B5"
+      "edge": "E1-M1"
     },
     {
       "kind": "report",
       "tick": 0,
       "id": "R01",
-      "channel": "police_radio",
-      "source_class": "verified",
-      "source": "Traffic management center",
-      "facts": [
-        {
-          "type": "road_cleared",
-          "subject": "B2-B3",
-          "value": null
-        }
-      ],
-      "text": "Update on Birch St from 2nd down to 3rd: it's clear as of a minute ago, far as we can tell. Traffic is moving.",
-      "truth": {
-        "is_true": true,
-        "from_level": 2,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F07"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "road_cleared/rc02"
-        ],
-        "noise": [
-          "hedge"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 1,
-      "id": "R02",
-      "channel": "crew_radio",
-      "source_class": "verified",
-      "source": "Grid control center",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
       "facts": [
         {
           "type": "substation_status",
-          "subject": "S1",
+          "subject": "S2",
           "value": "failed"
         }
       ],
-      "text": "Grid control here. The substation at Birch & 2nd is offline & needs a crew on site. Damage loiks like a line down across the bus.",
+      "text": "There's smoke coming off the substation at Elm & 6th, and the power's out all around here.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -383,11 +349,110 @@
         ],
         "bank": "train",
         "phrasings": [
-          "substation_status/ss09"
+          "substation_status/ss08"
+        ],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 0,
+      "id": "R02",
+      "channel": "police_radio",
+      "source_class": "verified",
+      "source": "Traffic management center",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "M1-M2",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "M1-O1",
+          "value": null
+        }
+      ],
+      "text": "Traffic management to dispatch. Update on Maple St from 1st doqn to 2nd: it's clear as of a minute ago. Traffic is moving. One more thing: 1st Ave from Maple over to Oak is open again, public works cleared it. Copy?",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09",
+          "F10"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc02",
+          "road_cleared/rc01"
+        ],
+        "noise": [
+          "typos",
+          "bundle",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 0,
+      "id": "R03",
+      "channel": "police_radio",
+      "source_class": "verified",
+      "source": "Traffic management center",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "B3-C3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "C2-C3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "C3-C4",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "C3-E3",
+          "value": null
+        }
+      ],
+      "text": "Traffic management to dispatch. I think the stretch of 3rd btwn Birch and Cedar is passable again, public works cleared it. Cancel the detour. Second thing: update on Cedar St between 2nd & 3rd: it's clear as of just now. Traffic is moving. One more thing: you can send truks down Cedar between 3rd and 4th again, it's clear. Also, 3rd between Cedar & Elm reopened just now, the utiity crew made it safe.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F11",
+          "F12",
+          "F13",
+          "F14"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc10",
+          "road_cleared/rc02",
+          "road_cleared/rc04",
+          "road_cleared/rc05"
         ],
         "noise": [
           "typos",
           "abbreviations",
+          "hedge",
+          "bundle",
           "opener"
         ]
       }
@@ -395,18 +460,18 @@
     {
       "kind": "report",
       "tick": 1,
-      "id": "R03",
-      "channel": "depot_staff",
+      "id": "R04",
+      "channel": "hospital_staff",
       "source_class": "field",
-      "source": "Yard manager Fischer, Westpoint Fuel Depot",
+      "source": "Charge nurse Diaz, Hillcrest Hospital",
       "facts": [
         {
-          "type": "depot_stock",
-          "subject": "D2",
-          "value": 3900
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 75
         }
       ],
-      "text": "Yard manager Fischer here. We're holding three thousand nine hundred L at the dpeot at Oak & 1st. Thanks.",
+      "text": "Hello? Charge nurse Diaz calling. We have seventy-five L of diiesel left at the hospital at Cedar & 3rd. Please send a truck.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -419,39 +484,43 @@
         ],
         "bank": "train",
         "phrasings": [
-          "depot_stock/ds03"
+          "hospital_fuel/hf03"
         ],
         "noise": [
           "typos",
           "abbreviations",
-          "opener",
-          "sign-off"
+          "opener"
         ]
       }
     },
     {
       "kind": "report",
       "tick": 1,
-      "id": "R04",
+      "id": "R05",
       "channel": "public",
       "source_class": "unverified",
-      "source": "Caller on the public line",
+      "source": "Caller on the non-emergency line",
       "facts": [
         {
           "type": "road_blocked",
-          "subject": "B2-B3",
+          "subject": "M1-M2",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "M1-O1",
           "value": null
         }
       ],
-      "text": "Hi there. The strech of Birch between 2nd and 3rd is blocked, there's a jackknifed box rig. Nobody can drive through. Somebody should look at it.",
+      "text": "Hello, yes. I'm standing at the stretch of Maple betwene 1st and 2nd and it's totally blocked. There's a collapsed scaffold. Also, 1st Ave from Maple over to Oak is blocked, there's a car fire. Nobody can drive through.",
       "truth": {
         "is_true": false,
         "from_level": 2,
         "cues": [
           {
             "kind": "report",
-            "report": "R01",
-            "note": "a more reliable source says it's open"
+            "report": "R02",
+            "note": "a more reliable source says they're open"
           }
         ],
         "stale_of": null,
@@ -460,31 +529,92 @@
         "fact_ids": [],
         "bank": "train",
         "phrasings": [
+          "road_blocked/rb05",
           "road_blocked/rb12"
         ],
         "noise": [
           "typos",
           "slang",
-          "opener",
-          "sign-off"
+          "bundle",
+          "opener"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 3,
-      "id": "R05",
-      "channel": "crew_radio",
+      "tick": 1,
+      "id": "R06",
+      "channel": "police_radio",
       "source_class": "field",
-      "source": "Line crew 1",
+      "source": "Sgt. Reyes, Unit 26",
       "facts": [
         {
-          "type": "repair_eta",
-          "subject": "S1",
-          "value": 170
+          "type": "road_blocked",
+          "subject": "B3-C3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "C2-C3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "C3-C4",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "C3-E3",
+          "value": null
         }
       ],
-      "text": "Tell control Millbrook sub is 170 minutes of woek, not a quick reset.",
+      "text": "Dispatch, Unit 26, priority traffic. We have a full closure on 3rd Ave between Birch and Cedar due to a car fire. Expect it to stay shut for a while. And another thing, the stretch of Cedar btwn 2nd and 3rd is shut, a sinkhole. Nobody's getting through. Also, Cedar St from 3rd down to 4th is shut, a tree down across both lanes. Nobody's getting through. Also, 3rd Ave from Cedar over to Elm, no trough traffic. We've had deebris all over the road there since just now.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R03",
+            "note": "a more reliable source says they're open"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb09",
+          "road_blocked/rb01",
+          "road_blocked/rb01",
+          "road_blocked/rb06"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "slang",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R07",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Novak, County General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 63
+        }
+      ],
+      "text": "Hi, this is Facilities manager Novak. Can someone get fuel to the County General hospital? We'ev only got 63 liters.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -497,63 +627,34 @@
         ],
         "bank": "train",
         "phrasings": [
-          "repair_eta/re10"
+          "hospital_fuel/hf10"
         ],
         "noise": [
-          "typos"
-        ]
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 4,
-      "id": "R06",
-      "channel": "hospital_staff",
-      "source_class": "field",
-      "source": "Facilities manager Reyes, Good Samaritan Hospital",
-      "facts": [
-        {
-          "type": "hospital_fuel",
-          "subject": "H1",
-          "value": 30
-        }
-      ],
-      "text": "Hello? Facilities manager Reyes calling. The backup tank at the Good Samaritan hosp is showing 30 liters, and the ICU is on that gen.",
-      "truth": {
-        "is_true": true,
-        "from_level": 0,
-        "cues": [],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [
-          "F04"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "hospital_fuel/hf09"
-        ],
-        "noise": [
-          "abbreviations",
+          "typos",
           "opener"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 9,
-      "id": "R07",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Resident, 311 line",
+      "tick": 2,
+      "id": "R08",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
       "facts": [
         {
-          "type": "road_blocked",
-          "subject": "B4-B5",
-          "value": null
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        },
+        {
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 90
         }
       ],
-      "text": "Hi, I'm calling about the outage. I'm standing at the stretch of Birch between 4th and 5th and it's totally jammed up. There's a tree dwon across both lanes. Thanks.",
+      "text": "Linden sub is offline & needs a crew on site. Damage looks like a transformer fire. And another thing, Linden sub is going to take 90 minutes of work once we're on site. Over.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -562,35 +663,36 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F05"
+          "F01",
+          "F04"
         ],
         "bank": "train",
         "phrasings": [
-          "road_blocked/rb05"
+          "substation_status/ss09",
+          "repair_eta/re01"
         ],
         "noise": [
-          "typos",
-          "slang",
-          "opener",
+          "abbreviations",
+          "bundle",
           "sign-off"
         ]
       }
     },
     {
       "kind": "report",
-      "tick": 23,
-      "id": "R08",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Silva, Unit 23",
+      "tick": 3,
+      "id": "R09",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
       "facts": [
         {
-          "type": "road_blocked",
-          "subject": "B4-B5",
-          "value": null
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
         }
       ],
-      "text": "From what I'm seeing, Birch St between 4th and 5th is blocked, a tree down across both lanes. Nobody's getting through. Over.",
+      "text": "The substtaion at Maple & 2nd is down hard, a transformer fire, don't quote me. Over.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -603,9 +705,10 @@
         ],
         "bank": "train",
         "phrasings": [
-          "road_blocked/rb01"
+          "substation_status/ss01"
         ],
         "noise": [
+          "typos",
           "hedge",
           "sign-off"
         ]
@@ -613,92 +716,19 @@
     },
     {
       "kind": "report",
-      "tick": 25,
-      "id": "R09",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Caller on the public line",
-      "facts": [
-        {
-          "type": "road_cleared",
-          "subject": "B4-B5",
-          "value": null
-        }
-      ],
-      "text": "Cars are getting through on the stretch of Birch between 4th and 5th again, looks like the debris is cleaned up.",
-      "truth": {
-        "is_true": false,
-        "from_level": 2,
-        "cues": [
-          {
-            "kind": "report",
-            "report": "R08",
-            "note": "police reported the block shortly before"
-          },
-          {
-            "kind": "report",
-            "report": "R10",
-            "note": "police correction"
-          }
-        ],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [],
-        "bank": "train",
-        "phrasings": [
-          "road_cleared/rc06"
-        ],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 31,
+      "tick": 3,
       "id": "R10",
-      "channel": "police_radio",
+      "channel": "crew_radio",
       "source_class": "field",
-      "source": "Officer Abara, Unit 27",
+      "source": "Line crew 2",
       "facts": [
         {
-          "type": "road_blocked",
-          "subject": "B4-B5",
-          "value": null
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 190
         }
       ],
-      "text": "We've shut down Birch St from 4th down to 5th because of a sinkhole, so route everything around it.",
-      "truth": {
-        "is_true": true,
-        "from_level": 2,
-        "cues": [],
-        "stale_of": null,
-        "corrects": "R09",
-        "injection": null,
-        "fact_ids": [
-          "F05"
-        ],
-        "bank": "train",
-        "phrasings": [
-          "road_blocked/rb03"
-        ],
-        "noise": []
-      }
-    },
-    {
-      "kind": "report",
-      "tick": 153,
-      "id": "R11",
-      "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Haddad, Unit 30",
-      "facts": [
-        {
-          "type": "road_cleared",
-          "subject": "B4-B5",
-          "value": null
-        }
-      ],
-      "text": "Update on Birch St from 4th down to 5th: it's clear as of just a bit ago. Traffic is moving.",
+      "text": "This is Line crew 2. Damage assessment on Kingsley Substation: figure 190 minutes to fix it.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -711,24 +741,177 @@
         ],
         "bank": "train",
         "phrasings": [
-          "road_cleared/rc02"
+          "repair_eta/re02"
+        ],
+        "noise": [
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 9,
+      "id": "R11",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Reyes, Unit 12",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": "Be advised, the stretch of 1st between Elm and Maple is closed as of a while ago. We've got a collapsed scaffold.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb02"
         ],
         "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 12,
+      "id": "R12",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": "Um, hi. Cars are getting through on the stretch of 1st btwn Elm & Maple again, looks like the wate'rs gone down. Thanks.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R11",
+            "note": "police reported the block shortly before"
+          },
+          {
+            "kind": "report",
+            "report": "R13",
+            "note": "police correction"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc06"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 19,
+      "id": "R13",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Haddad, Unit 36",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": "Traffic unit reporting 1st bteween Elm & Maple blocked a minute ago, downed power lines, I think. Detour your vehicles.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": "R12",
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb11"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "hedge"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 117,
+      "id": "R14",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Abara, Unit 37",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": "This is Unit 37. Pretty sure the stretch of 1st between Elm & Male reopened abt 4 minutes ago, the utility crew made it safe.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc05"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "hedge",
+          "opener"
+        ]
       }
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
-    "attempt": 0,
-    "world_hash": "a4b6006b2f4a78a740f7c856e80e2a31"
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 9,
+    "world_hash": "1625fd022a8280aa72b3dd0a692ed213"
   },
   "validity": {
-    "do_nothing_critical_downtime": 221,
+    "do_nothing_critical_downtime": 631,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 3,
-    "rules_l0_critical_downtime": 0
+    "reference_min_slack": 5,
+    "rules_l0_critical_downtime": 32
   },
-  "content_hash": "cff315cf1905f8ec9eb2a381c447b289"
+  "content_hash": "c61028e6e048a55307018c1693a80901"
 }

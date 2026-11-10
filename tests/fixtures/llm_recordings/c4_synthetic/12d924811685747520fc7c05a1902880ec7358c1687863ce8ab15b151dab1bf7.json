@@ -1,12 +1,12 @@
 {
- "key": "df570c099344d32045728bc1ad36de01e9624dea96d4baef32203b848865a33c",
+ "key": "12d924811685747520fc7c05a1902880ec7358c1687863ce8ab15b151dab1bf7",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R07\" source_class=\"unverified\" source=\"Caller on the non-emergency line\" channel=\"public\" tick=\"6\">\nHi, I'm calling about the outage. Damage assessment on Linden: figure 48 min to fix it. Okay, bye.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R17\" source_class=\"field\" source=\"Officer Novak, Unit 9\" channel=\"police_radio\" tick=\"148\">\nWe've reopened Cedar St between 4th and 5th. the tow truck just hauled it off, so it's good to use.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -126,20 +126,20 @@
  "response": {
   "content": [
    {
-    "text": "{\"facts\": [{\"amount\": 48, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"S2\", \"type\": \"repair_eta\"}], \"instruction_like\": false}",
+    "text": "{\"facts\": [{\"amount\": null, \"confidence\": \"high\", \"source_assessment\": \"plausible\", \"state\": null, \"subject\": \"C4-C5\", \"type\": \"road_cleared\"}], \"instruction_like\": false}",
     "type": "text"
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_df570c099344d320",
+  "id": "msg_synthetic_12d9248116857475",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 64,
-   "output_tokens": 41
+   "input_tokens": 63,
+   "output_tokens": 42
   }
  }
 }

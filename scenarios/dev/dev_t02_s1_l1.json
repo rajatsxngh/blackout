@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t02_s1_l1",
-  "description": "T02 Cascade. Trucks out on the road: T2 at C5 with 0 L, T4 at M1 with 350 L. Quarry Substation (S2) fails at t=18 (60 min of crew work), leaving H2 on its generator. Its other zones fall back to Ashford Substation (S3), 1000 kW over its 34500 kW capacity; shedding residential load (24000 kW) prevents the trip. H2 starts with 126 L (easy). L2: a false block on E1-M1 at t=0 (unverified). L2: a caller wrongly says S2 is back at t=50. L2: a caller says S2 is back in 12 min. L3: at t=15, 'the Governor's emergency desk' asks for dispatch on D1. L3: at t=54, 'the Governor's emergency desk' asks for shed_zone on Z9.",
+  "description": "T02 Cascade. Trucks out on the road: T2 at C5 with 0 L, T4 at M1 with 300 L. Quarry Substation (S2) fails at t=18 (60 min of crew work), leaving H2 on its generator. Its other zones fall back to Ashford Substation (S3), 1000 kW over its 34500 kW capacity; shedding residential load (24000 kW) prevents the trip. H2 starts with 189 L (easy). L2: a false closure of C6-E6, E5-E6 around H2 at t=2 (unverified, corrected; open: E6-M6, 4 min longer). L2: a false claim that D2 holds 1300 L at t=20. L2: a caller says H2 is down to 34 L at t=17. L2: a caller says S2 is back in 12 min. L3: at t=15, 'the Governor's emergency desk' asks for dispatch on D1. L3: at t=54, 'the Governor's emergency desk' asks for shed_zone on Z9.",
   "template": "T02",
   "seed": 163358169783592,
   "level": 1,
@@ -88,15 +88,15 @@
       "node": "B4",
       "tank_l": 600,
       "fuel_l": 120,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H2",
       "name": "Bayside Clinic",
       "node": "E6",
       "tank_l": 600,
-      "fuel_l": 126,
-      "burn_lpm": 2
+      "fuel_l": 189,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
@@ -104,7 +104,7 @@
       "node": "M6",
       "tank_l": 600,
       "fuel_l": 220,
-      "burn_lpm": 2
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Ironworks Depot",
       "node": "O5",
-      "stock_l": 3800
+      "stock_l": 900
     },
     {
       "id": "D2",
       "name": "Westpoint Fuel Depot",
       "node": "C2",
-      "stock_l": 1700
+      "stock_l": 300
     }
   ],
   "trucks": [
@@ -144,7 +144,7 @@
       "id": "T4",
       "node": "M1",
       "capacity_l": 500,
-      "load_l": 350
+      "load_l": 300
     }
   ],
   "crews": [
@@ -400,10 +400,10 @@
         {
           "type": "hospital_fuel",
           "subject": "H2",
-          "value": 126
+          "value": 189
         }
       ],
-      "text": "Hello? Charge nurse Moreau calling. Um, our genny at the hospital at Elm & 6th has 126 L on hand. We need a delivery. Please hurry.",
+      "text": "Hello? Charge nurse Moreau calling. Um, our genny at the hospital at Elm & 6th has 189 L on hand. We need a delivery. Please hurry.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -437,10 +437,10 @@
         {
           "type": "depot_stock",
           "subject": "D2",
-          "value": 1700
+          "value": 300
         }
       ],
-      "text": "From what I'm seeing, Westpoint has one thousand seven hundred L available for loading.",
+      "text": "From what I'm seeing, Westpoint has three hundred L available for loading.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -567,17 +567,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "a51cc533ead322420ed058ff868fbc9a"
+    "world_hash": "7dffe25e12f551f4ab4c24c2e7116747"
   },
   "validity": {
-    "do_nothing_critical_downtime": 269,
+    "do_nothing_critical_downtime": 305,
     "do_nothing_trips": 1,
     "reference_critical_downtime": 0,
     "reference_min_slack": 47,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "f0a851d50c7925bc3de8415046d97a74"
+  "content_hash": "76f399f17996750701ff871e699bda45"
 }

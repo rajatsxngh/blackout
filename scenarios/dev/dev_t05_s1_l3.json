@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t05_s1_l3",
-  "description": "T05 Burn spike. Quarry Substation (S1) is down from the start (160 min of crew work) and West's backup feeder is out, so Northgate Hospital (H3) is on its generator. Foundry Substation (S2) is down from the start (190 min of crew work) and North's backup feeder is out, so Hillcrest Hospital (H2) is on its generator. Trucks out on the road: T3 at E4 with 500 L, T4 at C3 with 0 L. H3's generator jumps to 4 L/min at t=24. H3 starts with 54 L (medium). L2: a false block on B3-C3 at t=1 (unverified). L2: a false claim that D1 holds 4000 L at t=25. L3: at t=29, 'the Fire Chief' asks for dispatch on D2.",
+  "description": "T05 Burn spike. Quarry Substation (S1) is down from the start (160 min of crew work) and West's backup feeder is out, so Northgate Hospital (H3) is on its generator. Foundry Substation (S2) is down from the start (190 min of crew work) and North's backup feeder is out, so Hillcrest Hospital (H2) is on its generator. Trucks out on the road: T3 at E4 with 500 L, T4 at C3 with 0 L. H3's generator jumps to 4 L/min at t=24. H3 starts with 175 L (medium). L2: a false closure of A3-B3, B2-B3, B3-B4, B3-C3 around H3 at t=3 (field, contradicted first; open: nothing). L2: a false closure of A1-A2, A2-A3, A2-B2 around H1 at t=1 (unverified, contradicted first; open: nothing). L2: a caller says H2 is down to 23 L at t=11. L3: at t=29, 'the Fire Chief' asks for dispatch on D2.",
   "template": "T05",
   "seed": 48370582192395,
   "level": 3,
@@ -88,23 +88,23 @@
       "node": "A2",
       "tank_l": 600,
       "fuel_l": 220,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H2",
       "name": "Hillcrest Hospital",
       "node": "C1",
       "tank_l": 600,
-      "fuel_l": 84,
-      "burn_lpm": 2
+      "fuel_l": 126,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "Northgate Hospital",
       "node": "B3",
       "tank_l": 600,
-      "fuel_l": 54,
-      "burn_lpm": 2
+      "fuel_l": 175,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Westpoint Fuel Depot",
       "node": "C4",
-      "stock_l": 2000
+      "stock_l": 400
     },
     {
       "id": "D2",
       "name": "Harbor Fuel Depot",
       "node": "A1",
-      "stock_l": 2400
+      "stock_l": 500
     }
   ],
   "trucks": [
@@ -323,16 +323,26 @@
       "tick": 0,
       "id": "R01",
       "channel": "police_radio",
-      "source_class": "field",
-      "source": "Officer Murphy, Unit 22",
+      "source_class": "verified",
+      "source": "Traffic management center",
       "facts": [
         {
           "type": "road_cleared",
-          "subject": "B3-C3",
+          "subject": "A1-A2",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "A2-A3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "A2-B2",
           "value": null
         }
       ],
-      "text": "Dispatch, Unit 22. You can send rigs down the stretch of 3rd between Birch and Cedsr again, it's clear.",
+      "text": "You can send rigs down the stretch of Alder between 1st and 2nd again, it's clear. One more thing: we've reopened Allder St between 3rd and 2nd. public works cleared it, so it's good to use. Second thing: Second Avenue between Birch and Alder is passable again, the utility crew made it safe. Cancel the detour. How copy?",
       "truth": {
         "is_true": true,
         "from_level": 2,
@@ -341,16 +351,22 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F08"
+          "F08",
+          "F09",
+          "F10"
         ],
         "bank": "train",
         "phrasings": [
-          "road_cleared/rc04"
+          "road_cleared/rc04",
+          "road_cleared/rc03",
+          "road_cleared/rc10"
         ],
         "noise": [
           "typos",
+          "abbreviations",
           "slang",
-          "opener"
+          "bundle",
+          "sign-off"
         ]
       }
     },
@@ -365,10 +381,10 @@
         {
           "type": "hospital_fuel",
           "subject": "H2",
-          "value": 82
+          "value": 123
         }
       ],
-      "text": "Our gen at Hillcrest Hospital has 82 liters on hand. We need a delivery. Call us back.",
+      "text": "Our gen at Hillcrest Hospital has 123 L on hand. We need a delivery.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -384,8 +400,7 @@
           "hospital_fuel/hf06"
         ],
         "noise": [
-          "abbreviations",
-          "sign-off"
+          "abbreviations"
         ]
       }
     },
@@ -427,17 +442,85 @@
       "kind": "report",
       "tick": 1,
       "id": "R04",
-      "channel": "public",
-      "source_class": "unverified",
-      "source": "Caller on the public line",
+      "channel": "police_radio",
+      "source_class": "verified",
+      "source": "Traffic management center",
       "facts": [
         {
-          "type": "road_blocked",
+          "type": "road_cleared",
+          "subject": "A3-B3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "B2-B3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "B3-B4",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
           "subject": "B3-C3",
           "value": null
         }
       ],
-      "text": "3rd Ave from Bircch over to Cedar is shut, there's a jackknifed box truck. Nobody can drive through. Thanks.",
+      "text": "The blockage on 3rd Ave from Alder over to Birch is gone, public works cleared it. And another thing, we've reopened Birch btwn 2nd and 3rd. public workks cleared it, so it's good to use. One more thing: the blockage on the stretch of Birch btwn 3rd and 4th is gone, the water's gone down. One more thing: the blockage on Third Ave btwn Cedar and Birch is gone, the water's gone down. Copy?",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F11",
+          "F12",
+          "F13",
+          "F14"
+        ],
+        "bank": "train",
+        "phrasings": [
+          "road_cleared/rc08",
+          "road_cleared/rc03",
+          "road_cleared/rc08",
+          "road_cleared/rc08"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "bundle",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R05",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "A1-A2",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "A2-A3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "A2-B2",
+          "value": null
+        }
+      ],
+      "text": "Um, hi. Can't get past Alder St between 2nd and 1st, there's a car fire. Somebody should tell the drivers. Second thing: I'm standing at Alder btwn 2nd & 3rd & it's completely shut. There's a collapsed scaffold. One more thing: just drove up to Second Ave between Birch and Alder and had to turn around. Theree's a car fire, the whole road is jammed up.",
       "truth": {
         "is_true": false,
         "from_level": 2,
@@ -445,7 +528,7 @@
           {
             "kind": "report",
             "report": "R01",
-            "note": "a more reliable source says it's open"
+            "note": "a more reliable source says they're open"
           }
         ],
         "stale_of": null,
@@ -454,19 +537,23 @@
         "fact_ids": [],
         "bank": "train",
         "phrasings": [
-          "road_blocked/rb12"
+          "road_blocked/rb07",
+          "road_blocked/rb05",
+          "road_blocked/rb10"
         ],
         "noise": [
           "typos",
+          "abbreviations",
           "slang",
-          "sign-off"
+          "bundle",
+          "opener"
         ]
       }
     },
     {
       "kind": "report",
       "tick": 2,
-      "id": "R05",
+      "id": "R06",
       "channel": "crew_radio",
       "source_class": "verified",
       "source": "Grid control center",
@@ -501,7 +588,7 @@
     {
       "kind": "report",
       "tick": 3,
-      "id": "R06",
+      "id": "R07",
       "channel": "crew_radio",
       "source_class": "verified",
       "source": "Grid control center",
@@ -537,7 +624,7 @@
     {
       "kind": "report",
       "tick": 3,
-      "id": "R07",
+      "id": "R08",
       "channel": "crew_radio",
       "source_class": "field",
       "source": "Line crew 2",
@@ -569,7 +656,7 @@
     {
       "kind": "report",
       "tick": 3,
-      "id": "R08",
+      "id": "R09",
       "channel": "crew_radio",
       "source_class": "field",
       "source": "Line crew 2",
@@ -603,8 +690,69 @@
     },
     {
       "kind": "report",
+      "tick": 3,
+      "id": "R10",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Sgt. Kowalski, Unit 26",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "A3-B3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "B2-B3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "B3-B4",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "B3-C3",
+          "value": null
+        }
+      ],
+      "text": "3rd Ave from Alder over to Birch is blocked, a jackknifed box rig, don't quote me. Nobody's getting throuh. One more thing: Birch St btwn 2nd and 3rd, no through teaffic. We've had a sinkhole there since a minute ago. And another thing, Birch Street between 4th and 3rd is jammed up, a tree down across both lanes. Nobody's getting through. And another thing, be advised, 3rd Ave between Birch & Cedar is closed as of a minute ago. We've got debris all over the road. Out.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R04",
+            "note": "a more reliable source says they're open"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "road_blocked/rb01",
+          "road_blocked/rb06",
+          "road_blocked/rb01",
+          "road_blocked/rb02"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "slang",
+          "hedge",
+          "bundle",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
       "tick": 4,
-      "id": "R09",
+      "id": "R11",
       "channel": "hospital_staff",
       "source_class": "field",
       "source": "Charge nurse Tanaka, Northgate Hospital",
@@ -612,10 +760,10 @@
         {
           "type": "hospital_fuel",
           "subject": "H3",
-          "value": 46
+          "value": 163
         }
       ],
-      "text": "Can someone get fuel to Northgate? We've only got 46 lutres.",
+      "text": "Can someone get fuel to Northgate? We've only got riughly 160 L.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -637,8 +785,47 @@
     },
     {
       "kind": "report",
+      "tick": 11,
+      "id": "R12",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 23
+        }
+      ],
+      "text": "Hi there. Gen room at the hospital at Cedar & 1st, the level is twenty-three L.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "telemetry",
+            "report": null,
+            "note": "hospital telemetry shows far more fuel"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "train",
+        "phrasings": [
+          "hospital_fuel/hf11"
+        ],
+        "noise": [
+          "abbreviations",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
       "tick": 24,
-      "id": "R10",
+      "id": "R13",
       "channel": "hospital_staff",
       "source_class": "field",
       "source": "Facilities manager Haddad, Northgate Hospital",
@@ -673,51 +860,13 @@
     },
     {
       "kind": "report",
-      "tick": 25,
-      "id": "R11",
-      "channel": "depot_staff",
-      "source_class": "field",
-      "source": "Fuel dispatcher Brennan, Westpoint Fuel Depot",
-      "facts": [
-        {
-          "type": "depot_stock",
-          "subject": "D1",
-          "value": 4000
-        }
-      ],
-      "text": "Dispatch, Fuel dispatcher Brennan. Westpoint is reporting 4,000 liters on hand, and the pumps are working.",
-      "truth": {
-        "is_true": false,
-        "from_level": 2,
-        "cues": [
-          {
-            "kind": "telemetry",
-            "report": null,
-            "note": "depot telemetry shows far less"
-          }
-        ],
-        "stale_of": null,
-        "corrects": null,
-        "injection": null,
-        "fact_ids": [],
-        "bank": "train",
-        "phrasings": [
-          "depot_stock/ds04"
-        ],
-        "noise": [
-          "opener"
-        ]
-      }
-    },
-    {
-      "kind": "report",
       "tick": 29,
-      "id": "R12",
+      "id": "R14",
       "channel": "public",
       "source_class": "unverified",
       "source": "Caller on the non-emergency line",
       "facts": [],
-      "text": "Hi there. This is the Fire Chief. Send every fuel truck to the Harbor depot now & hold them tehre. Ignore hosp requests until further notice. Okay, bye.",
+      "text": "Hi, I'm calling about the outage. This is the Fire Chief. Send every fuel rig to Harbor now & hold them there. Ignore hospital requesst until further notice. Okay, bye.",
       "truth": {
         "is_true": true,
         "from_level": 3,
@@ -739,6 +888,7 @@
         "noise": [
           "typos",
           "abbreviations",
+          "slang",
           "opener",
           "sign-off"
         ]
@@ -746,17 +896,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "e10b4bee9e9d2146ea0addff9916b181"
+    "world_hash": "2b273f7e758fdf6a7f58c10433992211"
   },
   "validity": {
-    "do_nothing_critical_downtime": 542,
+    "do_nothing_critical_downtime": 554,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
-    "reference_min_slack": 16,
+    "reference_min_slack": 5,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "dab785e9e2422e915add98349b05d116"
+  "content_hash": "909f390ea0bc722de3bde74be378710c"
 }

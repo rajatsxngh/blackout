@@ -41,8 +41,9 @@ class SolverController:
 
     name = "solver"
 
-    def __init__(self, config: SimConfig | None = None) -> None:
+    def __init__(self, config: SimConfig | None = None, *, random_seed: int = 0) -> None:
         self.config = config or SimConfig()
+        self.random_seed = random_seed  # CP-SAT's; only the generator's robustness check moves it
         self.reset()
 
     def reset(self) -> None:
@@ -102,7 +103,9 @@ class SolverController:
     # --- planning --------------------------------------------------------------------------
 
     def _plan(self, belief: BeliefState) -> SolverResult:
-        plan = solve_plan(belief, config=self.config, previous=self.last)
+        plan = solve_plan(
+            belief, config=self.config, previous=self.last, random_seed=self.random_seed
+        )
         stats = plan.stats
         self.solve_stats.append(
             {
@@ -130,7 +133,9 @@ class SolverController:
             report = self.belief.reports[report_id]
             trial = copy.deepcopy(self.belief)
             trial.apply_facts(by_report[report_id], lambda f, r: True, report=report)
-            alternative = solve_plan(trial, config=self.config, previous=self.last)
+            alternative = solve_plan(
+                trial, config=self.config, previous=self.last, random_seed=self.random_seed
+            )
             if _moves(alternative) != _moves(plan):
                 self._asked.add(report_id)
                 why = f"unverified {report_id} would change the plan: check it first"
@@ -144,8 +149,8 @@ class ReferenceController(SolverController):
     name = "reference"
     uses_truth = True
 
-    def __init__(self, config: SimConfig | None = None) -> None:
-        super().__init__(config)
+    def __init__(self, config: SimConfig | None = None, *, random_seed: int = 0) -> None:
+        super().__init__(config, random_seed=random_seed)
         self._engine: Callable[[], Engine] | None = None
 
     def attach(self, engine: Callable[[], Engine]) -> None:

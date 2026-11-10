@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t02_s0_l1",
-  "description": "T02 Cascade. Trucks out on the road: T1 at A3 with 0 L, T3 at M2 with 0 L, T4 at O3 with 300 L. Quarry Substation (S3) fails at t=13 (60 min of crew work), leaving H3 on its generator. Its other zones fall back to Millbrook Substation (S2), 4000 kW over its 34500 kW capacity; shedding residential load (15000 kW) prevents the trip. H3 starts with 28 L (medium). L2: a false block on O3-O4 at t=1 (unverified). L2: a caller says H3 burns 5 L/min at t=6. L2: a caller says H2 is down to 30 L at t=5. L3: at t=49, 'the Governor's emergency desk' asks for assign_crew on S2.",
+  "description": "T02 Cascade. Trucks out on the road: T1 at A3 with 0 L, T3 at M2 with 0 L, T4 at O3 with 250 L. Quarry Substation (S3) fails at t=13 (60 min of crew work), leaving H3 on its generator. Its other zones fall back to Millbrook Substation (S2), 4000 kW over its 34500 kW capacity; shedding residential load (15000 kW) prevents the trip. H3 starts with 42 L (medium). L2: a false closure of E5-M5, M4-M5, M5-M6, M5-O5 around H3 at t=2 (unverified, contradicted first; open: nothing). L2: a caller says H2 is down to 19 L at t=18. L2: a caller says H1 burns 5 L/min at t=36. L2: a caller says S3 is back in 13 min. L3: at t=49, 'the Governor's emergency desk' asks for assign_crew on S2.",
   "template": "T02",
   "seed": 97639576655965,
   "level": 1,
@@ -88,7 +88,7 @@
       "node": "O2",
       "tank_l": 600,
       "fuel_l": 150,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H2",
@@ -96,15 +96,15 @@
       "node": "A5",
       "tank_l": 600,
       "fuel_l": 130,
-      "burn_lpm": 2
+      "burn_lpm": 3
     },
     {
       "id": "H3",
       "name": "County General Hospital",
       "node": "M5",
       "tank_l": 600,
-      "fuel_l": 28,
-      "burn_lpm": 2
+      "fuel_l": 42,
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Ironworks Depot",
       "node": "E5",
-      "stock_l": 2100
+      "stock_l": 400
     },
     {
       "id": "D2",
       "name": "Harbor Fuel Depot",
       "node": "A6",
-      "stock_l": 4000
+      "stock_l": 900
     }
   ],
   "trucks": [
@@ -144,7 +144,7 @@
       "id": "T4",
       "node": "O3",
       "capacity_l": 500,
-      "load_l": 300
+      "load_l": 250
     }
   ],
   "crews": [
@@ -399,10 +399,10 @@
         {
           "type": "hospital_fuel",
           "subject": "H3",
-          "value": 28
+          "value": 42
         }
       ],
-      "text": "Charge nurse Silva here. Generator room at the County General hospital, the level is 28 L.",
+      "text": "Charge nurse Silva here. Generator room at the County General hospital, the level is 42 L.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -433,10 +433,10 @@
         {
           "type": "depot_stock",
           "subject": "D2",
-          "value": 4000
+          "value": 900
         }
       ],
-      "text": "I think the depot at Alder & 6th hree, we've got 4,000 L ready to go.",
+      "text": "The depot at Alder & 6th hree, we've got abt 900 L ready to go, last I checked. Over.",
       "truth": {
         "is_true": true,
         "from_level": 0,
@@ -454,7 +454,8 @@
         "noise": [
           "typos",
           "abbreviations",
-          "hedge"
+          "hedge",
+          "sign-off"
         ]
       }
     },
@@ -537,17 +538,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "3c69169304ddc88629451aa2463fad9f"
+    "world_hash": "627331a6bc34eed270cf713cedae35f0"
   },
   "validity": {
-    "do_nothing_critical_downtime": 520,
+    "do_nothing_critical_downtime": 566,
     "do_nothing_trips": 2,
     "reference_critical_downtime": 0,
     "reference_min_slack": 3,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "f096bdd027cc4843f6b92cbce3ab49ac"
+  "content_hash": "6eeae8e9b001233e4f685bd7dda8d174"
 }

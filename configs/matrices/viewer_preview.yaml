@@ -6,4 +6,4 @@ experiment: viewer_preview
 suite: dev
 contestants: [rules, solver]
 runs: 1
-scenarios: [dev_t01_s0_l2, dev_t04_s0_l0, dev_t07_s0_l1, dev_t09_s0_l3]
+scenarios: [dev_t01_s0_l2, dev_t04_s0_l0, dev_t07_s1_l1, dev_t09_s0_l3]

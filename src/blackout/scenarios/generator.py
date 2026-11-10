@@ -32,7 +32,14 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
 from blackout.info.reports import Cue, Injection, Report, ReportTruth
-from blackout.scenarios.calibrate import Calibrator, RunOutcome, do_nothing, reference, tier_of
+from blackout.scenarios.calibrate import (
+    Calibrator,
+    RunOutcome,
+    do_nothing,
+    fragile,
+    reference,
+    tier_of,
+)
 from blackout.scenarios.config import CityConfig
 from blackout.scenarios.conflict import plan_conflicts
 from blackout.scenarios.injection import plan_injections, render_injection
@@ -47,13 +54,13 @@ from blackout.scenarios.schema import (
 )
 from blackout.scenarios.seeding import Rng
 from blackout.scenarios.templates import TEMPLATES, Template
-from blackout.scenarios.templates.common import MIN_DO_NOTHING_LOSS
+from blackout.scenarios.templates.common import MIN_DO_NOTHING_LOSS, second_front
 from blackout.scenarios.text.banks import PhrasingBank
 from blackout.scenarios.text.render import render, report_rng
 from blackout.scenarios.world import Draft, Infeasible, PlannedReport, build_world
 from blackout.sim.events import BurnRateChange
 
-GENERATOR_VERSION = 2
+GENERATOR_VERSION = 3
 MAX_ATTEMPTS = 50
 """PRD 8.6 says 20 re-rolls for validity; filling a tier quota needs more (D072)."""
 
@@ -86,6 +93,7 @@ def generate(request: Request, config: CityConfig, bank: PhrasingBank) -> list[S
         try:
             draft = build_world(config, Rng.derive(request.seed, "world", attempt))
             template.apply(draft, Rng.derive(request.seed, "template", attempt))
+            second_front(draft, Rng.derive(request.seed, "front", attempt))
             return _finish(draft, template, request, config, bank, attempt)
         except (Infeasible, _Rejected) as reason:
             problems.append(f"attempt {attempt}: {reason}")
@@ -145,6 +153,8 @@ def _finish(
         raise _Rejected(f"asked for a {request.tier} world, got {tier} at {fuel} L")
     if tier == "hard" and naive.critical_downtime < cal.hard_min_rules_loss:
         raise _Rejected(f"Rules loses only {naive.critical_downtime} min, too close to a tie")
+    if (why := fragile(probe, cal)) is not None:
+        raise _Rejected(f"{why} at L0")
     draft.story.append(f"{target.id} starts with {fuel} L ({request.tier}).")
 
     if max(request.levels) >= 2:
@@ -157,6 +167,8 @@ def _finish(
         best_here = best if level == 0 else reference(draft_level)
         if best_here.critical_downtime > 0:
             raise _Rejected(f"the reference loses {best_here.critical_downtime} min at L{level}")
+        if level > 0 and (why := fragile(draft_level, cal)) is not None:
+            raise _Rejected(f"{why} at L{level}")
         scenarios.append(
             _assemble(
                 draft,

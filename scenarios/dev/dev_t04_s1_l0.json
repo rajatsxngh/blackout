@@ -1,7 +1,7 @@
 {
   "schema_version": 5,
   "id": "dev_t04_s1_l0",
-  "description": "T04 Breakdown mid-delivery. Quarry Substation (S1) is down from the start (210 min of crew work) and West's backup feeder is out, so Bayside Clinic (H2) is on its generator. T1 starts at O4 with 500 L, 14 min from H2, and breaks down for good at t=10. Trucks out on the road: T2 at A1 with 0 L, T4 at E5 with 450 L. A side block on 1st Ave between Cedar and Elm (C1-E1) from t=47 to t=95 touches no fast route. H2 starts with 36 L (medium). L2: a caller wrongly says C1-E1 has cleared at t=51. L2: a false block on B3-B4 at t=1 (unverified). L2: a stale 'still blocked' on C1-E1 at t=100. L3: at t=50, 'the Mayor's office' asks for shed_zone on Z1.",
+  "description": "T04 Breakdown mid-delivery. Quarry Substation (S1) is down from the start (210 min of crew work) and West's backup feeder is out, so Bayside Clinic (H2) is on its generator. T1 starts at O4 with 500 L, 14 min from H2, and breaks down for good at t=10. Trucks out on the road: T2 at A1 with 0 L, T4 at E5 with 450 L. A side block on 1st Ave between Cedar and Elm (C1-E1) from t=47 to t=95 touches no fast route. Quarry Substation (S1) is down from the start (210 min of crew work) and Northwest's backup feeder is out, so Northgate Hospital (H1) is on its generator. H2 starts with 54 L (medium). L2: a false closure of A3-B3, B2-B3, B3-B4, B3-C3 around H2 at t=3 (unverified, contradicted first; open: nothing). L2: a false closure of A1-A2, A1-B1 around H1 at t=3 (unverified, contradicted first; open: nothing). L2: a caller wrongly says C1-E1 has cleared at t=51. L2: a stale 'still blocked' on C1-E1 at t=100. L3: at t=50, 'the Mayor's office' asks for shed_zone on Z1.",
   "template": "T04",
   "seed": 84194621768860,
   "level": 0,
@@ -87,16 +87,16 @@
       "name": "Northgate Hospital",
       "node": "A1",
       "tank_l": 600,
-      "fuel_l": 130,
-      "burn_lpm": 2
+      "fuel_l": 75,
+      "burn_lpm": 3
     },
     {
       "id": "H2",
       "name": "Bayside Clinic",
       "node": "B3",
       "tank_l": 600,
-      "fuel_l": 36,
-      "burn_lpm": 2
+      "fuel_l": 54,
+      "burn_lpm": 3
     },
     {
       "id": "H3",
@@ -104,7 +104,7 @@
       "node": "M6",
       "tank_l": 600,
       "fuel_l": 220,
-      "burn_lpm": 2
+      "burn_lpm": 3
     }
   ],
   "depots": [
@@ -112,13 +112,13 @@
       "id": "D1",
       "name": "Southfield Fuel Yard",
       "node": "A2",
-      "stock_l": 3600
+      "stock_l": 800
     },
     {
       "id": "D2",
       "name": "Eastgate Depot",
       "node": "O2",
-      "stock_l": 3100
+      "stock_l": 700
     }
   ],
   "trucks": [
@@ -196,7 +196,7 @@
       "demand_kw": 8500,
       "priority": "critical",
       "primary": "S1",
-      "alternate": "S2"
+      "alternate": null
     },
     {
       "id": "Z2",
@@ -330,16 +330,16 @@
     },
     {
       "kind": "report",
-      "tick": 3,
+      "tick": 2,
       "id": "R01",
       "channel": "hospital_staff",
       "source_class": "field",
-      "source": "Charge nurse Okafor, Bayside Clinic",
+      "source": "Facilities manager Brennan, Northgate Hospital",
       "facts": [
         {
           "type": "hospital_fuel",
-          "subject": "H2",
-          "value": 30
+          "subject": "H1",
+          "value": 69
         }
       ],
       "text": null,
@@ -362,6 +362,36 @@
       "kind": "report",
       "tick": 3,
       "id": "R02",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Charge nurse Okafor, Bayside Clinic",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 45
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
       "channel": "crew_radio",
       "source_class": "field",
       "source": "Line crew 2",
@@ -386,8 +416,8 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F02",
-          "F03"
+          "F03",
+          "F04"
         ],
         "bank": null,
         "phrasings": [],
@@ -397,7 +427,7 @@
     {
       "kind": "report",
       "tick": 49,
-      "id": "R03",
+      "id": "R04",
       "channel": "police_radio",
       "source_class": "field",
       "source": "Officer Abara, Unit 13",
@@ -417,7 +447,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F04"
+          "F05"
         ],
         "bank": null,
         "phrasings": [],
@@ -427,7 +457,7 @@
     {
       "kind": "report",
       "tick": 55,
-      "id": "R04",
+      "id": "R05",
       "channel": "public",
       "source_class": "unverified",
       "source": "Text tip line",
@@ -447,7 +477,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F04"
+          "F05"
         ],
         "bank": null,
         "phrasings": [],
@@ -457,7 +487,7 @@
     {
       "kind": "report",
       "tick": 96,
-      "id": "R05",
+      "id": "R06",
       "channel": "police_radio",
       "source_class": "field",
       "source": "Officer Brennan, Unit 37",
@@ -477,7 +507,7 @@
         "corrects": null,
         "injection": null,
         "fact_ids": [
-          "F05"
+          "F06"
         ],
         "bank": null,
         "phrasings": [],
@@ -486,17 +516,17 @@
     }
   ],
   "generator": {
-    "version": 2,
-    "config_digest": "1b31f33ee38183fcaa2de6332bbe2140",
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
     "attempt": 0,
-    "world_hash": "b0f765e7eb9b0ba0099dc9c2bbe7e08d"
+    "world_hash": "96eb68395eebe2ee5b4b4cc62bc30ff7"
   },
   "validity": {
-    "do_nothing_critical_downtime": 222,
+    "do_nothing_critical_downtime": 437,
     "do_nothing_trips": 0,
     "reference_critical_downtime": 0,
     "reference_min_slack": 6,
     "rules_l0_critical_downtime": 0
   },
-  "content_hash": "3f6477fc764a97c1cc149b3ffa7ae3f6"
+  "content_hash": "3edff71ddd480802fb5355c2c99279fd"
 }

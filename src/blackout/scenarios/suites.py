@@ -77,7 +77,7 @@ SUITES: dict[str, Suite] = {
         ("T01", "T02", "T04", "T05", "T07", "T08", "T09"),
         seeds=2,
         levels=(0, 1, 2, 3),
-        tiers=(M, M, M, E, H, M, E, M, H, M, H, E, H, M),
+        tiers=(M, H, M, E, H, M, M, M, M, H, H, E, H, M),
     ),
     "test": Suite(
         "test",

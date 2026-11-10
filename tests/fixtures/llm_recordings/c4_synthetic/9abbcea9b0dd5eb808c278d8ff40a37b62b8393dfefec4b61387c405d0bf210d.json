@@ -1,12 +1,12 @@
 {
- "key": "d0e331388f61f280e9d342eebd16f966a516d9f387d8b3102f222f46735d84c0",
+ "key": "9abbcea9b0dd5eb808c278d8ff40a37b62b8393dfefec4b61387c405d0bf210d",
  "latency_ms": 0,
  "origin": "synthetic",
  "request": {
   "max_tokens": 8000,
   "messages": [
    {
-    "content": "<report id=\"R08\" source_class=\"field\" source=\"Sgt. Patel, Unit 31\" channel=\"police_radio\" tick=\"7\">\nDispatch, Unit 31. Cedar St between 5th & 4th, no through traffic. We've had flooding over the curbs there since abt 5 minutes ago.\n</report>\n\nExtract the facts this report states.",
+    "content": "<report id=\"R07\" source_class=\"field\" source=\"Sgt. Moreau, Unit 40\" channel=\"police_radio\" tick=\"17\">\nThis is Unit 40. Cedar between 4th and 5th is blocked, flooding over the curbs. Nobody's getting through.\n</report>\n\nExtract the facts this report states.",
     "role": "user"
    }
   ],
@@ -131,14 +131,14 @@
    }
   ],
   "fallback": false,
-  "id": "msg_synthetic_d0e331388f61f280",
+  "id": "msg_synthetic_9abbcea9b0dd5eb8",
   "model": "claude-haiku-5-5",
   "stop_details": null,
   "stop_reason": "end_turn",
   "usage": {
    "cache_creation_input_tokens": 0,
    "cache_read_input_tokens": 6471,
-   "input_tokens": 70,
+   "input_tokens": 64,
    "output_tokens": 42
   }
  }

@@ -171,6 +171,7 @@ def solve_plan(
     config: SimConfig | None = None,
     previous: SolverResult | None = None,
     deterministic_time: float = DETERMINISTIC_TIME_S,
+    random_seed: int = 0,
 ) -> SolverResult:
     """Plan power and fuel from ``belief`` and propose the actions that start the plan.
 
@@ -180,6 +181,9 @@ def solve_plan(
     model, which speeds it up and keeps plans stable. ``config`` must be the run's SimConfig
     (loading and unloading times, priority weights).
 
+    ``random_seed`` is CP-SAT's; every contestant uses 0. The scenario generator alone tries
+    others, to check that a world's reference result doesn't hang on one search path (D099).
+
     Raises ValueError if the belief has never observed anything (it has no map).
     """
     rules = config or SimConfig()
@@ -188,7 +192,7 @@ def solve_plan(
     hint = None
     if previous is not None:
         hint = {t.truck_id: tuple((p.depot, p.hospital) for p in t.trips) for t in previous.trucks}
-    fuel = solve_fuel(state, power.powered, hint, deterministic_time)
+    fuel = solve_fuel(state, power.powered, hint, deterministic_time, random_seed)
     return _result(state, power, fuel)
 
 
