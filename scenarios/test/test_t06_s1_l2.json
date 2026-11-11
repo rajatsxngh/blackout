@@ -1,0 +1,891 @@
+{
+  "schema_version": 5,
+  "id": "test_t06_s1_l2",
+  "description": "T06 Depot shortage. Quarry Substation (S2) is down from the start (210 min of crew work) and North's backup feeder is out, so Riverside Clinic (H1) is on its generator. Ironworks Depot (D2), the nearest depot, has only 40 L. Ridgeway Substation (S3) is down from the start (60 min of crew work) and Southeast's backup feeder is out, so County General Hospital (H3) is on its generator. H1 starts with 60 L (medium). L2: a false closure of C2-E2, E1-E2, E2-E3, E2-M2 around H1 at t=2 (field, contradicted first; open: nothing). L2: a false closure of M6-O6, O5-O6 around H3 at t=1 (unverified, contradicted first; open: nothing). L2: a caller says H3 burns 5 L/min at t=7. L3: at t=58, 'the Grid Operations Director' asks for dispatch on H2.",
+  "template": "T06",
+  "seed": 139322988606388,
+  "level": 2,
+  "split": "test",
+  "tier": "medium",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 5,
+      "A1-B1": 5,
+      "A2-A3": 5,
+      "A2-B2": 2,
+      "A3-A4": 2,
+      "A3-B3": 3,
+      "A4-A5": 5,
+      "A4-B4": 5,
+      "A5-A6": 3,
+      "A5-B5": 4,
+      "A6-B6": 2,
+      "B1-B2": 4,
+      "B1-C1": 3,
+      "B2-B3": 3,
+      "B2-C2": 2,
+      "B3-B4": 2,
+      "B3-C3": 5,
+      "B4-B5": 2,
+      "B4-C4": 3,
+      "B5-B6": 2,
+      "B5-C5": 3,
+      "B6-C6": 3,
+      "C1-C2": 5,
+      "C1-E1": 3,
+      "C2-C3": 4,
+      "C2-E2": 2,
+      "C3-C4": 2,
+      "C3-E3": 2,
+      "C4-C5": 2,
+      "C4-E4": 2,
+      "C5-C6": 4,
+      "C5-E5": 4,
+      "C6-E6": 3,
+      "E1-E2": 4,
+      "E1-M1": 2,
+      "E2-E3": 4,
+      "E2-M2": 1,
+      "E3-E4": 2,
+      "E3-M3": 2,
+      "E4-E5": 3,
+      "E4-M4": 3,
+      "E5-E6": 5,
+      "E5-M5": 5,
+      "E6-M6": 2,
+      "M1-M2": 1,
+      "M1-O1": 3,
+      "M2-M3": 1,
+      "M2-O2": 1,
+      "M3-M4": 1,
+      "M3-O3": 3,
+      "M4-M5": 2,
+      "M4-O4": 2,
+      "M5-M6": 2,
+      "M5-O5": 5,
+      "M6-O6": 5,
+      "O1-O2": 4,
+      "O2-O3": 2,
+      "O3-O4": 5,
+      "O4-O5": 2,
+      "O5-O6": 3
+    },
+    "landmarks": {
+      "City Hall": "B2",
+      "Grand Theater": "E5",
+      "Riverside Park": "M4",
+      "the Farmers Market": "O1"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Riverside Clinic",
+      "node": "E2",
+      "tank_l": 600,
+      "fuel_l": 60,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H2",
+      "name": "Hillcrest Hospital",
+      "node": "E3",
+      "tank_l": 600,
+      "fuel_l": 130,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H3",
+      "name": "County General Hospital",
+      "node": "O6",
+      "tank_l": 600,
+      "fuel_l": 72,
+      "burn_lpm": 3
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Southfield Fuel Yard",
+      "node": "M5",
+      "stock_l": 3800
+    },
+    {
+      "id": "D2",
+      "name": "Ironworks Depot",
+      "node": "C2",
+      "stock_l": 40
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "M5"
+    },
+    {
+      "id": "C2",
+      "node": "O1"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Kingsley Substation",
+      "node": "A5",
+      "capacity_kw": 47000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S2",
+      "name": "Quarry Substation",
+      "node": "C5",
+      "capacity_kw": 32000,
+      "state": "failed",
+      "repair_minutes": 210
+    },
+    {
+      "id": "S3",
+      "name": "Ridgeway Substation",
+      "node": "O4",
+      "capacity_kw": 39000,
+      "state": "failed",
+      "repair_minutes": 60
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 12000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 8000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": null
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 8500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 4000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 9000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 9500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 5000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    }
+  ],
+  "events": [
+    {
+      "kind": "report",
+      "tick": 0,
+      "id": "R01",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Brennan, Unit 27",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "M6-O6",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "O5-O6",
+          "value": null
+        }
+      ],
+      "text": "Dispatch, traffic report. Sixth Avenue between Oak and Maple is passable again in both directions.Separately,Trafffic resumed a minute ago on the stretch of Oak between 5th and 6th. Both directions are open.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08",
+          "F09"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_cleared/tc01",
+          "road_cleared/tc03"
+        ],
+        "noise": [
+          "typos",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R02",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": "The utility notice says equip has failed at Quarry Substation; it cannot supply electricityif that helps.. That's all I needed to report.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts03"
+        ],
+        "noise": [
+          "abbreviations",
+          "hedge",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R03",
+      "channel": "police_radio",
+      "source_class": "verified",
+      "source": "Traffic management center",
+      "facts": [
+        {
+          "type": "road_cleared",
+          "subject": "C2-E2",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "E1-E2",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "E2-E3",
+          "value": null
+        },
+        {
+          "type": "road_cleared",
+          "subject": "E2-M2",
+          "value": null
+        }
+      ],
+      "text": "Control, Traffic management calling. For your awareness,Lift the closure on 2nd Ave between Cedar and Elm. Vehicles can get through again.Separately,Please be advised, normal vehicle passage has been restored on Elm St from 1st down to 2nd.Next update:Elm between 2nd and 3rd is passable afain in both directions.Moving on,Lift the closure on 2nd between Elm and Maple. Vehicles can get through again.",
+      "truth": {
+        "is_true": true,
+        "from_level": 2,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F10",
+          "F11",
+          "F12",
+          "F13"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_cleared/tc02",
+          "road_cleared/tc04",
+          "road_cleared/tc01",
+          "road_cleared/tc02"
+        ],
+        "noise": [
+          "typos",
+          "hedge",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R04",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M6-O6",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "O5-O6",
+          "value": null
+        }
+      ],
+      "text": "Hi, thanks for taking my call. Had to turn the car around. 6th Ave from Maple over to Oak is completely impassable to vehicles.Another report:Nobody can drive through the stretch of Oak between 5th and 6th; the entire passage is shut.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R01",
+            "note": "a more reliable source says they're open"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb08",
+          "road_blocked/tb07"
+        ],
+        "noise": [
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R05",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Abara, Riverside Clinic",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 54
+        }
+      ],
+      "text": "Duty nurse speaking. Tank check completed just now: Riverside Clinic has 54 litres left for its generator.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "hospital_fuel/tf05"
+        ],
+        "noise": [
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R06",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": "Hi, thanks for taking my call. Thanks for staying with me.the utility notice says gear has failed at the substatiin at Oak & 4th; it cannot supply electricity.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts03"
+        ],
+        "noise": [
+          "typos",
+          "slang",
+          "filler",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R07",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": "Control, crew report. I'll keep it brief.the Ridgeway substation has suffered equip failure and cannot supply power. Back to work. Over.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts01"
+        ],
+        "noise": [
+          "abbreviations",
+          "filler",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R08",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 60
+        }
+      ],
+      "text": "Line crew 1 calling operations. 60 minutes remaining until repsirs are complete at Ridgeway sub. Back to work. Over.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "repair_eta/te01"
+        ],
+        "noise": [
+          "typos",
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R09",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Abara, Unit 7",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "C2-E2",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "E1-E2",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "E2-E3",
+          "value": null
+        },
+        {
+          "type": "road_blocked",
+          "subject": "E2-M2",
+          "value": null
+        }
+      ],
+      "text": "For your awareness,Please advise all drivers: 2nd Ave between Cedar and Elm is closed to vehicular passage.In addition,Elm St from 1st down to 2nd is impassable to vehicles. Keep traffic out.Another report:We've stopped traffic. Elm St between 2nd and 3rd cannot be deiven through.Separately,We've stopped traffic. Second Avenue between Maple and Elm cannot be driven through.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "report",
+            "report": "R03",
+            "note": "a more reliable source says they're open"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb03",
+          "road_blocked/tb01",
+          "road_blocked/tb04",
+          "road_blocked/tb04"
+        ],
+        "noise": [
+          "typos",
+          "hedge",
+          "bundle"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R10",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Depot supervisor Diaz, Ironworks Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 40
+        }
+      ],
+      "text": "For your ledgrr, total fuel held at Ironworks Depot stands at forty liters.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "depot_stock/td05"
+        ],
+        "noise": [
+          "typos"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R11",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": "Foreman here, go ahead and log this. Quarry has suffered kit failure and cannot supply power.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts01"
+        ],
+        "noise": [
+          "slang",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R12",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Kowalski, County General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 63
+        }
+      ],
+      "text": "County General, generator tank reading: sixty-three liters remainingif that helps..",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "hospital_fuel/tf01"
+        ],
+        "noise": [
+          "hedge"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R13",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 210
+        }
+      ],
+      "text": "Evening, dispatch. Field update. For the repair log, Quarry sub has 210 min of work remaining. Back to work. Over.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "repair_eta/te04"
+        ],
+        "noise": [
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 7,
+      "id": "R14",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "burn_spike",
+          "subject": "H3",
+          "value": 5
+        }
+      ],
+      "text": "Hi, thanks for taking my call. The new rate is 5 liters per minute for the County General hospital's generator. Staff conf that's an increase.",
+      "truth": {
+        "is_true": false,
+        "from_level": 2,
+        "cues": [
+          {
+            "kind": "telemetry",
+            "report": null,
+            "note": "hospital telemetry shows the real burn rate"
+          }
+        ],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [],
+        "bank": "test",
+        "phrasings": [
+          "burn_spike/tk08"
+        ],
+        "noise": [
+          "abbreviations",
+          "opener"
+        ]
+      }
+    }
+  ],
+  "generator": {
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 0,
+    "world_hash": "f7f5144145bee0156e80b4bef01d2ccf"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 436,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": 0,
+    "reference_min_slack": 1,
+    "rules_l0_critical_downtime": 0
+  },
+  "content_hash": "fe4caba1bdf12e5d2d4406ba12ad6675"
+}

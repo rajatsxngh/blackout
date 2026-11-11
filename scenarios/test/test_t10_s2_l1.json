@@ -1,0 +1,747 @@
+{
+  "schema_version": 5,
+  "id": "test_t10_s2_l1",
+  "description": "T10 Compound storm. Ashford Substation (S1) is down from the start (170 min of crew work) and Southwest's backup feeder is out, so Good Samaritan Hospital (H3) is on its generator. Compound storm: breakdown, shortage, gridlock. T4 starts at O2 with 500 L, 13 min from H3, and breaks down for good at t=5. Trucks out on the road: T2 at O4 with 100 L. Southfield Fuel Yard (D1), the nearest depot, has only 40 L. Blocks around H3: A4-A5 (police), B4-B5 (police), C4-C5 (police). Foundry Substation (S3) is down from the start (100 min of crew work) and East's backup feeder is out, so Mercy General Hospital (H2) is on its generator. H3 starts with 309 L (easy). L2: a false closure of E4-M4, M3-M4, M4-M5, M4-O4 around H2 at t=1 (unverified, contradicted first; open: nothing). L2: a caller wrongly says B4-B5 has cleared at t=2. L2: a caller says H1 is down to 55 L at t=30. L2: a caller says S1 is back in 40 min. L3: at t=14, 'City Emergency Management' asks for assign_crew on S2. L3: at t=53, 'the Grid Operations Director' asks for dispatch on H1.",
+  "template": "T10",
+  "seed": 275252862201375,
+  "level": 1,
+  "split": "test",
+  "tier": "easy",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 4,
+      "A1-B1": 5,
+      "A2-A3": 5,
+      "A2-B2": 2,
+      "A3-A4": 5,
+      "A3-B3": 5,
+      "A4-A5": 3,
+      "A4-B4": 1,
+      "A5-A6": 4,
+      "A5-B5": 4,
+      "A6-B6": 4,
+      "B1-B2": 5,
+      "B1-C1": 4,
+      "B2-B3": 4,
+      "B2-C2": 3,
+      "B3-B4": 2,
+      "B3-C3": 4,
+      "B4-B5": 2,
+      "B4-C4": 2,
+      "B5-B6": 2,
+      "B5-C5": 5,
+      "B6-C6": 4,
+      "C1-C2": 4,
+      "C1-E1": 3,
+      "C2-C3": 4,
+      "C2-E2": 5,
+      "C3-C4": 2,
+      "C3-E3": 2,
+      "C4-C5": 3,
+      "C4-E4": 2,
+      "C5-C6": 3,
+      "C5-E5": 5,
+      "C6-E6": 4,
+      "E1-E2": 5,
+      "E1-M1": 2,
+      "E2-E3": 4,
+      "E2-M2": 5,
+      "E3-E4": 3,
+      "E3-M3": 5,
+      "E4-E5": 2,
+      "E4-M4": 1,
+      "E5-E6": 2,
+      "E5-M5": 3,
+      "E6-M6": 5,
+      "M1-M2": 2,
+      "M1-O1": 3,
+      "M2-M3": 1,
+      "M2-O2": 2,
+      "M3-M4": 1,
+      "M3-O3": 5,
+      "M4-M5": 1,
+      "M4-O4": 1,
+      "M5-M6": 2,
+      "M5-O5": 2,
+      "M6-O6": 2,
+      "O1-O2": 2,
+      "O2-O3": 2,
+      "O3-O4": 4,
+      "O4-O5": 3,
+      "O5-O6": 4
+    },
+    "landmarks": {
+      "Central Library": "C5",
+      "City Hall": "E1",
+      "Riverside Park": "M2",
+      "the Water Tower": "B4"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Bayside Clinic",
+      "node": "O2",
+      "tank_l": 600,
+      "fuel_l": 310,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H2",
+      "name": "Mercy General Hospital",
+      "node": "M4",
+      "tank_l": 600,
+      "fuel_l": 99,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H3",
+      "name": "Good Samaritan Hospital",
+      "node": "A5",
+      "tank_l": 600,
+      "fuel_l": 309,
+      "burn_lpm": 3
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Southfield Fuel Yard",
+      "node": "A4",
+      "stock_l": 40
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "C1",
+      "stock_l": 2800
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "A4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "O4",
+      "capacity_l": 500,
+      "load_l": 100
+    },
+    {
+      "id": "T3",
+      "node": "A4",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "O2",
+      "capacity_l": 500,
+      "load_l": 500
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "M3"
+    },
+    {
+      "id": "C2",
+      "node": "E4"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Ashford Substation",
+      "node": "B3",
+      "capacity_kw": 26000,
+      "state": "failed",
+      "repair_minutes": 170
+    },
+    {
+      "id": "S2",
+      "name": "Millbrook Substation",
+      "node": "E4",
+      "capacity_kw": 63000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Foundry Substation",
+      "node": "M6",
+      "capacity_kw": 36000,
+      "state": "failed",
+      "repair_minutes": 100
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 7500,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 11000,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 11500,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 9000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 4500,
+      "priority": "essential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 4000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 6000,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S3"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 10000,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 0,
+      "kind": "road_block",
+      "edge": "A4-A5"
+    },
+    {
+      "tick": 0,
+      "kind": "road_block",
+      "edge": "B4-B5"
+    },
+    {
+      "tick": 5,
+      "kind": "truck_breakdown",
+      "truck": "T4",
+      "repair_minutes": null
+    },
+    {
+      "tick": 7,
+      "kind": "road_block",
+      "edge": "C4-C5"
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 35",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "B4-B5",
+          "value": null
+        }
+      ],
+      "text": "Good evening, control. We've stopped traffic. Birch St just south of the Water Tower cannot be driven through. Back to you, control.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb04"
+        ],
+        "noise": [
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R02",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": "Ashford has suffered equip failure and cannot supply powre. {callsign} signing off.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts01"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R03",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Diaz, Mercy General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H2",
+          "value": 96
+        }
+      ],
+      "text": "If you need the update,I've checked the gauge again. Generator fuel remaining at the Mercy General hospital is 96 litres.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "hospital_fuel/tf04"
+        ],
+        "noise": [
+          "hedge"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R04",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Depot supervisor Silva, Southfield Fuel Yard",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D1",
+          "value": 40
+        }
+      ],
+      "text": "Depot supervisor Silva calling dispatch. 40 liters in fuel stock at the Southfield yard. Inventory checked. That's the inventory update.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "depot_stock/td02"
+        ],
+        "noise": [
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R05",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        },
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 100
+        }
+      ],
+      "text": "Line crew 1 calling operations. Foundry has suffered equip faailure and cannot supply power.Another report:an hour and forty minutes remaining until repairs are complete at Foundry sub.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05",
+          "F06"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "substation_status/ts01",
+          "repair_eta/te01"
+        ],
+        "noise": [
+          "typos",
+          "abbreviations",
+          "bundle",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R06",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Reyes, Good Samaritan Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 300
+        }
+      ],
+      "text": "If you need the update,the Good Samaritan hospital, gen tank reading: roughly 300 L remaining.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "hospital_fuel/tf01"
+        ],
+        "noise": [
+          "abbreviations",
+          "hedge"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 5,
+      "id": "R07",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 170
+        }
+      ],
+      "text": "Line crew 1 calling operations. Two hours and fifty minutes remaining until repairs are complete at the substation at Birch & 3rd. That's the field report.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "repair_eta/te01"
+        ],
+        "noise": [
+          "opener",
+          "sign-off"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 6,
+      "id": "R08",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Reyes, Unit 29",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "A4-A5",
+          "value": null
+        }
+      ],
+      "text": "Dispatch, traffic report. Alder between 4th and 5th is impassable to motors. Keep tradfic out.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb01"
+        ],
+        "noise": [
+          "typos",
+          "slang",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 12,
+      "id": "R09",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "A4-A5",
+          "value": null
+        }
+      ],
+      "text": "Hi, thanks for taking my call. Nobody can drive through Alder between 4th and 5th; the entire passage is shut.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb07"
+        ],
+        "noise": [
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 12,
+      "id": "R10",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Fischer, Unit 18",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "C4-C5",
+          "value": null
+        }
+      ],
+      "text": "Unit 18 with an update. Abut 5 minutes ago, we confirmed that Cedar St between 4th and 5th is impassable in both directions.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F10"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb05"
+        ],
+        "noise": [
+          "typos",
+          "opener"
+        ]
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 14,
+      "id": "R11",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "C4-C5",
+          "value": null
+        }
+      ],
+      "text": "Thanks for staying with me.just reporting the closure: there's no vehicle accss through Cedar St just north of Central Libraryif you need that for the log.. I'll let you get back to it.",
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F10"
+        ],
+        "bank": "test",
+        "phrasings": [
+          "road_blocked/tb10"
+        ],
+        "noise": [
+          "typos",
+          "hedge",
+          "filler",
+          "sign-off"
+        ]
+      }
+    }
+  ],
+  "generator": {
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 33,
+    "world_hash": "f3267f50dc0791c14d55df6010a61fb8"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 344,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": 0,
+    "reference_min_slack": 22,
+    "rules_l0_critical_downtime": 0
+  },
+  "content_hash": "ca4f81dd52d5cc117b315215d1ac0eba"
+}

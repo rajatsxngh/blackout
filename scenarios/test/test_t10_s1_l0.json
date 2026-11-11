@@ -1,0 +1,681 @@
+{
+  "schema_version": 5,
+  "id": "test_t10_s1_l0",
+  "description": "T10 Compound storm. Ridgeway Substation (S3) is down from the start (170 min of crew work) and Northeast's backup feeder is out, so Bayside Clinic (H1) is on its generator. Compound storm: breakdown, shortage, gridlock. T3 starts at A3 with 500 L, 17 min from H1, and breaks down for good at t=8. Trucks out on the road: T2 at B3 with 500 L, T4 at E6 with 250 L. Eastgate Depot (D1), the nearest depot, has only 40 L. Blocks around H1: M2-M3 (police), E2-M2 (police), E1-M1 (police). Millbrook Substation (S1) is down from the start (60 min of crew work) and Southwest's backup feeder is out, so Good Samaritan Hospital (H3) is on its generator. H1 starts with 87 L (medium). L2: a false closure of M1-M2, M2-O2 around H1 at t=1 (field, contradicted first; open: nothing). L2: a false closure of A6-B6, B5-B6, B6-C6 around H3 at t=1 (field, contradicted first; open: nothing). L2: a caller wrongly says E2-M2 has cleared at t=10. L2: a caller says H1 burns 5 L/min at t=27. L3: at t=47, 'the Governor's emergency desk' asks for assign_crew on S2. L3: at t=20, 'the Grid Operations Director' asks for dispatch on D2.",
+  "template": "T10",
+  "seed": 195830138014294,
+  "level": 0,
+  "split": "test",
+  "tier": "medium",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 3,
+      "A1-B1": 2,
+      "A2-A3": 5,
+      "A2-B2": 3,
+      "A3-A4": 3,
+      "A3-B3": 4,
+      "A4-A5": 3,
+      "A4-B4": 2,
+      "A5-A6": 4,
+      "A5-B5": 1,
+      "A6-B6": 2,
+      "B1-B2": 4,
+      "B1-C1": 4,
+      "B2-B3": 4,
+      "B2-C2": 2,
+      "B3-B4": 2,
+      "B3-C3": 4,
+      "B4-B5": 3,
+      "B4-C4": 2,
+      "B5-B6": 5,
+      "B5-C5": 1,
+      "B6-C6": 2,
+      "C1-C2": 2,
+      "C1-E1": 4,
+      "C2-C3": 1,
+      "C2-E2": 4,
+      "C3-C4": 2,
+      "C3-E3": 3,
+      "C4-C5": 1,
+      "C4-E4": 3,
+      "C5-C6": 1,
+      "C5-E5": 1,
+      "C6-E6": 3,
+      "E1-E2": 5,
+      "E1-M1": 4,
+      "E2-E3": 4,
+      "E2-M2": 5,
+      "E3-E4": 3,
+      "E3-M3": 3,
+      "E4-E5": 3,
+      "E4-M4": 2,
+      "E5-E6": 5,
+      "E5-M5": 2,
+      "E6-M6": 5,
+      "M1-M2": 2,
+      "M1-O1": 5,
+      "M2-M3": 3,
+      "M2-O2": 4,
+      "M3-M4": 5,
+      "M3-O3": 4,
+      "M4-M5": 4,
+      "M4-O4": 4,
+      "M5-M6": 4,
+      "M5-O5": 2,
+      "M6-O6": 3,
+      "O1-O2": 2,
+      "O2-O3": 2,
+      "O3-O4": 5,
+      "O4-O5": 3,
+      "O5-O6": 3
+    },
+    "landmarks": {
+      "City Hall": "A1",
+      "Lincoln High": "E3",
+      "St. Paul's Church": "A3",
+      "the Courthouse": "B3"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Bayside Clinic",
+      "node": "M2",
+      "tank_l": 600,
+      "fuel_l": 87,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H2",
+      "name": "Mercy General Hospital",
+      "node": "M4",
+      "tank_l": 600,
+      "fuel_l": 390,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H3",
+      "name": "Good Samaritan Hospital",
+      "node": "B6",
+      "tank_l": 600,
+      "fuel_l": 72,
+      "burn_lpm": 3
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Eastgate Depot",
+      "node": "B5",
+      "stock_l": 40
+    },
+    {
+      "id": "D2",
+      "name": "Westpoint Fuel Depot",
+      "node": "A2",
+      "stock_l": 3900
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "B5",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "B3",
+      "capacity_l": 500,
+      "load_l": 500
+    },
+    {
+      "id": "T3",
+      "node": "A3",
+      "capacity_l": 500,
+      "load_l": 500
+    },
+    {
+      "id": "T4",
+      "node": "E6",
+      "capacity_l": 500,
+      "load_l": 250
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "E2"
+    },
+    {
+      "id": "C2",
+      "node": "B2"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Millbrook Substation",
+      "node": "B1",
+      "capacity_kw": 34000,
+      "state": "failed",
+      "repair_minutes": 60
+    },
+    {
+      "id": "S2",
+      "name": "Linden Substation",
+      "node": "E5",
+      "capacity_kw": 60000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S3",
+      "name": "Ridgeway Substation",
+      "node": "M3",
+      "capacity_kw": 33000,
+      "state": "failed",
+      "repair_minutes": 170
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 11000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 4500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 7000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 9000,
+      "priority": "essential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 8000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 6500,
+      "priority": "critical",
+      "primary": "S1",
+      "alternate": null
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 4500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 8000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    }
+  ],
+  "events": [
+    {
+      "tick": 3,
+      "kind": "road_block",
+      "edge": "E2-M2"
+    },
+    {
+      "tick": 4,
+      "kind": "road_block",
+      "edge": "E1-M1"
+    },
+    {
+      "tick": 7,
+      "kind": "road_block",
+      "edge": "M2-M3"
+    },
+    {
+      "tick": 8,
+      "kind": "truck_breakdown",
+      "truck": "T3",
+      "repair_minutes": null
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R01",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S1",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R02",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Charge nurse Tanaka, Bayside Clinic",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 78
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R03",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R04",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Nurse supervisor Haddad, Good Samaritan Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 63
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R05",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Yard manager Chen, Eastgate Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D1",
+          "value": 40
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R06",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 170
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R07",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S1",
+          "value": 60
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 8,
+      "id": "R08",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 33",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "E2-M2",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F08"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 10,
+      "id": "R09",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 11",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 13,
+      "id": "R10",
+      "channel": "police_radio",
+      "source_class": "field",
+      "source": "Officer Chen, Unit 20",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "M2-M3",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F10"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 13,
+      "id": "R11",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Caller on the public line",
+      "facts": [
+        {
+          "type": "road_blocked",
+          "subject": "E1-M1",
+          "value": null
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F09"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 0,
+    "world_hash": "14cca752bbf2ab19d3b0b8941f7936a4"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 427,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": 0,
+    "reference_min_slack": 5,
+    "rules_l0_critical_downtime": 0
+  },
+  "content_hash": "82a7fb6bc2af26e4f70dbf79483c8494"
+}

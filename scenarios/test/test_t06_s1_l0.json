@@ -1,0 +1,600 @@
+{
+  "schema_version": 5,
+  "id": "test_t06_s1_l0",
+  "description": "T06 Depot shortage. Quarry Substation (S2) is down from the start (210 min of crew work) and North's backup feeder is out, so Riverside Clinic (H1) is on its generator. Ironworks Depot (D2), the nearest depot, has only 40 L. Ridgeway Substation (S3) is down from the start (60 min of crew work) and Southeast's backup feeder is out, so County General Hospital (H3) is on its generator. H1 starts with 60 L (medium). L2: a false closure of C2-E2, E1-E2, E2-E3, E2-M2 around H1 at t=2 (field, contradicted first; open: nothing). L2: a false closure of M6-O6, O5-O6 around H3 at t=1 (unverified, contradicted first; open: nothing). L2: a caller says H3 burns 5 L/min at t=7. L3: at t=58, 'the Grid Operations Director' asks for dispatch on H2.",
+  "template": "T06",
+  "seed": 139322988606388,
+  "level": 0,
+  "split": "test",
+  "tier": "medium",
+  "horizon": 240,
+  "city": {
+    "width": 6,
+    "height": 6,
+    "default_travel_minutes": 2,
+    "travel_minutes": {
+      "A1-A2": 5,
+      "A1-B1": 5,
+      "A2-A3": 5,
+      "A2-B2": 2,
+      "A3-A4": 2,
+      "A3-B3": 3,
+      "A4-A5": 5,
+      "A4-B4": 5,
+      "A5-A6": 3,
+      "A5-B5": 4,
+      "A6-B6": 2,
+      "B1-B2": 4,
+      "B1-C1": 3,
+      "B2-B3": 3,
+      "B2-C2": 2,
+      "B3-B4": 2,
+      "B3-C3": 5,
+      "B4-B5": 2,
+      "B4-C4": 3,
+      "B5-B6": 2,
+      "B5-C5": 3,
+      "B6-C6": 3,
+      "C1-C2": 5,
+      "C1-E1": 3,
+      "C2-C3": 4,
+      "C2-E2": 2,
+      "C3-C4": 2,
+      "C3-E3": 2,
+      "C4-C5": 2,
+      "C4-E4": 2,
+      "C5-C6": 4,
+      "C5-E5": 4,
+      "C6-E6": 3,
+      "E1-E2": 4,
+      "E1-M1": 2,
+      "E2-E3": 4,
+      "E2-M2": 1,
+      "E3-E4": 2,
+      "E3-M3": 2,
+      "E4-E5": 3,
+      "E4-M4": 3,
+      "E5-E6": 5,
+      "E5-M5": 5,
+      "E6-M6": 2,
+      "M1-M2": 1,
+      "M1-O1": 3,
+      "M2-M3": 1,
+      "M2-O2": 1,
+      "M3-M4": 1,
+      "M3-O3": 3,
+      "M4-M5": 2,
+      "M4-O4": 2,
+      "M5-M6": 2,
+      "M5-O5": 5,
+      "M6-O6": 5,
+      "O1-O2": 4,
+      "O2-O3": 2,
+      "O3-O4": 5,
+      "O4-O5": 2,
+      "O5-O6": 3
+    },
+    "landmarks": {
+      "City Hall": "B2",
+      "Grand Theater": "E5",
+      "Riverside Park": "M4",
+      "the Farmers Market": "O1"
+    }
+  },
+  "hospitals": [
+    {
+      "id": "H1",
+      "name": "Riverside Clinic",
+      "node": "E2",
+      "tank_l": 600,
+      "fuel_l": 60,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H2",
+      "name": "Hillcrest Hospital",
+      "node": "E3",
+      "tank_l": 600,
+      "fuel_l": 130,
+      "burn_lpm": 3
+    },
+    {
+      "id": "H3",
+      "name": "County General Hospital",
+      "node": "O6",
+      "tank_l": 600,
+      "fuel_l": 72,
+      "burn_lpm": 3
+    }
+  ],
+  "depots": [
+    {
+      "id": "D1",
+      "name": "Southfield Fuel Yard",
+      "node": "M5",
+      "stock_l": 3800
+    },
+    {
+      "id": "D2",
+      "name": "Ironworks Depot",
+      "node": "C2",
+      "stock_l": 40
+    }
+  ],
+  "trucks": [
+    {
+      "id": "T1",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T2",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T3",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    },
+    {
+      "id": "T4",
+      "node": "C2",
+      "capacity_l": 500,
+      "load_l": 0
+    }
+  ],
+  "crews": [
+    {
+      "id": "C1",
+      "node": "M5"
+    },
+    {
+      "id": "C2",
+      "node": "O1"
+    }
+  ],
+  "substations": [
+    {
+      "id": "S1",
+      "name": "Kingsley Substation",
+      "node": "A5",
+      "capacity_kw": 47000,
+      "state": "online",
+      "repair_minutes": null
+    },
+    {
+      "id": "S2",
+      "name": "Quarry Substation",
+      "node": "C5",
+      "capacity_kw": 32000,
+      "state": "failed",
+      "repair_minutes": 210
+    },
+    {
+      "id": "S3",
+      "name": "Ridgeway Substation",
+      "node": "O4",
+      "capacity_kw": 39000,
+      "state": "failed",
+      "repair_minutes": 60
+    }
+  ],
+  "zones": [
+    {
+      "id": "Z1",
+      "name": "Northwest",
+      "nodes": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "demand_kw": 12000,
+      "priority": "essential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z2",
+      "name": "North",
+      "nodes": [
+        "C1",
+        "C2",
+        "E1",
+        "E2"
+      ],
+      "demand_kw": 8000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": null
+    },
+    {
+      "id": "Z3",
+      "name": "Northeast",
+      "nodes": [
+        "M1",
+        "M2",
+        "O1",
+        "O2"
+      ],
+      "demand_kw": 8500,
+      "priority": "residential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z4",
+      "name": "West",
+      "nodes": [
+        "A3",
+        "A4",
+        "B3",
+        "B4"
+      ],
+      "demand_kw": 12000,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z5",
+      "name": "Downtown",
+      "nodes": [
+        "C3",
+        "C4",
+        "E3",
+        "E4"
+      ],
+      "demand_kw": 4000,
+      "priority": "critical",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z6",
+      "name": "East",
+      "nodes": [
+        "M3",
+        "M4",
+        "O3",
+        "O4"
+      ],
+      "demand_kw": 9000,
+      "priority": "essential",
+      "primary": "S3",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z7",
+      "name": "Southwest",
+      "nodes": [
+        "A5",
+        "A6",
+        "B5",
+        "B6"
+      ],
+      "demand_kw": 6500,
+      "priority": "residential",
+      "primary": "S1",
+      "alternate": "S2"
+    },
+    {
+      "id": "Z8",
+      "name": "South",
+      "nodes": [
+        "C5",
+        "C6",
+        "E5",
+        "E6"
+      ],
+      "demand_kw": 9500,
+      "priority": "residential",
+      "primary": "S2",
+      "alternate": "S1"
+    },
+    {
+      "id": "Z9",
+      "name": "Southeast",
+      "nodes": [
+        "M5",
+        "M6",
+        "O5",
+        "O6"
+      ],
+      "demand_kw": 5000,
+      "priority": "critical",
+      "primary": "S3",
+      "alternate": null
+    }
+  ],
+  "events": [
+    {
+      "kind": "report",
+      "tick": 1,
+      "id": "R01",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Resident, 311 line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R02",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Duty manager Abara, Riverside Clinic",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H1",
+          "value": 54
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F02"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R03",
+      "channel": "public",
+      "source_class": "unverified",
+      "source": "Text tip line",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R04",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S3",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F03"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 2,
+      "id": "R05",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 1",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S3",
+          "value": 60
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F04"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R06",
+      "channel": "depot_staff",
+      "source_class": "field",
+      "source": "Depot supervisor Diaz, Ironworks Depot",
+      "facts": [
+        {
+          "type": "depot_stock",
+          "subject": "D2",
+          "value": 40
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F05"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R07",
+      "channel": "crew_radio",
+      "source_class": "verified",
+      "source": "Grid control center",
+      "facts": [
+        {
+          "type": "substation_status",
+          "subject": "S2",
+          "value": "failed"
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F01"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 3,
+      "id": "R08",
+      "channel": "hospital_staff",
+      "source_class": "field",
+      "source": "Facilities manager Kowalski, County General Hospital",
+      "facts": [
+        {
+          "type": "hospital_fuel",
+          "subject": "H3",
+          "value": 63
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F06"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    },
+    {
+      "kind": "report",
+      "tick": 4,
+      "id": "R09",
+      "channel": "crew_radio",
+      "source_class": "field",
+      "source": "Line crew 2",
+      "facts": [
+        {
+          "type": "repair_eta",
+          "subject": "S2",
+          "value": 210
+        }
+      ],
+      "text": null,
+      "truth": {
+        "is_true": true,
+        "from_level": 0,
+        "cues": [],
+        "stale_of": null,
+        "corrects": null,
+        "injection": null,
+        "fact_ids": [
+          "F07"
+        ],
+        "bank": null,
+        "phrasings": [],
+        "noise": []
+      }
+    }
+  ],
+  "generator": {
+    "version": 3,
+    "config_digest": "17d9caaab3f6116518dd113b7270e78e",
+    "attempt": 0,
+    "world_hash": "f7f5144145bee0156e80b4bef01d2ccf"
+  },
+  "validity": {
+    "do_nothing_critical_downtime": 436,
+    "do_nothing_trips": 0,
+    "reference_critical_downtime": 0,
+    "reference_min_slack": 1,
+    "rules_l0_critical_downtime": 0
+  },
+  "content_hash": "1058102a5cc393872985def031c0fca4"
+}
