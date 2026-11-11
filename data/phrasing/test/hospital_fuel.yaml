@@ -1,0 +1,32 @@
+fact_type: hospital_fuel
+phrasings:
+  - id: tf01
+    text: "{hospital}, generator tank reading: {liters} remaining."
+    channels: [hospital_staff]
+  - id: tf02
+    text: "We've got {liters} left in the generator tank at {hospital}. Please record that."
+    channels: [hospital_staff]
+  - id: tf03
+    text: "{liters} remains in {hospital}'s generator fuel tank."
+    channels: [hospital_staff]
+  - id: tf04
+    text: "I've checked the gauge again. Generator fuel remaining at {hospital} is {liters}."
+    channels: [hospital_staff]
+  - id: tf05
+    text: "Tank check completed {when}: {hospital} has {liters} left for its generator."
+    channels: [hospital_staff]
+  - id: tf06
+    text: "Staff asked me to relay this: the generator tank at {hospital} contains {liters}."
+    channels: [public]
+  - id: tf07
+    text: "{hospital}'s fuel update says {liters} remains in the generator tank."
+    channels: [public]
+  - id: tf08
+    text: "I'm reading the posted tank check for {hospital}: generator fuel left, {liters}."
+    channels: [public]
+  - id: tf09
+    text: "{liters} left in the generator tank—that's the staff report from {hospital}."
+    channels: [public]
+  - id: tf10
+    text: "The staff confirmed the remaining generator tank contents at {hospital}: {liters}."
+    channels: [public]

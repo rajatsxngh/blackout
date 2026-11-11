@@ -1,0 +1,32 @@
+fact_type: depot_stock
+phrasings:
+  - id: td01
+    text: "{depot} holds {liters} of fuel in total."
+    channels: [depot_staff]
+  - id: td02
+    text: "{liters} in fuel stock at {depot}. Inventory checked."
+    channels: [depot_staff]
+  - id: td03
+    text: "Current fuel inventory for {depot}: {liters}."
+    channels: [depot_staff]
+  - id: td04
+    text: "Finished the stock check {when}. {depot} has {liters} of fuel on hand."
+    channels: [depot_staff]
+  - id: td05
+    text: "For your ledger, total fuel held at {depot} stands at {liters}."
+    channels: [depot_staff]
+  - id: td06
+    text: "The inventory notice at {depot} lists {liters} of fuel in stock."
+    channels: [public]
+  - id: td07
+    text: "{depot}'s staff confirmed they have {liters} of fuel on hand."
+    channels: [public]
+  - id: td08
+    text: "{liters} is the total fuel stock at {depot}, according to its inventory update."
+    channels: [public]
+  - id: td09
+    text: "I'm relaying the stock report for {depot}: fuel held, {liters}."
+    channels: [public]
+  - id: td10
+    text: "They've checked the fuel inventory at {depot}. The total is {liters}."
+    channels: [public]

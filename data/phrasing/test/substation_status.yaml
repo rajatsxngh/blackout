@@ -1,0 +1,46 @@
+fact_type: substation_status
+phrasings:
+  - id: ts01
+    value: failed
+    text: "{substation} has suffered equipment failure and cannot supply power."
+    channels: [crew_radio]
+  - id: ts02
+    value: failed
+    text: "Confirmed equipment failure at {substation}. It is out of service."
+    channels: [crew_radio]
+  - id: ts03
+    value: failed
+    text: "The utility notice says equipment has failed at {substation}; it cannot supply electricity."
+    channels: [public]
+  - id: ts04
+    value: tripped
+    text: "Protection tripped at {substation}, disconnecting its supply."
+    channels: [crew_radio]
+  - id: ts05
+    value: tripped
+    text: "{substation} is disconnected following a protective trip {when}."
+    channels: [crew_radio]
+  - id: ts06
+    value: tripped
+    text: "The utility confirmed that {substation} has tripped off. Its protective system cut the supply."
+    channels: [public]
+  - id: ts07
+    value: online
+    text: "{substation} is energized and supplying power normally."
+    channels: [crew_radio]
+  - id: ts08
+    value: online
+    text: "Normal supply restored {when} from {substation}. It's operating."
+    channels: [crew_radio]
+  - id: ts09
+    value: online
+    text: "Good news from the utility: {substation} is operating and supplying electricity again."
+    channels: [public]
+  - id: ts10
+    value: repairing
+    text: "Repair work is underway at {substation}. Crew is working on the equipment now."
+    channels: [crew_radio]
+  - id: ts11
+    value: repairing
+    text: "The crew confirmed they're actively repairing {substation} now."
+    channels: [public]

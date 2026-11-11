@@ -1,0 +1,114 @@
+rates:
+  typo_pct: [3, 6]
+  abbreviation_pct: 35
+  slang_pct: 30
+  hedge_pct: 30
+  open_pct: 60
+  filler_pct: 25
+  close_pct: 35
+abbreviations:
+  information: info
+  department: dept
+  equipment: equip
+  maintenance: maint
+  operations: ops
+  message: msg
+  approximately: approx
+  emergency: emerg
+  generator: gen
+  inventory: inv
+  remaining: rem
+  confirmed: conf
+slang:
+  vehicle: [motor]
+  vehicles: [motors]
+  equipment: [gear, kit]
+  supervisor: [boss]
+  exhausted: [worn out, beat]
+  immediately: [right away, straight away]
+  inspect: [check out, look over]
+  report: [update]
+hedges:
+  prefix:
+    - "For what it's worth,"
+    - "If this helps,"
+    - "Just passing this along:"
+    - "For your awareness,"
+    - "If you need the update,"
+    - "Hope this helps:"
+  suffix:
+    - "if that helps."
+    - "for your awareness."
+    - "for what it's worth."
+    - "if you need that for the log."
+    - "in case that helps your planning."
+    - "if that's useful."
+chatter:
+  open:
+    police_radio:
+      - "Control, {callsign} calling."
+      - "Dispatch, traffic report."
+      - "Good evening, control."
+      - "{callsign} with an update."
+    crew_radio:
+      - "Control, crew report."
+      - "{callsign} calling operations."
+      - "Foreman here, go ahead and log this."
+      - "Evening, dispatch. Field update."
+    hospital_staff:
+      - "Duty nurse speaking."
+      - "Facilities desk calling."
+      - "Sorry for the rush, here's our update."
+      - "Hello, staff report coming through."
+    depot_staff:
+      - "Stock desk reporting."
+      - "{callsign} calling dispatch."
+      - "Shift supervisor here."
+      - "Evening, inventory update."
+    public:
+      - "Hello, I've got an update."
+      - "Hi, thanks for taking my call."
+      - "Sorry to bother you, here's the report."
+      - "Hello there, I'll keep this brief."
+  filler:
+    - "Bear with me."
+    - "Let me read this clearly."
+    - "Sorry about the background chatter."
+    - "Thanks for staying with me."
+    - "I'll keep it brief."
+    - "Putting that on the record."
+    - "Please add that to the log."
+    - "Right, carrying on."
+  close:
+    police_radio:
+      - "Over."
+      - "Report ends."
+      - "Back to you, control."
+      - "{callsign} standing by."
+    crew_radio:
+      - "Crew standing by."
+      - "That's the field report."
+      - "Back to work. Over."
+      - "{callsign} signing off."
+    hospital_staff:
+      - "Please log that. Thank you."
+      - "I need to get back to work."
+      - "That's our update."
+      - "Staff report complete."
+    depot_staff:
+      - "Stock report complete."
+      - "Standing by for dispatch."
+      - "Thank you kindly. Over."
+      - "That's the inventory update."
+    public:
+      - "Thanks for listening."
+      - "That's all I needed to report."
+      - "I'll let you get back to it."
+      - "Take care. Goodbye."
+  connectors:
+    - "Also,"
+    - "Separately,"
+    - "Another report:"
+    - "Moving on,"
+    - "In addition,"
+    - "Next update:"

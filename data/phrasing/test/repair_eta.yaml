@@ -1,0 +1,32 @@
+fact_type: repair_eta
+phrasings:
+  - id: te01
+    text: "{duration} remaining until repairs are complete at {substation}."
+    channels: [crew_radio]
+  - id: te02
+    text: "{substation}: repair completion is due in {duration}."
+    channels: [crew_radio]
+  - id: te03
+    text: "Put us down for another {duration} to finish repairing {substation}."
+    channels: [crew_radio]
+  - id: te04
+    text: "For the repair log, {substation} has {duration} of work remaining."
+    channels: [crew_radio]
+  - id: te05
+    text: "Updated repair ETA for {substation}: completion in {duration} from now."
+    channels: [crew_radio]
+  - id: te06
+    text: "The crew says repairs at {substation} will take another {duration}."
+    channels: [public]
+  - id: te07
+    text: "{duration} until the repair is finished, according to the notice for {substation}."
+    channels: [public]
+  - id: te08
+    text: "I'm passing on the utility update: repair work at {substation} finishes in {duration}."
+    channels: [public]
+  - id: te09
+    text: "{substation} still needs {duration} of repair work, starting from now."
+    channels: [public]
+  - id: te10
+    text: "They've given us the remaining repair time for {substation}: {duration}."
+    channels: [public]

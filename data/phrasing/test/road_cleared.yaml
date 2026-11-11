@@ -1,0 +1,32 @@
+fact_type: road_cleared
+phrasings:
+  - id: tc01
+    text: "{road} is passable again in both directions."
+    channels: [police_radio]
+  - id: tc02
+    text: "Lift the closure on {road}. Vehicles can get through again."
+    channels: [police_radio]
+  - id: tc03
+    text: "Traffic resumed {when} on {road}. Both directions are open."
+    channels: [police_radio]
+  - id: tc04
+    text: "Please be advised, normal vehicle passage has been restored on {road}."
+    channels: [police_radio]
+  - id: tc05
+    text: "Finally got traffic moving again. {road} is open in both directions."
+    channels: [police_radio]
+  - id: tc06
+    text: "You can drive through {road} again. The closure has ended."
+    channels: [public]
+  - id: tc07
+    text: "{road} has reopened to vehicles; traffic is going through both ways."
+    channels: [public]
+  - id: tc08
+    text: "Calling back with an update: {road} is clear for vehicles again."
+    channels: [public]
+  - id: tc09
+    text: "The obstruction is gone from {road}. Vehicles can pass again."
+    channels: [public]
+  - id: tc10
+    text: "They reopened {road} {when}. It's drivable in both directions now."
+    channels: [public]

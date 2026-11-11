@@ -1,0 +1,32 @@
+fact_type: road_blocked
+phrasings:
+  - id: tb01
+    text: "{road} is impassable to vehicles. Keep traffic out."
+    channels: [police_radio]
+  - id: tb02
+    text: "No vehicle can get through {road}. I've checked the whole segment."
+    channels: [police_radio]
+  - id: tb03
+    text: "Please advise all drivers: {road} is closed to vehicular passage."
+    channels: [police_radio]
+  - id: tb04
+    text: "We've stopped traffic. {road} cannot be driven through."
+    channels: [police_radio]
+  - id: tb05
+    text: "{when}, we confirmed that {road} is impassable in both directions."
+    channels: [police_radio]
+  - id: tb06
+    text: "I'm calling about {road}. Vehicles can't get through in either direction."
+    channels: [public]
+  - id: tb07
+    text: "Nobody can drive through {road}; the entire passage is shut."
+    channels: [public]
+  - id: tb08
+    text: "Had to turn the car around. {road} is completely impassable to vehicles."
+    channels: [public]
+  - id: tb09
+    text: "{road} is closed to all vehicles. Please put that in your traffic updates."
+    channels: [public]
+  - id: tb10
+    text: "Just reporting the closure: there's no vehicle access through {road}."
+    channels: [public]

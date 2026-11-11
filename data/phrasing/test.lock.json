@@ -1,0 +1,16 @@
+{
+  "bank": "test",
+  "minimum_phrasings": 8,
+  "digest": "f83858b06c87a7955b7bd5365016eb9b",
+  "files": {
+    "_injection.yaml": "6d4d8e8645a9aba4ebff6ef72603405b",
+    "_noise.yaml": "3a7ab43ca2c23541becaabbc3811a834",
+    "burn_spike.yaml": "5c3a241397ea5936170c9057c353ded9",
+    "depot_stock.yaml": "775dfa7d578079bec52d6242c9bb8cbf",
+    "hospital_fuel.yaml": "fafb2077ec2a65145f065ecdc1aaa04c",
+    "repair_eta.yaml": "41ff459fcc7d01d25735136e008d4056",
+    "road_blocked.yaml": "f763cd91b9dcaad1b97c34e622ff94a8",
+    "road_cleared.yaml": "4847bcce38f654b83d1c6a1768fa57c4",
+    "substation_status.yaml": "563a011f3c9a69ad188af9e11a5e5980"
+  }
+}

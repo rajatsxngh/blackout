@@ -1,0 +1,32 @@
+fact_type: burn_spike
+phrasings:
+  - id: tk01
+    text: "{hospital}'s generator fuel consumption has risen to {rate}."
+    channels: [hospital_staff]
+  - id: tk02
+    text: "{rate} is the new, higher fuel burn rate for the generator at {hospital}."
+    channels: [hospital_staff]
+  - id: tk03
+    text: "Please update the fuel sheet. The generator at {hospital} is now consuming fuel at {rate}, up from its previous rate."
+    channels: [hospital_staff]
+  - id: tk04
+    text: "Fuel draw increased {when} at {hospital}. The generator now burns {rate}."
+    channels: [hospital_staff]
+  - id: tk05
+    text: "We've confirmed the increase: {hospital}'s generator is using fuel at {rate} now."
+    channels: [hospital_staff]
+  - id: tk06
+    text: "Staff say the generator at {hospital} is burning fuel faster now, at {rate}."
+    channels: [public]
+  - id: tk07
+    text: "{hospital} posted a fuel-use increase. Its generator's new consumption rate is {rate}."
+    channels: [public]
+  - id: tk08
+    text: "The new rate is {rate} for {hospital}'s generator. Staff confirmed that's an increase."
+    channels: [public]
+  - id: tk09
+    text: "Passing along the staff update from {hospital}: generator fuel burn has climbed to {rate}."
+    channels: [public]
+  - id: tk10
+    text: "The generator is using more fuel at {hospital}; the confirmed new rate is {rate}."
+    channels: [public]
