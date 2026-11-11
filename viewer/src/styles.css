@@ -402,6 +402,11 @@ button.active {
   font-size: 12px;
   margin-left: 10px;
 }
+.notes {
+  color: var(--muted);
+  margin-top: 3px;
+  white-space: pre-wrap;
+}
 .quote {
   margin-top: 3px;
   font-style: italic;

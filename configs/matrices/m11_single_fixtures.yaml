@@ -1,0 +1,12 @@
+# C5 Single and C6 Single + Solver end to end with no API calls: the dev scenarios that have
+# synthetic replies in tests/fixtures/llm_recordings/c5_synthetic and c6_synthetic (see
+# tests/llm_fixtures.py). It checks the pipeline (harness, tools, fixtures, guard, logs,
+# tables), not Claude. C6's replies embed CP-SAT plans, which match only on Windows, where they
+# were authored (D084); elsewhere its runs stop with a missing fixture.
+#   uv run blackout batch --matrix configs/matrices/m11_single_fixtures.yaml
+experiment: m11_single_fixtures
+suite: dev
+contestants: [llm-single, llm-single-solver]
+scenarios: [dev_t01_s0_l0, dev_t02_s0_l1, dev_t01_s0_l3]
+llm_mode: fixture
+fixtures: tests/fixtures/llm_recordings

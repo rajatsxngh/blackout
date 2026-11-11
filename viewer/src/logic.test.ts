@@ -15,7 +15,7 @@ import {
   vehiclePoint,
   type MapIndex,
 } from "./logic";
-import type { Belief, Decision, Run, VehicleFrame } from "./types";
+import { type Belief, type Decision, type Run, type VehicleFrame, VIEWER_DATA_VERSION } from "./types";
 
 const index: MapIndex = {
   node: new Map([
@@ -42,10 +42,11 @@ const decision = (i: number, t: number, raws: Record<string, unknown>[], belief:
   actions: raws.map((raw) => ({ kind: String(raw.kind), raw, accepted: true, reason: null, message: "", route: [] })),
   belief,
   llm: null,
+  notes: null,
 });
 
 const run = (decisions: Decision[], extra: Partial<Run> = {}): Run => ({
-  v: 1,
+  v: VIEWER_DATA_VERSION,
   run_id: "s/x",
   scenario: "s",
   contestant: "x",

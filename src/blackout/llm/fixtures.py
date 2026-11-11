@@ -66,14 +66,23 @@ def write_fixture(
 
 
 def stored_request(body: dict[str, Any]) -> dict[str, Any]:
-    """The request as a fixture keeps it: system blocks (long and the same in every call of a
-    run) are replaced by their SHA-256, so fixture files stay small. The cache key still
-    covers the full text."""
+    """The request as a fixture keeps it: system blocks and tool definitions (long and the
+    same in every call of a run) are replaced by their SHA-256, so fixture files stay small.
+    The cache key still covers the full text."""
     system = [
         {**block, "text": "sha256:" + hashlib.sha256(block["text"].encode()).hexdigest()}
         for block in body.get("system", [])
     ]
-    return {**body, "system": system}
+    stored = {**body, "system": system}
+    if "tools" in body:
+        stored["tools"] = [
+            {
+                "name": tool["name"],
+                "sha256": hashlib.sha256(canonical_json(tool).encode()).hexdigest(),
+            }
+            for tool in body["tools"]
+        ]
+    return stored
 
 
 class FixtureTransport:

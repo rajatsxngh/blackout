@@ -1,0 +1,125 @@
+{
+ "key": "d547d7cf5ffb7c65b21d6ed3ab8accbad86a509e567e707354785142efa8baec",
+ "latency_ms": 0,
+ "origin": "synthetic",
+ "request": {
+  "max_tokens": 16000,
+  "messages": [
+   {
+    "content": "# Decision point 27: t=139 of 240\nWoken by: heartbeat\n\n## Hospitals\n- H1: on_grid, grid; fuel 290/600 L, burn 3 L/min, has grid power\n- H2: on_generator, NO GRID; fuel 378/600 L, burn 3 L/min, dry in ~126 min\n- H3: on_generator, NO GRID; fuel 411/600 L, burn 3 L/min, dry in ~137 min\n\n## Trucks\n- T1: idle at E6, load 0/500 L, no task\n- T2: idle at C3, load 0/500 L, no task\n- T3: idle at M6, load 0/500 L, no task\n- T4: idle at C3, load 0/500 L, no task\n\n## Crews\n- C1: repairing at E3, for S2\n- C2: idle at B1\n\n## Substations\n- S1: online, load 16500/34000 kW (49%)\n- S2: repairing, load 0/32000 kW (0%), 65 min of crew work left, crew C1 on site\n- S3: online, load 30500/34000 kW (90%)\n\n## Zones\n- Z1 (essential, 6500 kW): fed by S1\n- Z2 (essential, 5000 kW): fed by S3\n- Z3 (residential, 8000 kW): fed by S3\n- Z4 (critical, 4000 kW): fed by S1\n- Z5 (critical, 5000 kW): UNPOWERED\n- Z6 (residential, 6000 kW): fed by S3\n- Z7 (residential, 6000 kW): fed by S1\n- Z8 (critical, 6000 kW): UNPOWERED\n- Z9 (residential, 11500 kW): fed by S3\n\n## Depots\n- D1: stock 0 L\n- D2: stock 0 L\n\n## Roads (telemetry)\n- no blocks discovered by telemetry\n\n## Confirmations\n- waiting for: none; confirmations left: 4\n\n## New reports\n(none)\n\n## Your belief table\n| item | believed | as of | source | confidence |\n|---|---|---|---|---|\n| H1 fuel now | 290 L | t139 | telemetry | 100% |\n| H1 burn | 3 L/min | t139 | telemetry | 100% |\n| H2 fuel now | 378 L | t139 | telemetry | 100% |\n| H2 burn | 3 L/min | t139 | telemetry | 100% |\n| H3 fuel now | 411 L | t139 | telemetry | 100% |\n| H3 burn | 3 L/min | t139 | telemetry | 100% |\n| S1 state | online | t139 | telemetry | 100% |\n| S2 state | repairing | t139 | telemetry | 100% |\n| S2 work left | 65 min | t139 | telemetry | 100% |\n| S3 state | online | t139 | telemetry | 100% |\n| D1 stock | 0 L | t139 | telemetry | 100% |\n| D2 stock | 0 L | t139 | telemetry | 100% |\n| road C4-C5 | blocked | t29 | R15 | 85% |\n| road B3-C3 | open | t0 | R01 | 85% |\n| road C2-C3 | open | t0 | R01 | 85% |\n| road C3-C4 | open | t0 | R01 | 85% |\n| road C3-E3 | open | t0 | R01 | 85% |\n| road C6-E6 | open | t0 | R02 | 98% |\n| road E5-E6 | open | t0 | R02 | 98% |\n| road E6-M6 | open | t0 | R02 | 98% |\n\n## Your last actions\n- t14 T2 deliver H2: ok, route E1>C1>C2>C3, arriving in 6 min (\"plan fits my beliefs | plan: 333 L to H2, lands t25\")\n- t25 T2 deliver H3: ok, route C3>E3>E4>E5>E6, arriving in 13 min (\"plan fits my beliefs | plan: 148 L to H3, lands t43\")\n- t52 T2 load D1: ok, route E6>C6>C5>B5>A5, arriving in 7 min (\"plan fits my beliefs | plan: load D1 for H2, lands t78\")\n- t64 T2 deliver H3: ok, route A5>B5>C5>C6>E6, arriving in 7 min (\"plan fits my beliefs | plan: 99 L to H3, lands t76\")\n- t76 T2 deliver H2: ok, route E6>E5>E4>E3>C3, arriving in 13 min (\"plan fits my beliefs | plan: 120 L to H2, lands t94\")\n\n## Your notes from last turn\nt124: carried out the solver's plan; watch the reports.\n\nDecide now: act with the tools, then call end_turn with your notes.\n",
+    "role": "user"
+   }
+  ],
+  "model": "claude-haiku-5-5",
+  "output_config": {
+   "effort": "medium"
+  },
+  "system": [
+   {
+    "cache_control": {
+     "type": "ephemeral"
+    },
+    "text": "sha256:67efdfe74f25896f28e5fd11cddeb5cad1e6df6406f4752df1870e165e16fd0f",
+    "type": "text"
+   },
+   {
+    "cache_control": {
+     "type": "ephemeral"
+    },
+    "text": "sha256:bd18f72f94e7cc8036fd941a9bf1b79f1ab64bbe8b86f294f1d16d5562d1d03f",
+    "type": "text"
+   }
+  ],
+  "thinking": {
+   "type": "adaptive"
+  },
+  "tool_choice": {
+   "type": "auto"
+  },
+  "tools": [
+   {
+    "name": "accept_plan",
+    "sha256": "da1281f5a8f15542a8d8af38a46e8ed97e161b4c38564bb9f923c58b57edf1bd"
+   },
+   {
+    "name": "assign_crew",
+    "sha256": "e6ff82567c4a4f542512ccd6704aea728a8e75542ccc6aad2a4d7600c512c873"
+   },
+   {
+    "name": "call_solver",
+    "sha256": "3c11f9566e692f4376c35fb8674c8d1ff6aeb1fba804109fa3eb1b0b13048917"
+   },
+   {
+    "name": "confirm_report",
+    "sha256": "21b67e61e5b383c0883f217c8fe12c145e01bcbecd87e9aba34c7aa7871ab864"
+   },
+   {
+    "name": "dispatch_truck",
+    "sha256": "fda541c762efebba429eec81bbdc67e76edcdc263c8ede8f350221fcbc9a2ea5"
+   },
+   {
+    "name": "end_turn",
+    "sha256": "8672672e463f8f0b514a25ba9c638176c58542360ffb076ff535b9c9e38b503d"
+   },
+   {
+    "name": "get_status",
+    "sha256": "20b2f8a592ff5d33b038ddf421b241ade6d13d2a2df0e6b1260ae1df6ab8d8b6"
+   },
+   {
+    "name": "query_graph",
+    "sha256": "294797a006951db3edf10962435614bc1e0ae51ae2f744cef78037bd1a25da0f"
+   },
+   {
+    "name": "reroute",
+    "sha256": "5a911b38a3fd28d1326e874b3ba527c82fd4340fb2117edc35945c429f3b77d5"
+   },
+   {
+    "name": "restore_load",
+    "sha256": "604a662d36a660b5cd4b6feb3c66c0c203441f73747c47ed9972bb978e785f6c"
+   },
+   {
+    "name": "shed_load",
+    "sha256": "8ff80dff4425f276b5605fa4f522b114b0daf2be45215e211847f46d7b3d660e"
+   },
+   {
+    "name": "update_belief",
+    "sha256": "0d4c1aa3e6178e1ed53a492fc38df7edae339d1088f11432815bb3fc34a8b07a"
+   }
+  ]
+ },
+ "response": {
+  "content": [
+   {
+    "text": "Recording the new reports, then planning.",
+    "type": "text"
+   },
+   {
+    "id": "toolu_d547d7cf5ffb7c65_0",
+    "input": {
+     "overrides": {
+      "blocked_roads": [],
+      "burn_lpm": [],
+      "cleared_roads": [],
+      "fuel_l": [],
+      "pin": [],
+      "priority": [],
+      "unavailable_trucks": []
+     }
+    },
+    "name": "call_solver",
+    "type": "tool_use"
+   }
+  ],
+  "fallback": false,
+  "id": "msg_synthetic_d547d7cf5ffb7c65",
+  "model": "claude-haiku-5-5",
+  "stop_details": null,
+  "stop_reason": "tool_use",
+  "usage": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 9616,
+   "input_tokens": 779,
+   "output_tokens": 109
+  }
+ }
+}

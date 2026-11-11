@@ -37,7 +37,7 @@ from blackout.scenarios.schema import Scenario
 from blackout.sim.city import build_grid_city
 from blackout.sim.engine import Engine
 
-VIEWER_DATA_VERSION = 1
+VIEWER_DATA_VERSION = 2  # 2: decisions carry the agent's notes (M11)
 MANIFEST_FILE = "manifest.json"
 
 
@@ -270,6 +270,8 @@ def run_file(log: RunLog) -> dict[str, object]:
             "belief": dp.belief,
             # Tokens and cost (LLM contestants, M10 on); None for the baselines.
             "llm": None if dp.llm is None else dp.llm.model_dump(mode="json"),
+            # The notes an LLM agent carried to its next turn (M11); None for the others.
+            "notes": dp.notes,
         }
         for dp in log.decisions
     ]

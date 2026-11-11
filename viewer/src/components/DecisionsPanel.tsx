@@ -103,6 +103,7 @@ export const DecisionsPanel = memo(function DecisionsPanel({ runs, tick, diverge
                 )}
               </div>
             ))}
+            {d.notes && <div className="notes small">notes: {d.notes}</div>}
           </li>
         ))}
       </ol>

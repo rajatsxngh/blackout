@@ -70,10 +70,10 @@ def code_digest() -> str:
     return digest(parts)
 
 
-def llm_prompt_hash() -> str:
-    from blackout.controllers.llm_parser import prompt_hash
+def llm_prompt_hash(contestant: str) -> str:
+    from blackout.controllers.registry import prompt_hash_for
 
-    return prompt_hash()
+    return prompt_hash_for(contestant)
 
 
 def run_config(
@@ -95,7 +95,7 @@ def run_config(
     if llm is not None:
         config["llm"] = {
             "effort": effort,
-            "prompt_hash": llm_prompt_hash(),
+            "prompt_hash": llm_prompt_hash(contestant),
             "harness": HARNESS_VERSION,
             "mode": llm.mode,
         }
@@ -335,7 +335,7 @@ def _register(outcomes: list[Outcome]) -> None:
             "experiment": job.experiment,
             "run_dir": job.run_dir.as_posix(),
             "config_hash": job.config_hash,
-            "prompt_hash": None if job.llm is None else llm_prompt_hash(),
+            "prompt_hash": None if job.llm is None else llm_prompt_hash(job.contestant),
             "run_hash": outcome.card.run_hash,
         }
         if job.llm is not None:

@@ -1,11 +1,12 @@
 """The interface every contestant implements."""
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
 from typing import Any, Protocol
 
 from blackout.info.belief import BeliefState
 from blackout.info.observation import Observation
-from blackout.sim.actions import AnyAction
+from blackout.sim.actions import ActionResult, AnyAction
 
 
 class Controller(Protocol):
@@ -24,6 +25,25 @@ class Controller(Protocol):
     def decide(self, observation: Observation) -> Sequence[AnyAction]:
         """Actions to take at this decision point (possibly none)."""
         ...
+
+
+@dataclass(frozen=True, slots=True)
+class Actor:
+    """What a contestant that acts as it goes (an LLM agent's action tools, PRD 8.8) gets at a
+    decision point: ``act`` validates and applies one action immediately (``env.act``), and
+    ``observe`` shows the role's view right now, including what this turn's actions did. The
+    clock stays paused, so acting this way changes nothing a list of actions wouldn't."""
+
+    act: Callable[[AnyAction], ActionResult]
+    observe: Callable[[], Observation]
+
+
+def acts_live(controller: object) -> bool:
+    """Whether the contestant acts through an ``Actor`` (``decide_live(observation, actor)``)
+    instead of returning its actions from ``decide``."""
+    return getattr(controller, "acts_live", False) is True and callable(
+        getattr(controller, "decide_live", None)
+    )
 
 
 def uses_truth(controller: object) -> bool:

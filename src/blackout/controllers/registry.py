@@ -7,9 +7,12 @@ needs a script, so it isn't here.
 
 from collections.abc import Callable
 
+from blackout.controllers.agents.harness import prompt_hash as agent_prompt_hash
+from blackout.controllers.agents.single import SingleAgentController, SingleSolverController
 from blackout.controllers.base import Controller
 from blackout.controllers.do_nothing import DoNothingController
 from blackout.controllers.llm_parser import LLMParserController
+from blackout.controllers.llm_parser import prompt_hash as parser_prompt_hash
 from blackout.controllers.rules import RulesController
 from blackout.controllers.solver import ReferenceController, SolverController
 from blackout.llm.client import LLMClient
@@ -22,8 +25,23 @@ CONTESTANTS: dict[str, Callable[[], Controller]] = {
     ReferenceController.name: ReferenceController,
 }
 
-LLM_CONTESTANTS: dict[str, str] = {LLMParserController.name: "parser"}
+LLM_CONTESTANTS: dict[str, str] = {
+    LLMParserController.name: "parser",
+    SingleAgentController.name: "agent",
+    SingleSolverController.name: "agent",
+}
 """LLM contestant -> the purpose its effort and max_tokens are configured under."""
+
+_AGENTS = {c.name: c for c in (SingleAgentController, SingleSolverController)}
+
+
+def prompt_hash_for(name: str) -> str:
+    """The prompt version an LLM contestant runs with (docs/PROMPTS.md)."""
+    if name == LLMParserController.name:
+        return parser_prompt_hash()
+    if name in _AGENTS:
+        return agent_prompt_hash(_AGENTS[name].solver)
+    raise KeyError(f"{name!r} isn't an LLM contestant")
 
 
 def known_contestants() -> list[str]:
@@ -44,4 +62,6 @@ def make_llm_controller(
 ) -> Controller:
     if name == LLMParserController.name:
         return LLMParserController(client, model=model, effort=effort, run_index=run_index)
+    if name in _AGENTS:
+        return _AGENTS[name](client, model=model, effort=effort, run_index=run_index)
     raise KeyError(f"unknown LLM contestant {name!r}; available: {', '.join(LLM_CONTESTANTS)}")

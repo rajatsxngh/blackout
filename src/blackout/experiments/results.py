@@ -17,6 +17,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import fmean
+from typing import Any
 
 from blackout.controllers.do_nothing import DoNothingController
 from blackout.controllers.registry import LLM_CONTESTANTS
@@ -162,7 +163,9 @@ def write_results(
     files = {
         "runs.csv": _csv(rows),
         "summary.csv": _csv(groups),
-        "results.md": markdown(experiment, groups, parse, rows, llm_rows(outcomes)),
+        "results.md": markdown(
+            experiment, groups, parse, rows, llm_rows(outcomes), agent_rows(outcomes)
+        ),
     }
     paths = []
     for name, text in files.items():
@@ -178,6 +181,7 @@ def markdown(
     parse: Mapping[int, ParseCounts],
     rows: Sequence[RunRow],
     llm: Sequence["LlmRow"] = (),
+    agents: Sequence["AgentRow"] = (),
 ) -> str:
     lines = [
         f"# Results: {experiment}",
@@ -214,6 +218,7 @@ def markdown(
             f" | {_num(c.recall)} | {_num(c.f1)} |"
         )
     lines += llm_section(llm)
+    lines += agent_section(agents)
     lines += head_to_head(rows)
     problems = sum(r.discrepancies for r in rows)
     lines += ["", f"Runs: {len(rows)}. Scorer discrepancies: {problems}.", ""]
@@ -241,7 +246,7 @@ def llm_rows(outcomes: Sequence[Outcome]) -> list[LlmRow]:
     """Parse F1 and cost of the LLM contestants' runs, by (contestant, model, level)."""
     groups: dict[tuple[str, str, int], list[tuple[ParseCounts, dict[str, object]]]] = {}
     for o in outcomes:
-        if o.job.contestant not in LLM_CONTESTANTS:
+        if LLM_CONTESTANTS.get(o.job.contestant) != "parser":
             continue
         counts = logged_parse_counts(read_log(o.job.run_dir / LOG_FILE))
         summary = json.loads((o.job.run_dir / SUMMARY_FILE).read_text(encoding="utf-8"))
@@ -303,6 +308,105 @@ def llm_section(rows: Sequence[LlmRow]) -> list[str]:
             f"| {r.contestant} | {r.model} | L{r.level} | {r.runs} | {r.replies}"
             f" | {c.tp + c.fn} | {c.tp + c.fp} | {c.tp} | {_num(c.f1)} | {r.calls}"
             f" | {r.mean_cost_usd:.4f} | {r.spend_usd:.4f} | {r.cache_read_input_tokens}"
+            f" | {r.agent_faults}/{r.infra_faults} | {r.fallback_runs} |"
+        )
+    return lines
+
+
+@dataclass(frozen=True, slots=True)
+class AgentRow:
+    """The LLM agents' process figures (M11), by (contestant, model, level)."""
+
+    contestant: str
+    model: str
+    level: int
+    runs: int
+    replies: str
+    decision_points: int
+    calls: int
+    actions: int
+    invalid_actions: int
+    attempted: int
+    tool_errors: int
+    mean_cost_usd: float
+    spend_usd: float
+    cache_read_input_tokens: int
+    agent_faults: int
+    infra_faults: int
+    fallback_runs: int
+
+    @property
+    def invalid_action_rate(self) -> float | None:
+        return self.invalid_actions / self.attempted if self.attempted else None
+
+
+def agent_rows(outcomes: Sequence[Outcome]) -> list[AgentRow]:
+    groups: dict[tuple[str, str, int], list[dict[str, Any]]] = {}
+    for o in outcomes:
+        if LLM_CONTESTANTS.get(o.job.contestant) != "agent":
+            continue
+        summary = json.loads((o.job.run_dir / SUMMARY_FILE).read_text(encoding="utf-8"))
+        stats = summary.get("contestant_stats", {})
+        key = (o.job.contestant, o.job.model or "-", o.job.level)
+        groups.setdefault(key, []).append(stats)
+    rows = []
+    for (contestant, model, level), runs in sorted(groups.items()):
+        llm = [r.get("llm", {}) for r in runs]
+        agent = [r.get("agent", {}) for r in runs]
+
+        def tally(items: list[dict[str, Any]], name: str) -> float:
+            return sum(float(i.get(name, 0) or 0) for i in items)
+
+        sources = sorted({k for s in llm for k in s.get("sources", {})})
+        invalid = int(tally(agent, "invalid_actions"))
+        rows.append(
+            AgentRow(
+                contestant=contestant,
+                model=model,
+                level=level,
+                runs=len(runs),
+                replies="+".join(sources) or "-",
+                decision_points=int(tally(agent, "decision_points")),
+                calls=int(tally(llm, "calls")),
+                actions=int(tally(agent, "actions")),
+                invalid_actions=invalid,
+                attempted=int(tally(agent, "attempted_actions")),
+                tool_errors=int(tally(agent, "tool_errors")),
+                mean_cost_usd=round(tally(llm, "cost_usd") / len(runs), 6),
+                spend_usd=round(tally(llm, "spend_usd"), 6),
+                cache_read_input_tokens=int(tally(llm, "cache_read_input_tokens")),
+                agent_faults=int(tally(llm, "agent_faults")),
+                infra_faults=int(tally(llm, "infra_faults")),
+                fallback_runs=sum(1 for s in llm if s.get("fallback_run")),
+            )
+        )
+    return rows
+
+
+def agent_section(rows: Sequence[AgentRow]) -> list[str]:
+    if not rows:
+        return []
+    lines = [
+        "",
+        "## LLM agents: calls, invalid actions and cost by level",
+        "",
+        "From each run's summary.json. The invalid-action rate counts the engine's rejections"
+        " and action-tool inputs that never made a valid action, over every action tried."
+        " Cost per run is what the calls cost when made (synthetic fixtures carry estimated"
+        " usage); spend is new money.",
+        "",
+        "| Contestant | Model | Level | Runs | Replies | Decision points | Calls/decision"
+        " | Actions | Invalid-action rate | Tool errors | Cost/run (USD) | Spend (USD)"
+        " | Cache-read tokens | Faults (agent/infra) | Fallback runs |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for r in rows:
+        per_dp = r.calls / r.decision_points if r.decision_points else 0.0
+        lines.append(
+            f"| {r.contestant} | {r.model} | L{r.level} | {r.runs} | {r.replies}"
+            f" | {r.decision_points} | {per_dp:.2f} | {r.actions}"
+            f" | {_num(r.invalid_action_rate)} | {r.tool_errors} | {r.mean_cost_usd:.4f}"
+            f" | {r.spend_usd:.4f} | {r.cache_read_input_tokens}"
             f" | {r.agent_faults}/{r.infra_faults} | {r.fallback_runs} |"
         )
     return lines

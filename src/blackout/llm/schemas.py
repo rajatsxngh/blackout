@@ -4,7 +4,9 @@ Strict mode (``strict: true`` on a tool, or ``output_config.format``) needs ever
 set ``additionalProperties: false`` and list all its properties in ``required``. Pydantic's
 schemas also use ``$defs``/``$ref``, which ``strict_schema`` inlines so each schema stands
 alone, and carry ``title``/``default`` annotations, which it drops (an optional field stays
-optional by allowing ``null``).
+optional by allowing ``null``). Strict mode also rejects numeric, string-length and array-size
+constraints (``minimum``, ``maxLength``, ``minItems``...), so those are dropped too: the caller
+validates them client-side (the agents build the Pydantic action from the input, M11).
 """
 
 import copy
@@ -12,7 +14,22 @@ from typing import Any
 
 from pydantic import BaseModel
 
-_DROP = frozenset({"title", "default"})
+_DROP = frozenset(
+    {
+        "title",
+        "default",
+        "minimum",
+        "maximum",
+        "exclusiveMinimum",
+        "exclusiveMaximum",
+        "multipleOf",
+        "minLength",
+        "maxLength",
+        "minItems",
+        "maxItems",
+        "uniqueItems",
+    }
+)
 
 
 def strict_schema(source: type[BaseModel] | dict[str, Any]) -> dict[str, Any]:
@@ -40,9 +57,12 @@ def _strict(node: Any, defs: dict[str, Any], seen: tuple[str, ...]) -> Any:
             raise ValueError(f"unresolved $ref {ref!r}")
         merged = {**defs[name], **{k: v for k, v in node.items() if k != "$ref"}}
         return _strict(merged, defs, (*seen, name))
-    out = {k: _strict(v, defs, seen) for k, v in node.items() if k not in _DROP}
-    if out.get("type") == "object" or "properties" in out:
-        props = out.get("properties", {})
+    out = {
+        k: _strict(v, defs, seen) for k, v in node.items() if k not in _DROP and k != "properties"
+    }
+    if node.get("type") == "object" or "properties" in node:
+        # Property names are data, not schema keywords: never drop one.
+        props = {k: _strict(v, defs, seen) for k, v in node.get("properties", {}).items()}
         out["properties"] = props
         out["required"] = list(props)
         out["additionalProperties"] = False

@@ -57,6 +57,8 @@ class ControllerName(StrEnum):
     SOLVER = "solver"
     REFERENCE = "reference"
     LLM_PARSER = "llm-parser"
+    LLM_SINGLE = "llm-single"
+    LLM_SINGLE_SOLVER = "llm-single-solver"
     SCRIPTED = "scripted"
 
 
@@ -163,7 +165,8 @@ def run(
     if controller.value in LLM_CONTESTANTS:
         models = load_models_config()
         model = model or models.dev_model
-        chosen: Effort = effort.value if effort else models.effort["parser"]  # type: ignore[assignment]
+        purpose = LLM_CONTESTANTS[controller.value]
+        chosen: Effort = effort.value if effort else models.effort[purpose]  # type: ignore[assignment,index]
         settings = LLMSettings(mode=llm.value, fixtures=fixtures, record=record)
         try:
             client = make_client(settings, models)

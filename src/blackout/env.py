@@ -15,7 +15,7 @@ each decision point wakes only the roles with triggers of their own.
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 
-from blackout.controllers.base import Controller, uses_truth
+from blackout.controllers.base import Actor, Controller, acts_live, uses_truth
 from blackout.info.layer import InfoLayer, merge
 from blackout.info.observation import Observation
 from blackout.info.roles import ROLE_ALL
@@ -343,9 +343,24 @@ def run_episode(
     controller.reset()
     request = env.reset()
     records: list[DecisionRecord] = []
+    live = acts_live(controller)
     while isinstance(request, DecisionRequest):
-        actions = controller.decide(request.observations[role])
-        results = tuple(env.act(role, action) for action in actions)
+        observation = request.observations[role]
+        if live:
+            # The contestant acts as it goes (an LLM agent's tools call env.act at once).
+            taken: list[ActionResult] = []
+
+            def act(action: AnyAction, taken: list[ActionResult] = taken) -> ActionResult:
+                result = env.act(role, action)
+                taken.append(result)
+                return result
+
+            actor = Actor(act=act, observe=lambda: env.observe(role))
+            controller.decide_live(observation, actor)  # type: ignore[attr-defined]
+            results = tuple(taken)
+        else:
+            actions = controller.decide(observation)
+            results = tuple(env.act(role, action) for action in actions)
         records.append(DecisionRecord(request.index, request.tick, request.triggers, results))
         if on_decision is not None:
             on_decision(request, results)

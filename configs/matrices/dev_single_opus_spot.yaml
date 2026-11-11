@@ -1,0 +1,11 @@
+# Opus spot checks for C5 and C6 on 5 dev scenarios (docs/PRD.md section 12, M11; the dev
+# bucket's "Opus spot checks on 5 dev scenarios", PRD 8.11). One template per scenario, L1 to
+# L3, so the agent has text to read. Live only (refused until the test bank is locked).
+#   uv run blackout batch --matrix configs/matrices/dev_single_opus_spot.yaml
+experiment: m11_single_opus_spot
+suite: dev
+contestants: [llm-single, llm-single-solver]
+models: [claude-opus-5-5]
+scenarios: [dev_t01_s0_l3, dev_t02_s1_l2, dev_t05_s0_l1, dev_t07_s1_l3, dev_t09_s0_l2]
+llm_mode: live
+runs: 1

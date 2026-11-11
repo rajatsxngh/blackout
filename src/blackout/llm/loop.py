@@ -8,7 +8,9 @@ Each decision point is one fresh conversation. The loop:
    user message (a handler's ``ToolError`` becomes an ``is_error`` result: for action tools
    that counts as an invalid action);
 4. appends the assistant turn unchanged (thinking blocks included) and repeats, at most
-   ``max_calls`` model calls in all.
+   ``max_calls`` model calls in all. A ``stop`` callback lets a tool end the conversation
+   (the agents' ``end_turn``): it's checked after every round of tool results, and if it says
+   so no further call is made.
 
 History is never edited, so the cached prefix stays valid and preserved thinking holds.
 """
@@ -43,7 +45,11 @@ class LoopResult:
     calls: list[CallRecord] = field(default_factory=list)
     tool_calls: list[ToolCall] = field(default_factory=list)
     final: LLMResult | None = None
-    stopped: str = ""  # end_turn, fault, max_calls, no_tools
+    stopped: str = ""  # end_turn, fault, max_calls, no_tools, stopped (by the stop callback)
+    responses: list[dict[str, Any] | None] = field(default_factory=list)
+    """Each call's normalized response (None for an infra fault), for transcripts."""
+    tool_results: list[list[dict[str, Any]]] = field(default_factory=list)
+    """The tool_result blocks sent back after each call that asked for tools."""
 
     @property
     def errors(self) -> int:
@@ -72,11 +78,13 @@ def run_tool_loop(
     *,
     run_index: int = 0,
     max_calls: int = MAX_CALLS,
+    stop: Callable[[], bool] | None = None,
 ) -> LoopResult:
     out = LoopResult()
     for _ in range(max_calls):
         result = client.call(request, run_index=run_index)
         out.calls.append(result.record)
+        out.responses.append(result.response)
         out.final = result
         if not result.ok:
             out.stopped = "fault"
@@ -100,6 +108,10 @@ def run_tool_loop(
             if call.is_error:
                 item["is_error"] = True
             results.append(item)
+        out.tool_results.append(results)
+        if stop is not None and stop():
+            out.stopped = "stopped"
+            return out
         request = request.followed_by(
             {"role": "assistant", "content": result.content},
             {"role": "user", "content": results},

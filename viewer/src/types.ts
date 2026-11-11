@@ -1,7 +1,7 @@
 // Shapes of the files that `blackout export-viewer` writes (src/blackout/logs/export_viewer.py).
 // If you change one side, change the other and bump VIEWER_DATA_VERSION in both.
 
-export const VIEWER_DATA_VERSION = 1;
+export const VIEWER_DATA_VERSION = 2; // 2: Decision.notes (M11)
 
 // ---- manifest.json ------------------------------------------------------------------------
 
@@ -197,6 +197,8 @@ export interface Decision {
   belief: Belief | null;
   // What the decision cost in model calls (LLM contestants only; null for the baselines).
   llm: { input_tokens: number; output_tokens: number; cost_usd: number; calls: number } | null;
+  // The notes an LLM agent carried to its next turn (M11); null for the baselines.
+  notes: string | null;
 }
 
 export interface Run {

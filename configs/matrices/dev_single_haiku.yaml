@@ -1,0 +1,13 @@
+# C5 Single and C6 Single + Solver on the frozen dev suite with the dev model (docs/PRD.md
+# section 12, M11), next to C2 Solver. Done when: every one of the 56 scenarios finishes with no
+# harness error; the invalid-action rate is measured; cost per run is within PRD 8.11's range.
+# Live calls: refused until the human test bank is locked and committed (PRD 8.4), then charged
+# to the "dev" budget bucket in runs/ledger.json.
+#   uv run blackout batch --matrix configs/matrices/dev_single_haiku.yaml [--resume]
+# Logs go to runs/m11_single_haiku/, tables to results/m11_single_haiku/.
+experiment: m11_single_haiku
+suite: dev
+contestants: [solver, llm-single, llm-single-solver]
+models: [claude-haiku-5-5]
+llm_mode: live
+runs: 1  # one sample per scenario for the dev check; the experiment (M12) runs 3
