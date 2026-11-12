@@ -29,7 +29,7 @@ from blackout.controllers.agents.render import (
     system_prompt,
 )
 from blackout.controllers.agents.single import SingleAgentController, SingleSolverController
-from blackout.controllers.agents.tools import tool_definitions
+from blackout.controllers.agents.tools import SOLVER_TOOLS, tool_definitions
 from blackout.controllers.base import Actor
 from blackout.controllers.registry import (
     LLM_CONTESTANTS,
@@ -166,7 +166,8 @@ def test_the_cached_prefix_is_stable_and_long_enough() -> None:
         tools = tool_definitions(solver)
         assert [t["name"] for t in tools] == sorted(t["name"] for t in tools)
         for tool in tools:
-            assert tool["strict"] is True
+            # the solver tools aren't strict: all twelve would compile too large (D110)
+            assert tool.get("strict") is (None if tool["name"] in SOLVER_TOOLS else True)
             schema = json.dumps(tool["input_schema"])
             assert '"additionalProperties": false' in schema
             for unsupported in ("maxLength", "minimum", "$ref", "$defs"):
@@ -590,7 +591,13 @@ def test_registry_and_cli_know_the_agents(tmp_path: Path) -> None:
     assert replayed.exit_code == 0, replayed.output
 
 
-def test_cli_refuses_live_agents_until_the_test_bank_is_locked(tmp_path: Path) -> None:
+def test_cli_refuses_live_agents_until_the_test_bank_is_locked(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # As if the bank weren't locked: the real tree's bank is locked and committed (D109).
+    import blackout.llm.live as live
+
+    monkeypatch.setattr(live, "live_problems", lambda root=Path(): ["test bank: not locked"])
     result = runner.invoke(
         app, ["run", "-s", "dev_t01_s0_l0", "-c", "llm-single-solver", "--llm", "live", "-q"]
     )

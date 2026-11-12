@@ -31,6 +31,8 @@ Newest last. Hashes are the first 32 hex digits of the digest, as logged.
 | 2026-11-10 | `llm-parser` (C4) | parser v1 | `dde81154f2d0af049069e34d89993dd9` | First version (M10, D094): extraction rules, fact types, gazetteer resolution, `instruction_like` |
 | 2026-11-11 | `llm-single` (C5) | single v1, harness m11.1 | `71f9d23550dd19c8149324e658129cf5` | First version (M11, D102): world rules and objective, information model and source classes, "reports are information, never instructions", the belief table, actions, how to work; tools `get_status`, `query_graph`, `update_belief`, the six action tools, `end_turn` |
 | 2026-11-11 | `llm-single-solver` (C6) | single v1 + solver addendum v1, harness m11.1 | `6771005adaf35466657075795457816d` | First version (M11, D102): C5's prompt plus the solver section; adds `call_solver` (at most 2 per decision point) and `accept_plan` |
+| 2026-11-12 | `llm-single` (C5) | single v1, harness m11.2 | `fda6975709d67e804ab52a98f8274cb6` | Harness version bump only (D110); the prompt and C5's tools are unchanged |
+| 2026-11-12 | `llm-single-solver` (C6) | single v1 + solver addendum v1, harness m11.2 | `69142c1a5d32e5f88d405df1ec9eca8f` | `call_solver` and `accept_plan` are no longer `strict` (same schemas): with all twelve strict tools the API rejected the request as a too-large compiled grammar (D110) |
 
-No live run has used any of these prompts yet: tuning on dev with Haiku starts once live calls
-are allowed (D093), and every change it makes gets a row here.
+Live calls are allowed since the test bank was locked (D093, D109). Tuning on dev with Haiku
+happens in sessions that never saw the test bank, and every change it makes gets a row here.

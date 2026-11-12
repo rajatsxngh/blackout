@@ -55,7 +55,7 @@ from blackout.sim.actions import AnyAction
 from blackout.sim.config import SimConfig
 from blackout.sim.hashing import digest
 
-AGENT_HARNESS_VERSION = "m11.1"
+AGENT_HARNESS_VERSION = "m11.2"
 """Part of the agents' prompt hash: bump it when the harness changes what the agents are shown
 or how their replies are read."""
 

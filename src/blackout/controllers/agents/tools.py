@@ -1,8 +1,11 @@
 """The agents' tools (docs/PRD.md 8.8): information, belief, every 8.3 action, and the solver.
 
-Every tool is strict (``strict: true``; schemas from ``blackout.llm.schemas``, so every field
-is required and an optional one is ``null``). Inputs are validated again here, by building the
-Pydantic model, so a test double or a schema gap can't slip a bad value through.
+Every tool but the two solver tools is strict (``strict: true``; schemas from
+``blackout.llm.schemas``, so every field is required and an optional one is ``null``).
+``call_solver`` and ``accept_plan`` use the same schemas without ``strict``: with all twelve
+enforced, the API rejects C6's tool set as a too-large compiled grammar (D110). Inputs are
+validated again here, by building the Pydantic model, so a non-strict tool, a test double or
+a schema gap can't slip a bad value through (an invalid one is an ``is_error`` result).
 
 - ``get_status(scope)``: the current state (after this turn's actions), one section or all.
 - ``query_graph(query, subject, mode, max_slack)``: the five dependency-graph queries, from
@@ -294,7 +297,10 @@ ACTION_TOOLS = frozenset(
 def tool_definitions(solver: bool) -> tuple[dict[str, Any], ...]:
     """The strict tool definitions, sorted by name (the cached prefix starts with them)."""
     names = sorted(BASE_TOOLS + (SOLVER_TOOLS if solver else ()))
-    return tuple(strict_tool(n, _DEFINITIONS[n][0], _DEFINITIONS[n][1]) for n in names)
+    return tuple(
+        strict_tool(n, _DEFINITIONS[n][0], _DEFINITIONS[n][1], strict=n not in SOLVER_TOOLS)
+        for n in names
+    )
 
 
 # --- the handlers --------------------------------------------------------------------------

@@ -69,14 +69,23 @@ def _strict(node: Any, defs: dict[str, Any], seen: tuple[str, ...]) -> Any:
     return out
 
 
-def strict_tool(name: str, description: str, source: type[BaseModel] | dict[str, Any]) -> dict:
-    """A strict tool definition (schema-valid inputs guaranteed)."""
-    return {
+def strict_tool(
+    name: str, description: str, source: type[BaseModel] | dict[str, Any], *, strict: bool = True
+) -> dict:
+    """A tool definition with a strict-style schema; ``strict: true`` unless ``strict=False``.
+
+    With ``strict=False`` the schema is the same, but the API doesn't enforce it, so the
+    caller must validate the input itself. Used where enforcing every schema in a request
+    makes the compiled grammar too large for the API (D110).
+    """
+    tool: dict[str, Any] = {
         "name": name,
         "description": description,
         "input_schema": strict_schema(source),
-        "strict": True,
     }
+    if strict:
+        tool["strict"] = True
+    return tool
 
 
 def output_format(source: type[BaseModel] | dict[str, Any]) -> dict[str, Any]:
